@@ -10,7 +10,7 @@ Text Domain: wordfence
 Domain Path: /languages
 Network: true
 */
-if(defined('WP_INSTALLING') && WP_INSTALLING){
+if (defined('WP_INSTALLING') && WP_INSTALLING) {
 	return;
 }
 
@@ -19,6 +19,7 @@ if (!defined('ABSPATH')) {
 }
 define('WORDFENCE_VERSION', '7.5.4');
 define('WORDFENCE_BUILD_NUMBER', '1623076348');
+define('WORDFENCE_CDN_URL', 'https://cdn.jsdelivr.net/gh/AH-dark/WordPress-Wordfence@v' . WORDFENCE_VERSION . '/');
 define('WORDFENCE_BASENAME', function_exists('plugin_basename') ? plugin_basename(__FILE__) :
 	basename(dirname(__FILE__)) . '/' . basename(__FILE__));
 
@@ -49,24 +50,33 @@ if (!defined('WF_PHP_UNSUPPORTED')) {
 if (WF_PHP_UNSUPPORTED) {
 	add_action('all_admin_notices', 'wfUnsupportedPHPOverlay');
 
-	function wfUnsupportedPHPOverlay() {
+	function wfUnsupportedPHPOverlay()
+	{
 		include "views/unsupported-php/admin-message.php";
 	}
 	return;
 }
 
-if(get_option('wordfenceActivated') != 1){
-	add_action('activated_plugin','wordfence_save_activation_error'); function wordfence_save_activation_error(){ update_option('wf_plugin_act_error',  ob_get_contents()); }
+if (get_option('wordfenceActivated') != 1) {
+	add_action('activated_plugin', 'wordfence_save_activation_error');
+	function wordfence_save_activation_error()
+	{
+		update_option('wf_plugin_act_error',  ob_get_contents());
+	}
 }
-if(! defined('WORDFENCE_VERSIONONLY_MODE')){ //Used to get version from file.
+if (!defined('WORDFENCE_VERSIONONLY_MODE')) { //Used to get version from file.
 	$maxMemory = @ini_get('memory_limit');
 	$last = strtolower(substr($maxMemory, -1));
 	$maxMemory = (int) $maxMemory;
-	
-	if ($last == 'g') { $maxMemory = $maxMemory * 1024 * 1024 * 1024; }
-	else if ($last == 'm') { $maxMemory = $maxMemory * 1024 * 1024; }
-	else if ($last == 'k') { $maxMemory = $maxMemory * 1024; }
-	
+
+	if ($last == 'g') {
+		$maxMemory = $maxMemory * 1024 * 1024 * 1024;
+	} else if ($last == 'm') {
+		$maxMemory = $maxMemory * 1024 * 1024;
+	} else if ($last == 'k') {
+		$maxMemory = $maxMemory * 1024;
+	}
+
 	if ($maxMemory < 134217728 /* 128 MB */ && $maxMemory > 0 /* Unlimited */) {
 		if (strpos(ini_get('disable_functions'), 'ini_set') === false) {
 			@ini_set('memory_limit', '128M'); //Some hosts have ini set at as little as 32 megs. 128 is the min sane amount of memory.
@@ -86,7 +96,7 @@ if(! defined('WORDFENCE_VERSIONONLY_MODE')){ //Used to get version from file.
 			require_once(dirname(__FILE__) . '/waf/bootstrap.php');
 		}
 	}
-	
+
 	//Modules
 
 	//Load
