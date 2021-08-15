@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 }
 define('WORDFENCE_VERSION', '7.5.4');
 define('WORDFENCE_BUILD_NUMBER', '1623076348');
-define('WORDFENCE_CDN_URL', 'https://cdn.jsdelivr.net/gh/AH-dark/WordPress-Wordfence@v' . WORDFENCE_VERSION . '/');
+define('WORDFENCE_CDN_URL', 'https://cdn.jsdelivr.net/wp/plugins/wordfence/tags/' . WORDFENCE_VERSION . '/');
 define('WORDFENCE_BASENAME', function_exists('plugin_basename') ? plugin_basename(__FILE__) :
 	basename(dirname(__FILE__)) . '/' . basename(__FILE__));
 
