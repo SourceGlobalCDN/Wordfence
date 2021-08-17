@@ -55,8 +55,7 @@ class wfView {
 		extract($this->data, EXTR_SKIP);
 
 		ob_start();
-		/** @noinspection PhpIncludeInspection */
-		include $view_path;
+        include $view_path;
 		return ob_get_clean();
 	}
 

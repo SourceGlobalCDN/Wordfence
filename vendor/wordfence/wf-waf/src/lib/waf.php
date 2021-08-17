@@ -326,8 +326,7 @@ auEa+7b+FGTKs7dUo2BNGR7OVifK4GZ8w/ajS0TelhrSRi3BBQCGXLzUO/UURUAh
 			// Acquire lock on this file so we're not including it while it's being written in another process.
 			$handle = fopen($storageEngine->getRulesFile(), 'r');
 			flock($handle, LOCK_SH);
-			/** @noinspection PhpIncludeInspection */
-			include $storageEngine->getRulesFile();
+            include $storageEngine->getRulesFile();
 			flock($handle, LOCK_UN);
 			fclose($handle);
 		} else {
