@@ -292,9 +292,6 @@ auEa+7b+FGTKs7dUo2BNGR7OVifK4GZ8w/ajS0TelhrSRi3BBQCGXLzUO/UURUAh
 			$this->eventBus->blockSQLi($ip, $e);
 			$this->blockAction($e);
 			
-		} catch (wfWAFLogException $e) {
-			$this->eventBus->log($ip, $e);
-			$this->logAction($e);
 		}
 
 		$this->runCron();
@@ -377,40 +374,42 @@ auEa+7b+FGTKs7dUo2BNGR7OVifK4GZ8w/ajS0TelhrSRi3BBQCGXLzUO/UURUAh
 		foreach ($this->failedRules as $paramKey => $categories) {
 			foreach ($categories as $category => $failedRules) {
 				foreach ($failedRules as $failedRule) {
-					/**
-					 * @var wfWAFRule $rule
-					 * @var wfWAFRuleComparisonFailure $failedComparison
-					 */
-					$rule = $failedRule['rule'];
-					$failedComparison = $failedRule['failedComparison'];
-					$action = $failedRule['action'];
+                    /**
+                     * @var wfWAFRule $rule
+                     * @var wfWAFRuleComparisonFailure $failedComparison
+                     */
+                    $rule = $failedRule['rule'];
+                    $failedComparison = $failedRule['failedComparison'];
+                    $action = $failedRule['action'];
 
-					$score = $rule->getScore();
-					if ($failedComparison->hasMultiplier()) {
-						$score *= $failedComparison->getMultiplier();
-					}
-					if (!isset($this->failScores[$category])) {
-						$this->failScores[$category] = 100;
-					}
-					if (!isset($this->scores[$paramKey][$category])) {
-						$this->scores[$paramKey][$category] = 0;
-					}
-					$this->scores[$paramKey][$category] += $score;
-					if ($this->scores[$paramKey][$category] >= $this->failScores[$category]) {
-						$blockActions[$category] = array(
-							'paramKey'         => $paramKey,
-							'score'            => $this->scores[$paramKey][$category],
-							'action'           => $action,
-							'rule'             => $rule,
-							'failedComparison' => $failedComparison,
-						);
-					}
-					if (defined('WFWAF_DEBUG') && WFWAF_DEBUG) {
-						$this->debug[] = sprintf("%s tripped %s for %s->%s('%s'). Score %d/%d", $paramKey, $action,
-							$category, $failedComparison->getAction(), $failedComparison->getExpected(),
-							$this->scores[$paramKey][$category], $this->failScores[$category]);
-					}
-				}
+                    if ($action !== 'log') {
+                        $score = $rule->getScore();
+                        if ($failedComparison->hasMultiplier()) {
+                            $score *= $failedComparison->getMultiplier();
+                        }
+                        if (!isset($this->failScores[$category])) {
+                            $this->failScores[$category] = 100;
+                        }
+                        if (!isset($this->scores[$paramKey][$category])) {
+                            $this->scores[$paramKey][$category] = 0;
+                        }
+                        $this->scores[$paramKey][$category] += $score;
+                        if ($this->scores[$paramKey][$category] >= $this->failScores[$category]) {
+                            $blockActions[$category] = array(
+                                'paramKey' => $paramKey,
+                                'score' => $this->scores[$paramKey][$category],
+                                'action' => $action,
+                                'rule' => $rule,
+                                'failedComparison' => $failedComparison,
+                            );
+                        }
+                        if (defined('WFWAF_DEBUG') && WFWAF_DEBUG) {
+                            $this->debug[] = sprintf("%s tripped %s for %s->%s('%s'). Score %d/%d", $paramKey, $action,
+                                $category, $failedComparison->getAction(), $failedComparison->getExpected(),
+                                $this->scores[$paramKey][$category], $this->failScores[$category]);
+                        }
+                    }
+                }
 			}
 		}
 
@@ -1094,35 +1093,43 @@ HTML
 	 * @param wfWAFRule $rule
 	 * @param wfWAFRuleComparisonFailure $failedComparison
 	 * @param bool $updateFailedRules
-	 * @throws wfWAFLogException
 	 */
 	public function log($rule, $failedComparison, $updateFailedRules = true) {
 		$paramKey = $failedComparison->getParamKey();
-		$category = $rule->getCategory();
+        $category = $rule->getCategory();
 
-		if ($updateFailedRules) {
-			$this->failedRules[$paramKey][$category][] = array(
-				'rule'             => $rule,
-				'failedComparison' => $failedComparison,
-				'action'           => 'log',
-			);
-		}
+        if ($updateFailedRules) {
+            $this->failedRules[$paramKey][$category][] = array(
+                'rule' => $rule,
+                'failedComparison' => $failedComparison,
+                'action' => 'log',
+            );
+        }
 
-		$e = new wfWAFLogException();
-		$e->setFailedRules(array($rule));
-		$e->setParamKey($failedComparison->getParamKey());
-		$e->setParamValue($failedComparison->getParamValue());
-		$e->setRequest($this->getRequest());
-		throw $e;
-	}
+        $event = new wfWAFLogEvent(
+            array($rule),
+            $failedComparison->getParamKey(),
+            $failedComparison->getParamValue(),
+            $this->getRequest()
+        );
 
-	/**
-	 * @todo Hook up $httpCode
-	 * @param wfWAFBlockException $e
-	 * @param int $httpCode
-	 */
-	public function blockAction($e, $httpCode = 403, $redirect = false, $template = null) {
-		$this->getStorageEngine()->logAttack($e->getFailedRules(), $e->getParamKey(), $e->getParamValue(), $e->getRequest(), $e->getRequest()->getMetadata());
+        $this->recordLogEvent($event);
+    }
+
+    public function recordLogEvent($event)
+    {
+        $this->eventBus->log($this->getRequest()->getIP(), $event);
+        $this->logAction($event);
+    }
+
+    /**
+     * @param wfWAFBlockException $e
+     * @param int $httpCode
+     * @todo Hook up $httpCode
+     */
+    public function blockAction($e, $httpCode = 403, $redirect = false, $template = null)
+    {
+        $this->getStorageEngine()->logAttack($e->getFailedRules(), $e->getParamKey(), $e->getParamValue(), $e->getRequest(), $e->getRequest()->getMetadata());
 		
 		if ($redirect) {
 			wfWAFUtils::redirect($redirect); // exits and emits no cache headers
@@ -1158,33 +1165,31 @@ HTML
 			wfWAFUtils::statusHeader(503);
 			wfWAFUtils::doNotCache();
 			if ($secsToGo = $e->getRequest()->getMetadata('503Time')) {
-				header('Retry-After: ' . $secsToGo);
-			}
-			exit($this->getUnavailableMessage($e->getRequest()->getMetadata('503Reason')));
-		}
-		
-		header('HTTP/1.0 403 Forbidden');
-		wfWAFUtils::doNotCache();
-		exit($this->getBlockedMessage());
-	}
-	
-	public function logAction($e) {
-		$failedRules = array('logged');
-		if (is_array($e->getFailedRules())) {
-			$failedRules = array_merge($failedRules, $e->getFailedRules());
-		}
-		$this->getStorageEngine()->logAttack($failedRules, $e->getParamKey(), $e->getParamValue(), $this->getRequest());
-	}
+                header('Retry-After: ' . $secsToGo);
+            }
+            exit($this->getUnavailableMessage($e->getRequest()->getMetadata('503Reason')));
+        }
 
-	/**
-	 * @return string
-	 */
-	public function getBlockedMessage($template = null) {
-		if ($template === null) {
-			if ($this->currentUserCanWhitelist()) {
-				$template = '403-roadblock';
-			}
-			else {
+        header('HTTP/1.0 403 Forbidden');
+        wfWAFUtils::doNotCache();
+        exit($this->getBlockedMessage());
+    }
+
+    public function logAction($event)
+    {
+        $failedRules = array_merge(array('logged'), $event->getFailedRules());
+        $this->getStorageEngine()->logAttack($failedRules, $event->getParamKey(), $event->getParamValue(), $this->getRequest());
+    }
+
+    /**
+     * @return string
+     */
+    public function getBlockedMessage($template = null)
+    {
+        if ($template === null) {
+            if ($this->currentUserCanWhitelist()) {
+                $template = '403-roadblock';
+            } else {
 				$template = '403';
 			}
 		}
@@ -2113,9 +2118,9 @@ interface wfWAFObserver {
 	
 	public function blockSQLi($ip, $exception);
 	
-	public function log($ip, $exception);
-	
-	public function wafDisabled();
+	public function log($ip, $event);
+
+    public function wafDisabled();
 	
 	public function beforeRunRules();
 	
@@ -2182,15 +2187,16 @@ class wfWAFEventBus implements wfWAFObserver {
 		}
 	}
 	
-	public function log($ip, $exception) {
-		/** @var wfWAFObserver $observer */
-		foreach ($this->observers as $observer) {
-			$observer->log($ip, $exception);
-		}
-	}
+	public function log($ip, $event)
+    {
+        /** @var wfWAFObserver $observer */
+        foreach ($this->observers as $observer) {
+            $observer->log($ip, $event);
+        }
+    }
 
 
-	public function wafDisabled() {
+    public function wafDisabled() {
 		/** @var wfWAFObserver $observer */
 		foreach ($this->observers as $observer) {
 			$observer->wafDisabled();
@@ -2331,15 +2337,52 @@ class wfWAFBlockException extends wfWAFRunException {
 class wfWAFBlockXSSException extends wfWAFRunException {
 }
 
-class wfWAFBlockSQLiException extends wfWAFRunException {
+    class wfWAFBlockSQLiException extends wfWAFRunException
+    {
+    }
+
+    class wfWAFBuildRulesException extends wfWAFException
+    {
+    }
+
+    class wfWAFEventBusException extends wfWAFException
+    {
+    }
 }
 
-class wfWAFLogException extends wfWAFRunException {
-}
+class wfWAFLogEvent
+{
 
-class wfWAFBuildRulesException extends wfWAFException {
-}
+    private $failedRules;
+    private $paramKey, $paramValue;
+    private $request;
 
-class wfWAFEventBusException extends wfWAFException {
-}
+    public function __construct($failedRules = array(), $paramKey = null, $paramValue = null, $request = null)
+    {
+        $this->failedRules = $failedRules;
+        $this->paramKey = $paramKey;
+        $this->paramValue = $paramValue;
+        $this->request = $request;
+    }
+
+    public function getFailedRules()
+    {
+        return $this->failedRules;
+    }
+
+    public function getParamKey()
+    {
+        return $this->paramKey;
+    }
+
+    public function getParamValue()
+    {
+        return $this->paramValue;
+    }
+
+    public function getRequest()
+    {
+        return $this->request;
+    }
+
 }

@@ -24,24 +24,27 @@ if (!isset($linkNewWindow)) { $linkNewWindow = false; }
 ?>
 <div id="<?php echo esc_attr($id); ?>" class="wf-status-detail">
 	<?php
-	echo wfView::create('common/status-circular', array(
-		'id' => 'circle-' . $id,
-		'diameter' => 100,
-		'percentage' => $percentage,
-		'inactiveColor' => '#ececec',
-		'activeColor' => $activeColor,
-	))->render();
-	?>
-	<p class="wf-status-detail-title"><?php echo esc_html($title); ?></p>
-	<p class="wf-status-detail-subtitle"><?php echo esc_html($subtitle); ?></p>
-	<p class="wf-status-detail-link"><?php if ($linkLabel !== null): ?><a href="<?php echo esc_attr($link); ?>"<?php echo ($linkNewWindow ? ' target="_blank" rel="noopener noreferrer"' : ''); ?>><?php echo esc_html($linkLabel); ?></a><?php endif; ?></p>
-	<?php
-	echo wfView::create('common/status-tooltip', array(
-		'id' => 'tooltip-circle-' . $id,
-		'title' => $statusTitle,
-		'statusList' => $statusList,
-		'statusExtra' => (isset($statusExtra) ? $statusExtra : ''),
-		'helpLink' => $helpLink,
-	))->render();
-	?> 
+    echo wfView::create('common/status-circular', array(
+        'id' => 'circle-' . $id,
+        'diameter' => 100,
+        'percentage' => $percentage,
+        'inactiveColor' => '#ececec',
+        'activeColor' => $activeColor,
+    ))->render();
+    ?>
+    <p class="wf-status-detail-title"><?php echo esc_html($title); ?></p>
+    <p class="wf-status-detail-subtitle"><?php echo esc_html($subtitle); ?></p>
+    <p class="wf-status-detail-link"><?php if ($linkLabel !== null): ?>
+            <a href="<?php echo esc_attr($link); ?>"<?php echo($linkNewWindow ? ' target="_blank" rel="noopener noreferrer"' : ''); ?>><?php echo esc_html($linkLabel); ?>
+            <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span>
+            </a><?php endif; ?></p>
+    <?php
+    echo wfView::create('common/status-tooltip', array(
+        'id' => 'tooltip-circle-' . $id,
+        'title' => $statusTitle,
+        'statusList' => $statusList,
+        'statusExtra' => (isset($statusExtra) ? $statusExtra : ''),
+        'helpLink' => $helpLink,
+    ))->render();
+    ?>
 </div>

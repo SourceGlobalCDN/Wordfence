@@ -73,8 +73,8 @@ class wfScan {
 		
 		if ($expired) {
 			self::errorExit(sprintf(
-			/* translators: 1. Unix timestamp. 2. WordPress nonce. 3. Unix timestamp. */
-				__('The key used to start a scan expired. The value is: %1$s and split is: %2$s and time is: %3$d'), $expired, $storedCronKey, time()));
+            /* translators: 1. Unix timestamp. 2. WordPress nonce. 3. Unix timestamp. */
+                __('The key used to start a scan expired. The value is: %1$s and split is: %2$s and time is: %3$d', 'wordfence'), $expired, $storedCronKey, time()));
 		} //keys only last 60 seconds and are used within milliseconds of creation
 		
 		if (!$storedCronKey) {
@@ -177,9 +177,9 @@ class wfScan {
 					
 					if ($scanController->schedulingMode() == wfScanner::SCAN_SCHEDULING_MODE_AUTOMATIC && $isScheduled) {
 						if (isset($response['defer'])) {
-							$defer = (int) $response['defer'];
-							wordfence::status(2, 'info', sprintf(/* translators: Time until. */ __("Deferring scheduled scan by %s"), wfUtils::makeDuration($defer)));
-							wfConfig::set('lastScheduledScanStart', 0);
+                            $defer = (int)$response['defer'];
+                            wordfence::status(2, 'info', sprintf(/* translators: Time until. */ __("Deferring scheduled scan by %s", 'wordfence'), wfUtils::makeDuration($defer)));
+                            wfConfig::set('lastScheduledScanStart', 0);
 							wfConfig::set('lastScanCompleted', 'ok');
 							wfConfig::set('lastScanFailureType', false);
 							wfConfig::set_ser('wfStatusStartMsgs', array());

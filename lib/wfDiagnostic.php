@@ -108,18 +108,18 @@ class wfDiagnostic
 			'PHP Environment' => array(
 				'description' => __('PHP version, important PHP extensions.', 'wordfence'),
 				'tests' => array(
-					'phpVersion' => array('raw' => true, 'value' => sprintf(/* translators: Support URL. */ __('PHP version >= PHP 5.6.20<br><em> (<a href="https://wordpress.org/about/requirements/" target="_blank" rel="noopener noreferrer">Minimum version required by WordPress</a>)</em> <a href="%s" target="_blank" rel="noopener noreferrer" class="wfhelp"></a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_VERSION_PHP))),
-					'processOwner' => __('Process Owner', 'wordfence'),
-					'hasOpenSSL' => __('Checking for OpenSSL support', 'wordfence'),
-					'openSSLVersion' => __('Checking OpenSSL version', 'wordfence'),
-					'hasCurl'    => __('Checking for cURL support', 'wordfence'),
-					'curlFeatures'    => __('cURL Features Code', 'wordfence'),
-					'curlHost'    => __('cURL Host', 'wordfence'),
-					'curlProtocols'    => __('cURL Support Protocols', 'wordfence'),
-					'curlSSLVersion'    => __('cURL SSL Version', 'wordfence'),
-					'curlLibZVersion'    => __('cURL libz Version', 'wordfence'),
-					'displayErrors' => __('Checking <code>display_errors</code><br><em> (<a href="http://php.net/manual/en/errorfunc.configuration.php#ini.display-errors" target="_blank" rel="noopener noreferrer">Should be disabled on production servers</a>)</em>', 'wordfence'),
-				)
+                    'phpVersion' => array('raw' => true, 'value' => wp_kses(sprintf(/* translators: Support URL. */ __('PHP version >= PHP 5.6.20<br><em> (<a href="https://wordpress.org/about/requirements/" target="_blank" rel="noopener noreferrer">Minimum version required by WordPress</a>)</em> <a href="%s" target="_blank" rel="noopener noreferrer" class="wfhelp"><span class="screen-reader-text"> (opens in new tab)</span></a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_VERSION_PHP)), array('a' => array('href' => array(), 'target' => array(), 'rel' => array(), 'class' => array()), 'span' => array('class' => array())))),
+                    'processOwner' => __('Process Owner', 'wordfence'),
+                    'hasOpenSSL' => __('Checking for OpenSSL support', 'wordfence'),
+                    'openSSLVersion' => __('Checking OpenSSL version', 'wordfence'),
+                    'hasCurl' => __('Checking for cURL support', 'wordfence'),
+                    'curlFeatures' => __('cURL Features Code', 'wordfence'),
+                    'curlHost' => __('cURL Host', 'wordfence'),
+                    'curlProtocols' => __('cURL Support Protocols', 'wordfence'),
+                    'curlSSLVersion' => __('cURL SSL Version', 'wordfence'),
+                    'curlLibZVersion' => __('cURL libz Version', 'wordfence'),
+                    'displayErrors' => array('raw' => true, 'value' => wp_kses(__('Checking <code>display_errors</code><br><em> (<a href="http://php.net/manual/en/errorfunc.configuration.php#ini.display-errors" target="_blank" rel="noopener noreferrer">Should be disabled on production servers<span class="screen-reader-text"> (opens in new tab)</span></a>)</em>', 'wordfence'), array('a' => array('href' => array(), 'target' => array(), 'rel' => array()), 'span' => array('class' => array()), 'em' => array(), 'code' => array(), 'br' => array()))),
+                )
 			),
 			'Connectivity' => array(
 				'description' => __('Ability to connect to the Wordfence servers and your own site.', 'wordfence'),
@@ -133,13 +133,14 @@ class wfDiagnostic
 			'Time' => array(
 				'description' => __('Server time accuracy and applied offsets.', 'wordfence'),
 				'tests' => array(
-					'wfTime' => __('Wordfence Network Time', 'wordfence'),
-					'serverTime' => __('Server Time', 'wordfence'),
-					'wfTimeOffset' => __('Wordfence Network Time Offset', 'wordfence'),
-					'ntpTimeOffset' => __('NTP Time Offset', 'wordfence'),
-					'timeSourceInUse' => __('TOTP Time Source', 'wordfence'),
-					'wpTimeZone' => __('WordPress Time Zone', 'wordfence'),
-				),
+                    'wfTime' => __('Wordfence Network Time', 'wordfence'),
+                    'serverTime' => __('Server Time', 'wordfence'),
+                    'wfTimeOffset' => __('Wordfence Network Time Offset', 'wordfence'),
+                    'ntpTimeOffset' => __('NTP Time Offset', 'wordfence'),
+                    'ntpStatus' => __('NTP Status', 'wordfence'),
+                    'timeSourceInUse' => __('TOTP Time Source', 'wordfence'),
+                    'wpTimeZone' => __('WordPress Time Zone', 'wordfence'),
+                ),
 			),
 		);
 		
@@ -766,26 +767,55 @@ class wfDiagnostic
 			return array(
 				'test' => true,
 				'infoOnly' => true,
-				'message' => ($delta < 0 ? '-' : '+') . ' ' . wfUtils::makeDuration(abs($delta), true),
-			);
-		}
-		
-		return array(
-			'test' => true,
-			'infoOnly' => true,
-			'message' => '-',
-		);
-	}
-	
-	public function timeSourceInUse() {
-		if (class_exists('WFLSPHP52Compatability')) {
-			$time = WFLSPHP52Compatability::ntp_time();
-			if (WFLSPHP52Compatability::using_ntp_time()) {
-				return array(
-					'test' => true,
-					'infoOnly' => true,
-					'message' => __('NTP', 'wordfence'),
-				);
+                'message' => ($delta < 0 ? '-' : '+') . ' ' . wfUtils::makeDuration(abs($delta), true),
+            );
+        }
+
+        return array(
+            'test' => true,
+            'infoOnly' => true,
+            'message' => '-',
+        );
+    }
+
+    public function ntpStatus()
+    {
+        $maxFailures = \WordfenceLS\Controller_Time::FAILURE_LIMIT;
+        $cronDisabled = \WordfenceLS\Controller_Settings::shared()->is_ntp_cron_disabled($failureCount);
+        if ($cronDisabled) {
+            $constant = \WordfenceLS\Controller_Settings::shared()->is_ntp_disabled_via_constant();
+            $status = __('Disabled ', 'wordfence');
+            if ($constant) {
+                $status .= __('(WORDFENCE_LS_DISABLE_NTP)', 'wordfence');
+            } else if ($failureCount > 0) {
+                $status .= __('(failures exceeded limit)', 'wordfence');
+            } else {
+                $status .= __('(settings)', 'wordfence');
+            }
+        } else {
+            $status = __('Enabled', 'wordfence');
+            if ($failureCount > 0) {
+                $remainingAttempts = $maxFailures - $failureCount;
+                $status .= sprintf(__(' (%d of %d attempts remaining)', 'wordfence'), $remainingAttempts, $maxFailures);
+            }
+        }
+        return array(
+            'test' => true,
+            'infoOnly' => true,
+            'message' => $status
+        );
+    }
+
+    public function timeSourceInUse()
+    {
+        if (class_exists('WFLSPHP52Compatability')) {
+            $time = WFLSPHP52Compatability::ntp_time();
+            if (WFLSPHP52Compatability::using_ntp_time()) {
+                return array(
+                    'test' => true,
+                    'infoOnly' => true,
+                    'message' => __('NTP', 'wordfence'),
+                );
 			}
 			else if (WFLSPHP52Compatability::using_wf_time()) {
 				return array(
@@ -823,4 +853,3 @@ class wfDiagnostic
 		);
 	}
 }
-

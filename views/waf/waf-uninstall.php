@@ -2,25 +2,28 @@
 if (!defined('WORDFENCE_VERSION')) { exit; }
 ?>
 <script type="text/x-jquery-template" id="wafTmpl_uninstall">
-	<div class="wf-modal">
-		<div class="wf-modal-header">
-			<div class="wf-modal-header-content">
-				<div class="wf-modal-title">
-					<strong><?php esc_html_e('Uninstall Wordfence Firewall', 'wordfence'); ?></strong>
-				</div>
-			</div>
-			<div class="wf-modal-header-action">
-				<div><?php echo wp_kses(sprintf(__('If you cannot complete the uninstall process, <a target="_blank" rel="noopener noreferrer" href="%s">click here for help</a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_FIREWALL_WAF_REMOVE_MANUALLY)), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array()))); ?></div>
-				<div class="wf-padding-add-left-small wf-modal-header-action-close"><a href="#" onclick="WFAD.colorboxClose(); return false"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
-			</div>
-		</div>
-		<div class="wf-modal-content">
-		<?php
-		if (WF_IS_WP_ENGINE || WF_IS_PRESSABLE) {
-			$currentAutoPrependFile = wordfence::getWAFBootstrapPath();
-		} else {
-			$currentAutoPrependFile = ini_get('auto_prepend_file');
-		}
+    <div class="wf-modal">
+        <div class="wf-modal-header">
+            <div class="wf-modal-header-content">
+                <div class="wf-modal-title">
+                    <strong><?php esc_html_e('Uninstall Wordfence Firewall', 'wordfence'); ?></strong>
+                </div>
+            </div>
+            <div class="wf-modal-header-action">
+                <div><?php echo wp_kses(sprintf(__('If you cannot complete the uninstall process, <a target="_blank" rel="noopener noreferrer" href="%s">click here for help<span class="screen-reader-text"> (opens in new tab)</span></a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_FIREWALL_WAF_REMOVE_MANUALLY)), array('a' => array('href' => array(), 'target' => array(), 'rel' => array()), 'span' => array('class' => array()))); ?></div>
+                <div class="wf-padding-add-left-small wf-modal-header-action-close"><a href="#"
+                                                                                       onclick="WFAD.colorboxClose(); return false"
+                                                                                       role="button"><i
+                                class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
+            </div>
+        </div>
+        <div class="wf-modal-content">
+            <?php
+            if (WF_IS_WP_ENGINE || WF_IS_PRESSABLE) {
+                $currentAutoPrependFile = wordfence::getWAFBootstrapPath();
+            } else {
+                $currentAutoPrependFile = ini_get('auto_prepend_file');
+            }
 
 		?>
 			<p><?php echo wp_kses(__('Extended Protection Mode of the Wordfence Web Application Firewall uses the PHP ini setting called <code>auto_prepend_file</code> in order to ensure it runs before any potentially vulnerable code runs. This PHP setting currently refers to the Wordfence file at:', 'wordfence'), array('code'=>array())); ?></p>
@@ -30,9 +33,9 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
 		$refersToWAF = preg_match('/define\s*\(\s*(["\'])WFWAF_LOG_PATH\1\s*,\s*(__DIR__\s*\.\s*)?(["\']).+?\3\s*\)\s*/', $contents);
 		
 		if (!$refersToWAF):
-		?>
-			<p><?php echo wp_kses(sprintf(/* translators: Support URL. */ __('Automatic uninstallation cannot be completed, but you may still be able to <a href="%s" target="_blank" rel="noopener noreferrer">manually uninstall extended protection</a>.', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_FIREWALL_WAF_REMOVE_MANUALLY)), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array()))); ?></p>
-		<?php else: ?>
+            ?>
+            <p><?php echo wp_kses(sprintf(/* translators: Support URL. */ __('Automatic uninstallation cannot be completed, but you may still be able to <a href="%s" target="_blank" rel="noopener noreferrer">manually uninstall extended protection<span class="screen-reader-text"> (opens in new tab)</span></a>.', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_FIREWALL_WAF_REMOVE_MANUALLY)), array('a' => array('href' => array(), 'target' => array(), 'rel' => array()), 'span' => array('class' => array()))); ?></p>
+        <?php else: ?>
 				<p><?php echo wp_kses(__('Before this file can be deleted, the configuration for the <code>auto_prepend_file</code> setting needs to be removed.', 'wordfence'), array('code'=>array())); ?></p>
 				<?php
 				$serverInfo = wfWebServerInfo::createFromEnvironment();
@@ -95,18 +98,20 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
 										'serverConfiguration' => $helper->getServerConfig(),
 										'wfnonce'             => $wfnonce,
 									), $adminURL)) . '">' . esc_html(sprintf(__('Download %s', 'wordfence'), basename($backup))) . '</a></li>';
-							}
-							?>
-						</ul>
-					</div>
-				<?php endforeach; ?>
-		<?php endif; ?>
-		</div>
-		<div class="wf-modal-footer">
-			<ul class="wf-flex-horizontal wf-flex-full-width">
-				<li class="wf-waf-download-instructions"><?php esc_html_e('Once you have downloaded the files, click Continue to complete uninstallation.', 'wordfence'); ?></li>
-				<li class="wf-right"><a href="#" class="wf-btn wf-btn-primary wf-btn-callout-subtle wf-disabled" id="wf-waf-uninstall-continue"><?php esc_html_e('Continue', 'wordfence'); ?></a></li>
-			</ul>
-		</div>
-	</div>
+                            }
+                            ?>
+                        </ul>
+                    </div>
+                <?php endforeach; ?>
+        <?php endif; ?>
+        </div>
+        <div class="wf-modal-footer">
+            <ul class="wf-flex-horizontal wf-flex-full-width">
+                <li class="wf-waf-download-instructions"><?php esc_html_e('Once you have downloaded the files, click Continue to complete uninstallation.', 'wordfence'); ?></li>
+                <li class="wf-right"><a href="#" class="wf-btn wf-btn-primary wf-btn-callout-subtle wf-disabled"
+                                        id="wf-waf-uninstall-continue"
+                                        role="button"><?php esc_html_e('Continue', 'wordfence'); ?></a></li>
+            </ul>
+        </div>
+    </div>
 </script>

@@ -21,27 +21,38 @@ if (!isset($titleHTML)) {
 $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $optionName);
 ?>
 <ul id="<?php echo esc_attr($id); ?>" class="wf-option wf-option-switch<?php if (!wfConfig::p() && isset($premium) && $premium) { echo ' wf-option-premium'; } ?>" data-option-name="<?php echo esc_attr($optionName); ?>" data-original-value="<?php echo esc_attr($value); ?>">
-	<?php if (!isset($noSpacer) || !$noSpacer): ?>
-	<li class="wf-option-spacer"></li>
-	<?php endif; ?>
-	<li class="wf-option-content">
-		<ul>
-			<li class="wf-option-title">
-			<?php if (isset($subtitle)): ?>
-				<ul class="wf-flex-vertical wf-flex-align-left">
-					<li>
-			<?php endif; ?>
-						<span id="<?php echo esc_attr($id); ?>-label"><?php echo $titleHTML; ?></span><?php if (!wfConfig::p() && isset($premium) && $premium) { echo ' <a href="https://www.wordfence.com/gnl1optionUpgrade/wordfence-signup/" target="_blank" rel="noopener noreferrer" class="wf-premium-link">' . esc_html__('Premium Feature', 'wordfence') . '</a>'; } ?><?php if (isset($helpLink)) { echo ' <a href="' . esc_attr($helpLink) . '"  target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i></a>'; } ?>
-			<?php if (isset($subtitle)): ?>
-					</li>
-					<li class="wf-option-subtitle"><?php echo esc_html($subtitle); ?></li>
-				</ul>
-			<?php endif; ?>
-			</li>
-			<li class="wf-option-switch<?php if (isset($alignment)) { echo ' ' . $alignment; } ?> wf-padding-add-top-xs-small">
-				<ul class="wf-switch<?php echo (!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' wf-disabled'); ?>" role="radiogroup" aria-labelledby="<?php echo esc_attr($id); ?>-label">
-				<?php foreach ($states as $s): ?>
-					<li<?php if ($s['value'] == $value) { echo ' class="wf-active"'; } ?> data-option-value="<?php echo esc_attr($s['value']); ?>" role="radio" aria-checked="<?php echo ($s['value'] == $value ? 'true' : 'false'); ?>" tabindex="0"><?php echo esc_html($s['label']); ?></li>
+    <?php if (!isset($noSpacer) || !$noSpacer): ?>
+        <li class="wf-option-spacer"></li>
+    <?php endif; ?>
+    <li class="wf-option-content">
+        <ul>
+            <li class="wf-option-title">
+                <?php if (isset($subtitle)): ?>
+                <ul class="wf-flex-vertical wf-flex-align-left">
+                    <li>
+                        <?php endif; ?>
+                        <span id="<?php echo esc_attr($id); ?>-label"><?php echo $titleHTML; ?></span><?php if (!wfConfig::p() && isset($premium) && $premium) {
+                            echo ' <a href="https://www.wordfence.com/gnl1optionUpgrade/wordfence-signup/" target="_blank" rel="noopener noreferrer" class="wf-premium-link">' . esc_html__('Premium Feature', 'wordfence') . '</a>';
+                        } ?><?php if (isset($helpLink)) {
+                            echo ' <a href="' . esc_attr($helpLink) . '"  target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i><span class="screen-reader-text"> (' . esc_html__('opens in new tab', 'wordfence') . ')</span></a>';
+                        } ?>
+                        <?php if (isset($subtitle)): ?>
+                    </li>
+                    <li class="wf-option-subtitle"><?php echo esc_html($subtitle); ?></li>
+                </ul>
+            <?php endif; ?>
+            </li>
+            <li class="wf-option-switch<?php if (isset($alignment)) {
+                echo ' ' . $alignment;
+            } ?> wf-padding-add-top-xs-small">
+                <ul class="wf-switch<?php echo(!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' wf-disabled'); ?>"
+                    role="radiogroup" aria-labelledby="<?php echo esc_attr($id); ?>-label">
+                    <?php foreach ($states as $s): ?>
+                        <li<?php if ($s['value'] == $value) {
+                            echo ' class="wf-active"';
+                        } ?> data-option-value="<?php echo esc_attr($s['value']); ?>" role="radio"
+                             aria-checked="<?php echo($s['value'] == $value ? 'true' : 'false'); ?>"
+                             tabindex="0"><?php echo esc_html($s['label']); ?></li>
 				<?php endforeach; ?>
 				</ul>
 			</li>

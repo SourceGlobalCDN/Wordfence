@@ -24,20 +24,24 @@ if ($wfCoreActive && !(isset($wfCoreLoading) && $wfCoreLoading)) {
 	return; //Wordfence core will load this, prevent the standalone one from also loading if active
 }
 else {
-	define('WORDFENCE_LS_FROM_CORE', ($wfCoreActive && isset($wfCoreLoading) && $wfCoreLoading));
-	
-	define('WORDFENCE_LS_VERSION', '1.0.6');
-	define('WORDFENCE_LS_BUILD_NUMBER', '1623076348');
-	
-	if (!defined('WORDFENCE_LS_EMAIL_VALIDITY_DURATION_MINUTES')) { define('WORDFENCE_LS_EMAIL_VALIDITY_DURATION_MINUTES', 15); }
-	
-	if (!WORDFENCE_LS_FROM_CORE) {
-		global $wp_plugin_paths;
-		foreach ($wp_plugin_paths as $dir => $realdir) {
-			if (strpos(__FILE__, $realdir) === 0) {
-				define('WORDFENCE_LS_FCPATH', $dir . '/' . basename(__FILE__));
-				define('WORDFENCE_LS_PATH', trailingslashit($dir));
-				break;
+    define('WORDFENCE_LS_FROM_CORE', ($wfCoreActive && isset($wfCoreLoading) && $wfCoreLoading));
+
+    define('WORDFENCE_LS_VERSION', '1.0.8');
+    define('WORDFENCE_LS_BUILD_NUMBER', '1629122067');
+
+    define('WORDFENCE_LS_PLUGIN_BASENAME', plugin_basename(__FILE__));
+
+    if (!defined('WORDFENCE_LS_EMAIL_VALIDITY_DURATION_MINUTES')) {
+        define('WORDFENCE_LS_EMAIL_VALIDITY_DURATION_MINUTES', 15);
+    }
+
+    if (!WORDFENCE_LS_FROM_CORE) {
+        global $wp_plugin_paths;
+        foreach ($wp_plugin_paths as $dir => $realdir) {
+            if (strpos(__FILE__, $realdir) === 0) {
+                define('WORDFENCE_LS_FCPATH', $dir . '/' . basename(__FILE__));
+                define('WORDFENCE_LS_PATH', trailingslashit($dir));
+                break;
 			}
 		}
 	}

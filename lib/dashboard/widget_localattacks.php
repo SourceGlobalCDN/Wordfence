@@ -57,18 +57,28 @@
 									</tr>
 								<?php endforeach; ?>
 								</tbody>
-								<tfoot>
-									<tr>
-										<th></th>
-										<?php foreach ($d->localBlocks as $row): ?>
-											<td<?php if ($row['type'] == wfActivityReport::BLOCK_TYPE_BLACKLIST && !wfConfig::get('isPaid')) { echo ' class="wf-premium"'; } ?>><?php if ($row['type'] == wfActivityReport::BLOCK_TYPE_BLACKLIST && !wfConfig::get('isPaid')) { esc_html_e('Premium', 'wordfence'); } ?></td>
-										<?php endforeach; ?>
-										<td></td>
-									</tr>
-								</tfoot>
-							</table>
-							<p class="wf-right wf-no-top"><a href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_WIDGET_LOCAL_ATTACKS); ?>" target="_blank" rel="noopener noreferrer"><i class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i> <?php esc_html_e('How are these categorized?', 'wordfence'); ?></a></p>
-						<?php endif; ?>
+                                <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <?php foreach ($d->localBlocks as $row): ?>
+                                        <td<?php if ($row['type'] == wfActivityReport::BLOCK_TYPE_BLACKLIST && !wfConfig::get('isPaid')) {
+                                            echo ' class="wf-premium"';
+                                        } ?>><?php if ($row['type'] == wfActivityReport::BLOCK_TYPE_BLACKLIST && !wfConfig::get('isPaid')) {
+                                                esc_html_e('Premium', 'wordfence');
+                                            } ?></td>
+                                    <?php endforeach; ?>
+                                    <td></td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                            <p class="wf-right wf-no-top"><a
+                                        href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_WIDGET_LOCAL_ATTACKS); ?>"
+                                        target="_blank" rel="noopener noreferrer"><i
+                                            class="wf-fa wf-fa-question-circle-o"
+                                            aria-hidden="true"></i> <?php esc_html_e('How are these categorized?', 'wordfence'); ?>
+                                    <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                            </p>
+                        <?php endif; ?>
 					</li>
 				</ul>
 				<?php endif; ?>

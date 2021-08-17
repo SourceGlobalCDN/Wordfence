@@ -15,23 +15,25 @@ if (!isset($titleHTML)) {
 }
 ?>
 <ul class="wf-option wf-option-label">
-	<?php if (!isset($noSpacer) || !$noSpacer): ?>
-		<li class="wf-option-spacer"></li>
-	<?php endif; ?>
-	<li class="wf-option-content">
-		<ul>
-			<li class="wf-option-title">
-				<?php if (isset($subtitle)): ?>
-				<ul class="wf-flex-vertical wf-flex-align-left">
-					<li>
-						<?php endif; ?>
-						<?php echo $titleHTML; ?><?php if (isset($helpLink)) { echo ' <a href="' . esc_attr($helpLink) . '"  target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i></a>'; } ?>
-						<?php if (isset($subtitle)): ?>
-					</li>
-					<li class="wf-option-subtitle"><?php echo esc_html($subtitle); ?></li>
-				</ul>
-			<?php endif; ?>
-			</li>
-		</ul>
-	</li>
+    <?php if (!isset($noSpacer) || !$noSpacer): ?>
+        <li class="wf-option-spacer"></li>
+    <?php endif; ?>
+    <li class="wf-option-content">
+        <ul>
+            <li class="wf-option-title">
+                <?php if (isset($subtitle)): ?>
+                <ul class="wf-flex-vertical wf-flex-align-left">
+                    <li>
+                        <?php endif; ?>
+                        <?php echo $titleHTML; ?><?php if (isset($helpLink)) {
+                            echo ' <a href="' . esc_attr($helpLink) . '"  target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i><span class="screen-reader-text"> (' . esc_html__('opens in new tab', 'wordfence') . ')</span></a>';
+                        } ?>
+                        <?php if (isset($subtitle)): ?>
+                    </li>
+                    <li class="wf-option-subtitle"><?php echo esc_html($subtitle); ?></li>
+                </ul>
+            <?php endif; ?>
+            </li>
+        </ul>
+    </li>
 </ul>

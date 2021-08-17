@@ -9,8 +9,8 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 ?>
 <div id="wf-onboarding-plugin-overlay">
-	<a href="#" id="wf-onboarding-dismiss">&times;</a>
-	<?php echo $contentHTML; ?>
+    <a href="#" id="wf-onboarding-dismiss" role="button">&times;</a>
+    <?php echo $contentHTML; ?>
 	<script type="application/javascript">
 		(function($) {
 			$(function() {
