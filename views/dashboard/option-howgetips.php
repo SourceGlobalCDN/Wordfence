@@ -8,40 +8,62 @@ $selectOptions = array(
 	array('value' => '', 'label' => esc_html__('Let Wordfence use the most secure method to get visitor IP addresses. Prevents spoofing and works with most sites.', 'wordfence') . ' <strong>' . esc_html__('(Recommended)', 'wordfence') . '</strong>'),
 	array('value' => 'REMOTE_ADDR', 'label' => esc_html__('Use PHP\'s built in REMOTE_ADDR and don\'t use anything else. Very secure if this is compatible with your site.', 'wordfence')),
 	array('value' => 'HTTP_X_FORWARDED_FOR', 'label' => esc_html__('Use the X-Forwarded-For HTTP header. Only use if you have a front-end proxy or spoofing may result.', 'wordfence')),
-	array('value' => 'HTTP_X_REAL_IP', 'label' => esc_html__('Use the X-Real-IP HTTP header. Only use if you have a front-end proxy or spoofing may result.', 'wordfence')),
-	array('value' => 'HTTP_CF_CONNECTING_IP', 'label' => esc_html__('Use the Cloudflare "CF-Connecting-IP" HTTP header to get a visitor IP. Only use if you\'re using Cloudflare.', 'wordfence')),
+    array('value' => 'HTTP_X_REAL_IP', 'label' => esc_html__('Use the X-Real-IP HTTP header. Only use if you have a front-end proxy or spoofing may result.', 'wordfence')),
+    array('value' => 'HTTP_CF_CONNECTING_IP', 'label' => esc_html__('Use the Cloudflare "CF-Connecting-IP" HTTP header to get a visitor IP. Only use if you\'re using Cloudflare.', 'wordfence')),
 );
 ?>
 <ul class="wf-flex-vertical wf-flex-full-width">
-	<li>
-		<ul id="wf-option-howGetIPs" class="wf-option wf-option-howgetips" data-option="howGetIPs" data-original-value="<?php echo esc_attr(wfConfig::get('howGetIPs')); ?>" data-text-area-option="howGetIPs_trusted_proxies" data-original-text-area-value="<?php echo esc_attr(wfConfig::get('howGetIPs_trusted_proxies')); ?>">
-			<li class="wf-option-spacer"></li>
-			<li class="wf-option-content">
-				<ul class="wf-flex-vertical wf-flex-align-left">
-					<li class="wf-option-title"><?php esc_html_e('How does Wordfence get IPs', 'wordfence'); ?> <a href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_DASHBOARD_OPTION_HOW_GET_IPS); ?>"  target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i></a></li>
-					<li>
-						<ul class="wf-flex-vertical wf-flex-align-left">
-							<li class="wf-padding-add-left">
-								<ul class="wf-flex-vertical wf-flex-align-left" role="radiogroup">
-								<?php foreach ($selectOptions as $o): ?>
-									<li class="wf-padding-add-top-small"><input type="radio" class="wf-option-radio" name="wf-howgetIPs" value="<?php echo esc_attr($o['value']); ?>" id="wf-howgetIPs-<?php echo esc_attr(preg_replace('/[^a-z0-9]/i', '-', $o['value'])); ?>"<?php if ($o['value'] == wfConfig::get('howGetIPs')) { echo ' checked'; } ?>><label for="wf-howgetIPs-<?php echo esc_attr(preg_replace('/[^a-z0-9]/i', '-', $o['value'])); ?>">&nbsp;&nbsp;</label><?php echo $o['label']; ?></li>
-								<?php endforeach; ?>
-								</ul>
-							</li>
-							<li class="wf-option-howgetips-details wf-padding-add-top-small">
-								<div class="wf-left"><?php esc_html_e('Detected IP(s):', 'wordfence') ?> <span id="howGetIPs-preview-all"><?php echo wfUtils::getIPPreview(); ?></span></div>
-								<div class="wf-left"><?php esc_html_e('Your IP with this setting:') ?> <span id="howGetIPs-preview-single"><?php echo wfUtils::getIP(); ?></span></div>
-								<div class="wf-left"><a href="#" id="howGetIPs-trusted-proxies-show">+ <?php esc_html_e('Edit trusted proxies', 'wordfence') ?></a></div>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</li>
-			<!-- <li class="wf-option-disclosure"><svg width="12px" height="12px" viewBox="0 0 12 12"><path id="disclosure-closed" d="M 6 0 l 6 6 -6 6 0 -12" fill="#777"/></svg></li> -->
-		</ul>
-	</li>
-	<li id="howGetIPs-trusted-proxies">
-		<ul id="wf-option-howGetIPs-trusted-proxies" class="wf-option wf-option-textarea" data-text-option="howGetIPs_trusted_proxies" data-original-text-value="<?php echo esc_attr(wfConfig::get('howGetIPs_trusted_proxies')); ?>">
+    <li>
+        <ul id="wf-option-howGetIPs" class="wf-option wf-option-howgetips" data-option="howGetIPs"
+            data-original-value="<?php echo esc_attr(wfConfig::get('howGetIPs')); ?>"
+            data-text-area-option="howGetIPs_trusted_proxies"
+            data-original-text-area-value="<?php echo esc_attr(wfConfig::get('howGetIPs_trusted_proxies')); ?>">
+            <li class="wf-option-spacer"></li>
+            <li class="wf-option-content">
+                <ul class="wf-flex-vertical wf-flex-align-left">
+                    <li class="wf-option-title"><?php esc_html_e('How does Wordfence get IPs', 'wordfence'); ?> <a
+                                href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_DASHBOARD_OPTION_HOW_GET_IPS); ?>"
+                                target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i
+                                    class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i><span
+                                    class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                    </li>
+                    <li>
+                        <ul class="wf-flex-vertical wf-flex-align-left">
+                            <li class="wf-padding-add-left">
+                                <ul class="wf-flex-vertical wf-flex-align-left" role="radiogroup">
+                                    <?php foreach ($selectOptions as $o): ?>
+                                        <li class="wf-padding-add-top-small"><input type="radio" class="wf-option-radio"
+                                                                                    name="wf-howgetIPs"
+                                                                                    value="<?php echo esc_attr($o['value']); ?>"
+                                                                                    id="wf-howgetIPs-<?php echo esc_attr(preg_replace('/[^a-z0-9]/i', '-', $o['value'])); ?>"<?php if ($o['value'] == wfConfig::get('howGetIPs')) {
+                                                echo ' checked';
+                                            } ?>><label
+                                                    for="wf-howgetIPs-<?php echo esc_attr(preg_replace('/[^a-z0-9]/i', '-', $o['value'])); ?>">&nbsp;&nbsp;</label><?php echo $o['label']; ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </li>
+                            <li class="wf-option-howgetips-details wf-padding-add-top-small">
+                                <div class="wf-left"><?php esc_html_e('Detected IP(s):', 'wordfence') ?> <span
+                                            id="howGetIPs-preview-all"><?php echo wfUtils::getIPPreview(); ?></span>
+                                </div>
+                                <div class="wf-left"><?php esc_html_e('Your IP with this setting:', 'wordfence') ?>
+                                    <span id="howGetIPs-preview-single"><?php echo wfUtils::getIP(); ?></span></div>
+                                <div class="wf-left"><a href="#" id="howGetIPs-trusted-proxies-show"
+                                                        role="button">+ <?php esc_html_e('Edit trusted proxies', 'wordfence') ?></a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <!-- <li class="wf-option-disclosure"><svg width="12px" height="12px" viewBox="0 0 12 12"><path id="disclosure-closed" d="M 6 0 l 6 6 -6 6 0 -12" fill="#777"/></svg></li> -->
+        </ul>
+    </li>
+    <li id="howGetIPs-trusted-proxies">
+        <ul id="wf-option-howGetIPs-trusted-proxies" class="wf-option wf-option-textarea"
+            data-text-option="howGetIPs_trusted_proxies"
+            data-original-text-value="<?php echo esc_attr(wfConfig::get('howGetIPs_trusted_proxies')); ?>">
 			<li class="wf-option-spacer"></li>
 			<li class="wf-option-content">
 				<ul>

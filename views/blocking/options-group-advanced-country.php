@@ -78,13 +78,22 @@ if (!isset($collapseable)) {
 						</li>
 					</ul>
 				<?php else: ?>
-					<ul class="wf-flex-vertical wf-padding-add-right-large wf-padding-add-bottom-large">
-						<li><h3><?php esc_html_e('Put Geographic Protection In Place With Country Blocking', 'wordfence'); ?></h3></li>
-						<li><p class="wf-no-top"><?php esc_html_e('Wordfence country blocking is designed to stop an attack, prevent content theft, or end malicious activity that originates from a geographic region in less than 1/300,000th of a second. Blocking countries who are regularly creating failed logins, a large number of page not found errors, and are clearly engaged in malicious activity is an effective way to protect your site during an attack.', 'wordfence'); ?></p></li>
-						<li><?php echo wfView::create('blocking/country-block-map')->render(); ?></li>
-						<li><a class="wf-btn wf-btn-primary wf-btn-callout-subtle" href="https://www.wordfence.com/gnl1countryBlockUpgrade/wordfence-signup/" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Upgrade to Premium', 'wordfence'); ?></a></li>
-					</ul>
-				<?php endif; ?>
+                    <ul class="wf-flex-vertical wf-padding-add-right-large wf-padding-add-bottom-large">
+                        <li>
+                            <h3><?php esc_html_e('Put Geographic Protection In Place With Country Blocking', 'wordfence'); ?></h3>
+                        </li>
+                        <li>
+                            <p class="wf-no-top"><?php esc_html_e('Wordfence country blocking is designed to stop an attack, prevent content theft, or end malicious activity that originates from a geographic region in less than 1/300,000th of a second. Blocking countries who are regularly creating failed logins, a large number of page not found errors, and are clearly engaged in malicious activity is an effective way to protect your site during an attack.', 'wordfence'); ?></p>
+                        </li>
+                        <li><?php echo wfView::create('blocking/country-block-map')->render(); ?></li>
+                        <li><a class="wf-btn wf-btn-primary wf-btn-callout-subtle"
+                               href="https://www.wordfence.com/gnl1countryBlockUpgrade/wordfence-signup/"
+                               target="_blank"
+                               rel="noopener noreferrer"><?php esc_html_e('Upgrade to Premium', 'wordfence'); ?><span
+                                        class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                        </li>
+                    </ul>
+                <?php endif; ?>
 			</div>
 		</div>
 	</div>

@@ -24,9 +24,15 @@ if (!isset($linkNewWindow)) { $linkNewWindow = false; }
 			c-1.5,0-2.7-0.6-3.9-1.7c-1.1-1.1-1.7-2.4-1.7-3.9v-31.9c0-1.5,0.6-2.7,1.7-3.9c1.1-1.1,2.4-1.7,3.9-1.7h32.2
 			c1.5,0,2.7,0.5,3.7,1.6c1,1.1,1.5,2.4,1.5,3.9V585.5z M669.1,527.7c-0.1,1.1-0.7,2.1-1.8,2.9c-1.1,0.8-2.4,1.3-3.9,1.3h-31.1
 			c-1.6,0-2.9-0.4-4-1.3c-1.1-0.8-1.7-1.8-1.7-2.9l-2.9-104.3c0-1.3,0.6-2.3,1.7-3c1.1-0.9,2.5-1.3,4-1.3h36.9c1.6,0,2.9,0.5,4,1.3
-			c1.1,0.7,1.7,1.7,1.7,3L669.1,527.7z M669.1,527.7"/></g></g></svg>
-	</div>
-	<p class="wf-status-detail-title"><?php echo esc_html($title); ?></p>
-	<p class="wf-status-detail-subtitle"><?php echo esc_html($subtitle); ?></p>
-	<p class="wf-status-detail-link"><?php if ($linkLabel !== null): ?><a href="<?php echo esc_attr($link); ?>"<?php echo ($linkNewWindow ? ' target="_blank" rel="noopener noreferrer"' : ''); ?>><?php echo esc_html($linkLabel); ?></a><?php endif; ?></p>
+			c1.1,0.7,1.7,1.7,1.7,3L669.1,527.7z M669.1,527.7"/>
+                </g>
+            </g>
+        </svg>
+    </div>
+    <p class="wf-status-detail-title"><?php echo esc_html($title); ?></p>
+    <p class="wf-status-detail-subtitle"><?php echo esc_html($subtitle); ?></p>
+    <p class="wf-status-detail-link"><?php if ($linkLabel !== null): ?>
+            <a href="<?php echo esc_attr($link); ?>"<?php echo($linkNewWindow ? ' target="_blank" rel="noopener noreferrer"' : ''); ?>><?php echo esc_html($linkLabel); ?>
+            <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span>
+            </a><?php endif; ?></p>
 </div>

@@ -774,9 +774,9 @@ class wfScanner {
 		if ($percentage > 0) {
 			$subtraction = min($this->_normalizedPercentageToDisplay($percentage), $remainingPercentage);
 			$statusList[] = array(
-				'percentage' => $subtraction,
-				'title' => sprintf(_nx('Enable %d scan option.', 'Enable %d scan options.', $disabledOptionCount,'wordfence'), number_format_i18n($disabledOptionCount)),
-			);
+                'percentage' => $subtraction,
+                'title' => sprintf(_n('Enable %d scan option.', 'Enable %d scan options.', $disabledOptionCount, 'wordfence'), number_format_i18n($disabledOptionCount)),
+            );
 		}
 
 		return $statusList;

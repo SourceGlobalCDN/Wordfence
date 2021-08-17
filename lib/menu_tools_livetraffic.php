@@ -31,27 +31,27 @@ $w = new wfConfig();
 						}, 1000);
 					}
 
-					history.replaceState('', document.title, window.location.pathname + window.location.search);
-				}
-			}
-		});
-	})(jQuery);
+                    history.replaceState('', document.title, window.location.pathname + window.location.search);
+                }
+            }
+        });
+    })(jQuery);
 </script>
-<div class="wf-section-title">
-	<h2><?php esc_html_e('Live Traffic', 'wordfence') ?></h2>
-	<span><?php echo wp_kses(sprintf(
-		/* translators: URL to support page. */
-			__('<a href="%s" target="_blank" rel="noopener noreferrer" class="wf-help-link">Learn more<span class="wf-hidden-xs"> about Live Traffic</span></a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_TOOLS_LIVE_TRAFFIC)), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array(), 'class'=>array()))); ?>
+    <div class="wf-section-title">
+        <h2><?php esc_html_e('Live Traffic', 'wordfence') ?></h2>
+        <span><?php echo wp_kses(sprintf(
+            /* translators: URL to support page. */
+                __('<a href="%s" target="_blank" rel="noopener noreferrer" class="wf-help-link">Learn more<span class="wf-hidden-xs"> about Live Traffic</span><span class="screen-reader-text"> (opens in new tab)</span></a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_TOOLS_LIVE_TRAFFIC)), array('a' => array('href' => array(), 'target' => array(), 'rel' => array(), 'class' => array()), 'span' => array('class' => array()))); ?>
 		<i class="wf-fa wf-fa-external-link" aria-hidden="true"></i></span>
-</div>
+    </div>
 
 <?php if (wfConfig::liveTrafficEnabled() && wfConfig::get('liveActivityPauseEnabled')): ?>
-	<div id="wfLiveTrafficOverlayAnchor"></div>
-	<div id="wfLiveTrafficDisabledMessage">
-		<h2><?php esc_html_e('Live Updates Paused', 'wordfence') ?><br/>
-			<small><?php esc_html_e('Click inside window to resume', 'wordfence') ?></small>
-		</h2>
-	</div>
+    <div id="wfLiveTrafficOverlayAnchor"></div>
+    <div id="wfLiveTrafficDisabledMessage">
+        <h2><?php esc_html_e('Live Updates Paused', 'wordfence') ?><br/>
+            <small><?php esc_html_e('Click inside window to resume', 'wordfence') ?></small>
+        </h2>
+    </div>
 <?php endif ?>
 
 <p><?php esc_html_e("Wordfence Live Traffic shows you what is happening on your site in real-time, including user logins, hack attempts, and requests that were blocked by the Wordfence Firewall. You can choose to log security-related traffic only or all traffic. Traffic is logged directly on the server, which means it includes visits that don't execute JavaScript. Google and other JavaScript-based analytics packages typically only show visits from browsers that are operated by a human, while Live Traffic can show visits from crawlers like Google and Bing.", 'wordfence') ?></p>
@@ -72,18 +72,18 @@ if (!wfConfig::liveTrafficEnabled($overridden)):
 	<div id="wordfenceLiveActivitySecurityOnly"><p>
 			<strong><?php esc_html_e('Traffic logging mode: Security-related traffic only', 'wordfence') ?><?php
 				if ($overridden) {
-					echo wp_kses(sprintf(
-					/* translators: URL to support page. */
-							__(' (host setting <a href="%s" class="wfhelp" target="_blank" rel="noopener noreferrer"></a>)', 'wordfence'), wfSupportController::supportURL(wfSupportController::ITEM_TOOLS_LIVE_TRAFFIC_OPTION_ENABLE)), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array(), 'class'=>array())));
+                    echo wp_kses(sprintf(
+                    /* translators: URL to support page. */
+                        __(' (host setting <a href="%s" class="wfhelp" target="_blank" rel="noopener noreferrer"><span class="screen-reader-text"> (opens in new tab)</span></a>)', 'wordfence'), wfSupportController::supportURL(wfSupportController::ITEM_TOOLS_LIVE_TRAFFIC_OPTION_ENABLE)), array('a' => array('href' => array(), 'target' => array(), 'rel' => array(), 'class' => array()), 'span' => array('class' => array())));
 				} ?>.</strong> <?php esc_html_e('Login and firewall activity will appear below.', 'wordfence') ?></p>
 	</div>
 <?php else: ?>
 	<div id="wordfenceLiveActivityAll"><p>
 			<strong><?php esc_html_e('Traffic logging mode: All traffic', 'wordfence') ?><?php
 				if ($overridden) {
-					echo wp_kses(sprintf(
-					/* translators: URL to support page. */
-							__(' (host setting <a href="%s" class="wfhelp" target="_blank" rel="noopener noreferrer"></a>)', 'wordfence'), wfSupportController::supportURL(wfSupportController::ITEM_TOOLS_LIVE_TRAFFIC_OPTION_ENABLE)), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array(), 'class'=>array())));
+                    echo wp_kses(sprintf(
+                    /* translators: URL to support page. */
+                        __(' (host setting <a href="%s" class="wfhelp" target="_blank" rel="noopener noreferrer"><span class="screen-reader-text"> (opens in new tab)</span></a>)', 'wordfence'), wfSupportController::supportURL(wfSupportController::ITEM_TOOLS_LIVE_TRAFFIC_OPTION_ENABLE)), array('a' => array('href' => array(), 'target' => array(), 'rel' => array(), 'class' => array()), 'span' => array('class' => array())));
 				} ?>.</strong> <?php esc_html_e('Regular traffic and security-related traffic will appear below.', 'wordfence') ?></p>
 	</div>
 <?php endif; ?>
@@ -150,20 +150,25 @@ if (!wfConfig::liveTrafficEnabled($overridden)):
 
 																	<span data-bind="if: selectedFilterParamOptionValue() && selectedFilterParamOptionValue().type() == 'bool'">
 																		<label><?php esc_html_e('Yes', 'wordfence') ?> <input data-bind="checked: value" type="radio" value="1"></label>
-																		<label><?php esc_html_e('No', 'wordfence') ?> <input data-bind="checked: value" type="radio" value="0"></label>
+																		<label><?php esc_html_e('No', 'wordfence') ?> <input
+                                                                                    data-bind="checked: value"
+                                                                                    type="radio" value="0"></label>
 																	</span>
-																</div>
-															</div>
-															<div>
-																<!--<button data-bind="click: $root.removeFilter" type="button" class="wf-btn wf-btn-default">Remove</button> -->
-																<a href="#" data-bind="click: $root.removeFilter" class="wf-live-traffic-filter-remove"><i class="wf-ion-trash-a"></i></a>
-															</div>
-														</div>
-													</div>
-													<div>
-														<div class="wf-pad-small">
-															<button type="button" class="wf-btn wf-btn-default" data-bind="click: addFilter">
-																<?php esc_html_e('Add Filter', 'wordfence') ?>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <!--<button data-bind="click: $root.removeFilter" type="button" class="wf-btn wf-btn-default">Remove</button> -->
+                                                                <a href="#" data-bind="click: $root.removeFilter"
+                                                                   class="wf-live-traffic-filter-remove"
+                                                                   role="button"><i class="wf-ion-trash-a"></i></a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <div class="wf-pad-small">
+                                                            <button type="button" class="wf-btn wf-btn-default"
+                                                                    data-bind="click: addFilter">
+                                                                <?php esc_html_e('Add Filter', 'wordfence') ?>
 															</button>
 														</div>
 													</div>
@@ -196,27 +201,31 @@ if (!wfConfig::liveTrafficEnabled($overridden)):
 								</div>
 							</div>
 							<div class="wf-row">
-								<div class="wf-col-xs-12">
-									<div id="wf-live-traffic-group-by" class="wf-block" data-bind="if: groupBy(), visible: groupBy()">
-										<ul class="wf-filtered-traffic wf-block-list" data-bind="foreach: listings">
-											<li class="wf-flex-row wf-padding-add-top wf-padding-add-bottom">
-												<div class="wf-flex-row-1">
-													<!-- ko if: $root.groupBy().param() == 'ip' -->
-													<div data-bind="if: loc()">
-														<span data-bind="attr: { class: 'wf-flag wf-flag-' + loc().countryCode.toLowerCase(), title: loc().countryName }"></span>
-														<a data-bind="text: (loc().city ? loc().city + ', ' : '') + (loc().region ? loc().region + ', ' : '') + loc().countryName,
+                                <div class="wf-col-xs-12">
+                                    <div id="wf-live-traffic-group-by" class="wf-block"
+                                         data-bind="if: groupBy(), visible: groupBy()">
+                                        <ul class="wf-filtered-traffic wf-block-list" data-bind="foreach: listings">
+                                            <li class="wf-flex-row wf-padding-add-top wf-padding-add-bottom">
+                                                <div class="wf-flex-row-1">
+                                                    <!-- ko if: $root.groupBy().param() == 'ip' -->
+                                                    <div data-bind="if: loc()">
+                                                        <span data-bind="attr: { class: 'wf-flag wf-flag-' + loc().countryCode.toLowerCase(), title: loc().countryName }"></span>
+                                                        <a data-bind="text: (loc().city ? loc().city + ', ' : '') + (loc().region ? loc().region + ', ' : '') + loc().countryName,
 																	attr: { href: 'http://maps.google.com/maps?q=' + loc().lat + ',' + loc().lon + '&z=6' }"
-																target="_blank" rel="noopener noreferrer"></a>
-													</div>
-													<div data-bind="if: !loc()">
-														<?php esc_html_e('An unknown location at IP', 'wordfence') ?>
-														<span data-bind="text: IP" target="_blank" rel="noopener noreferrer"></span>
-													</div>
+                                                           target="_blank" rel="noopener noreferrer"><span
+                                                                    class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                                                    </div>
+                                                    <div data-bind="if: !loc()">
+                                                        <?php esc_html_e('An unknown location at IP', 'wordfence') ?>
+                                                        <span data-bind="text: IP" target="_blank"
+                                                              rel="noopener noreferrer"></span>
+                                                    </div>
 
-													<div>
-														<strong><?php esc_html_e('IP:', 'wordfence') ?></strong>
-														<span data-bind="text: IP" target="_blank" rel="noopener noreferrer"></span>
-													</div>
+                                                    <div>
+                                                        <strong><?php esc_html_e('IP:', 'wordfence') ?></strong>
+                                                        <span data-bind="text: IP" target="_blank"
+                                                              rel="noopener noreferrer"></span>
+                                                    </div>
 													<div>
 														<span class="wfReverseLookup"><span data-bind="text: IP" style="display:none;"></span></span>
 													</div>
@@ -333,56 +342,59 @@ if (!wfConfig::liveTrafficEnabled($overridden)):
 												odd: ($index() % 2 == 1), even: ($index() % 2 == 0) }" class="wf-details-row">
 												<td colspan="8" data-bind="attr: { id: ('wfActEvent_' + id()) }" class="wf-live-traffic-details">
 													<div class="wf-live-traffic-activity-detail-wrapper">
-														<div class="wf-live-traffic-activity-type">
-															<div data-bind="attr: { 'class': typeIconClass }"></div>
-															<div data-bind="text: typeText"></div>
-														</div>
-														<div class="wf-live-traffic-activity-detail">
-															<h2><?php esc_html_e('Activity Detail', 'wordfence') ?></h2>
-															<div>
+                                                        <div class="wf-live-traffic-activity-type">
+                                                            <div data-bind="attr: { 'class': typeIconClass }"></div>
+                                                            <div data-bind="text: typeText"></div>
+                                                        </div>
+                                                        <div class="wf-live-traffic-activity-detail">
+                                                            <h2><?php esc_html_e('Activity Detail', 'wordfence') ?></h2>
+                                                            <div>
 																<span data-bind="if: action() != 'loginOK' && action() != 'loginFailValidUsername' && action() != 'loginFailInvalidUsername' && user()">
-																	<span data-bind="attr: {'data-userid': user().ID}" class="wfAvatar"></span>
+																	<span data-bind="attr: {'data-userid': user().ID}"
+                                                                          class="wfAvatar"></span>
 																	<a data-bind="attr: { href: user().editLink }, text: user().display_name"
-																			target="_blank" rel="noopener noreferrer"></a>
+                                                                       target="_blank" rel="noopener noreferrer"><span
+                                                                                class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
 																</span>
-																<span data-bind="if: loc()">
+                                                                <span data-bind="if: loc()">
 																	<span data-bind="if: action() != 'loginOK' && action() != 'loginFailValidUsername' && action() != 'loginFailInvalidUsername' && user()"> in</span>
 																	<span data-bind="attr: { class: 'wf-flag wf-flag-' + loc().countryCode.toLowerCase(), title: loc().countryName }"></span>
 																	<a data-bind="text: (loc().city ? loc().city + ', ' : '') + (loc().region ? loc().region + ', ' : '') + loc().countryName,
 																		attr: { href: 'http://maps.google.com/maps?q=' + loc().lat + ',' + loc().lon + '&z=6' }"
-																			target="_blank" rel="noopener noreferrer"></a>
+                                                                       target="_blank" rel="noopener noreferrer"><span
+                                                                                class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
 																</span>
-																<span data-bind="if: !loc()">
+                                                                <span data-bind="if: !loc()">
 																	<span data-bind="if: action() != 'loginOK' && action() != 'loginFailValidUsername' && action() != 'loginFailInvalidUsername' && user()">
 																		<?php echo wp_kses(sprintf(
-																		/* translators: 1. User agent. 2. IP address  */
-																				__('%1$s at an unknown location at IP %2$s', 'wordfence'), '', '<a data-bind="text: IP, attr: { href: WFAD.makeIPTrafLink(IP()) }" target="_blank" rel="noopener noreferrer"></a>'), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array(), 'data-bind'=>array()))) ?>
+                                                                        /* translators: 1. User agent. 2. IP address  */
+                                                                            __('%1$s at an unknown location at IP %2$s', 'wordfence'), '', '<a data-bind="text: IP, attr: { href: WFAD.makeIPTrafLink(IP()) }" target="_blank" rel="noopener noreferrer"><span class="screen-reader-text"> (opens in new tab)</span></a>'), array('a' => array('href' => array(), 'target' => array(), 'rel' => array(), 'data-bind' => array()), 'span' => array('class' => array()))) ?>
 																	</span>
 																	<span data-bind="if: !(action() != 'loginOK' && action() != 'loginFailValidUsername' && action() != 'loginFailInvalidUsername' && user())">
 																		<?php echo wp_kses(sprintf(
-																		/* translators: IP address  */
-																				__('An unknown location at IP %s', 'wordfence'), '<a data-bind="text: IP, attr: { href: WFAD.makeIPTrafLink(IP()) }" target="_blank" rel="noopener noreferrer"></a>'), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array(), 'data-bind'=>array()))) ?>
+                                                                        /* translators: IP address  */
+                                                                            __('An unknown location at IP %s', 'wordfence'), '<a data-bind="text: IP, attr: { href: WFAD.makeIPTrafLink(IP()) }" target="_blank" rel="noopener noreferrer"><span class="screen-reader-text"> (opens in new tab)</span></a>'), array('a' => array('href' => array(), 'target' => array(), 'rel' => array(), 'data-bind' => array()), 'span' => array('class' => array()))) ?>
 																	</span>
 																</span>
-																<span data-bind="if: referer()">
+                                                                <span data-bind="if: referer()">
 																	<span data-bind="if: extReferer()">
 																		<?php echo wp_kses(sprintf(
-																		/* translators: 1. User agent. 2. HTTP referer. 3. Server response. */
-																				__('%1$s arrived from %2$s and %3$s', 'wordfence'), '', '<a data-bind="text: LiveTrafficViewModel.truncateText(referer(), 100), attr: { title: referer, href: referer }" target="_blank" rel="noopener noreferrer" class="wf-split-word-xs"></a>', ''), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array(), 'class'=>array(), 'data-bind'=>array()))) ?>
+                                                                        /* translators: 1. User agent. 2. HTTP referer. 3. Server response. */
+                                                                            __('%1$s arrived from %2$s and %3$s', 'wordfence'), '', '<a data-bind="text: LiveTrafficViewModel.truncateText(referer(), 100), attr: { title: referer, href: referer }" target="_blank" rel="noopener noreferrer" class="wf-split-word-xs"><span class="screen-reader-text"> (opens in new tab)</span></a>', ''), array('a' => array('href' => array(), 'target' => array(), 'rel' => array(), 'class' => array(), 'data-bind' => array()), 'span' => array('class' => array()))) ?>
 																	</span>
 																	<span data-bind="if: !extReferer()">
 																		<?php echo wp_kses(sprintf(
-																		/* translators: 1. User agent. 2. HTTP referer. 3. Server response. */
-																				__('%1$s left %2$s and %3$s', 'wordfence'), '', '<a data-bind="text: LiveTrafficViewModel.truncateText(referer(), 100), attr: { title: referer, href: referer }" target="_blank" rel="noopener noreferrer" class="wf-split-word-xs"></a>', ''), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array(), 'class'=>array(), 'data-bind'=>array()))) ?>
+                                                                        /* translators: 1. User agent. 2. HTTP referer. 3. Server response. */
+                                                                            __('%1$s left %2$s and %3$s', 'wordfence'), '', '<a data-bind="text: LiveTrafficViewModel.truncateText(referer(), 100), attr: { title: referer, href: referer }" target="_blank" rel="noopener noreferrer" class="wf-split-word-xs"><span class="screen-reader-text"> (opens in new tab)</span></a>', ''), array('a' => array('href' => array(), 'target' => array(), 'rel' => array(), 'class' => array(), 'data-bind' => array()), 'span' => array('class' => array()))) ?>
 																	</span>
 																</span>
-																<span data-bind="if: statusCode() == 404">
+                                                                <span data-bind="if: statusCode() == 404">
 																	<?php echo wp_kses(sprintf(
-																	/* translators: User agent. */
-																			__('%s tried to access a <span style="color: #F00;">non-existent page</span>', 'wordfence'), ''), array('span'=>array('style'=>array()))) ?>
+                                                                    /* translators: User agent. */
+                                                                        __('%s tried to access a <span style="color: #F00;">non-existent page</span>', 'wordfence'), ''), array('span' => array('style' => array()))) ?>
 																</span>
 
-																<span data-bind="if: statusCode() == 200 && !action()">
+                                                                <span data-bind="if: statusCode() == 200 && !action()">
 																	<?php echo esc_html(sprintf(
 																	/* translators: 1. User agent. 2. URL of page visited. */
 																			__('%1$s visited %2$s', 'wordfence'), '', '')) ?>
@@ -415,26 +427,29 @@ if (!wfConfig::liveTrafficEnabled($overridden)):
 																	<?php echo esc_html(sprintf(/* translators: WordPress username. */__('%s requested a password reset.', 'wordfence'), '')) ?>
 																</span>
 																<span data-bind="if: action() == 'loginFailValidUsername'">
-																	<?php echo wp_kses(sprintf(/* translators: 1. User agent. 2. WordPress username. */ __('%1$s attempted a <span style="color: #F00;">failed login</span> as "%2$s".', 'wordfence'), '', '<strong data-bind="text: username"></strong>'), array('span'=>array('style'=>array()), 'strong'=>array('data-bind'=>array()))) ?>
+																	<?php echo wp_kses(sprintf(/* translators: 1. User agent. 2. WordPress username. */ __('%1$s attempted a <span style="color: #F00;">failed login</span> as "%2$s".', 'wordfence'), '', '<strong data-bind="text: username"></strong>'), array('span' => array('style' => array()), 'strong' => array('data-bind' => array()))) ?>
 																</span>
-																<span data-bind="if: action() == 'loginFailInvalidUsername'">
-																	<?php echo wp_kses(sprintf(/* translators: 1. User agent. 2. WordPress username. */ __('%1$s attempted a <span style="color: #F00;">failed login</span> using an invalid username "%2$s".', 'wordfence'), '', '<strong data-bind="text: username"></strong>'), array('span'=>array('style'=>array()), 'strong'=>array('data-bind'=>array()))) ?>
+                                                                <span data-bind="if: action() == 'loginFailInvalidUsername'">
+																	<?php echo wp_kses(sprintf(/* translators: 1. User agent. 2. WordPress username. */ __('%1$s attempted a <span style="color: #F00;">failed login</span> using an invalid username "%2$s".', 'wordfence'), '', '<strong data-bind="text: username"></strong>'), array('span' => array('style' => array()), 'strong' => array('data-bind' => array()))) ?>
 																</span>
-																<span data-bind="if: action() == 'user:passwordReset'">
+                                                                <span data-bind="if: action() == 'user:passwordReset'">
 																	<?php echo esc_html(sprintf(/* translators: WordPress username. */ __('%s changed their password.', 'wordfence'), '')) ?>
 																</span>
-																<a class="wf-lt-url wf-split-word-xs"
-																		data-bind="text: displayURL, attr: { href: URL, title: URL }"
-																		target="_blank" rel="noopener noreferrer"></a>
-															</div>
-															<div>
+                                                                <a class="wf-lt-url wf-split-word-xs"
+                                                                   data-bind="text: displayURL, attr: { href: URL, title: URL }"
+                                                                   target="_blank" rel="noopener noreferrer"><span
+                                                                            class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                                                            </div>
+                                                            <div>
 																<span data-bind="text: timeAgo, attr: { 'data-timestamp': ctime }"
-																		class="wfTimeAgo-timestamp"></span>&nbsp;&nbsp;
-															</div>
-															<div>
-																<strong><?php esc_html_e('IP:', 'wordfence') ?></strong> <span data-bind="text: IP"></span>
-																<span class="wfReverseLookup">
-																	<span data-bind="text: IP" style="display:none;"></span>
+                                                                      class="wfTimeAgo-timestamp"></span>&nbsp;&nbsp;
+                                                            </div>
+                                                            <div>
+                                                                <strong><?php esc_html_e('IP:', 'wordfence') ?></strong>
+                                                                <span data-bind="text: IP"></span>
+                                                                <span class="wfReverseLookup">
+																	<span data-bind="text: IP"
+                                                                          style="display:none;"></span>
 																</span>
 																<span data-bind="if: blocked()">
 																	<a class="wf-btn wf-btn-default wf-btn-sm wf-block-ip-btn"
@@ -471,22 +486,27 @@ if (!wfConfig::liveTrafficEnabled($overridden)):
 																		<?php esc_html_e('Unblock range', 'wordfence') ?>
 																	</a>
 																</span>
-																<span data-bind="if: !blocked() && !rangeBlocked()">
+                                                                <span data-bind="if: !blocked() && !rangeBlocked()">
 																	<a class="wf-btn wf-btn-default wf-btn-sm"
-																			data-bind="click: blockIP">
+                                                                       data-bind="click: blockIP">
 																		<?php esc_html_e('Block IP', 'wordfence') ?>
 																	</a>
 																</span>
-																<a class="wf-btn wf-btn-default wf-btn-sm" data-bind="click: showWhoisOverlay"
-																		target="_blank" rel="noopener noreferrer"><?php esc_html_e('Run Whois', 'wordfence') ?></a>
-																<a class="wf-btn wf-btn-default wf-btn-sm"
-																		data-bind="click: showRecentTraffic" target="_blank" rel="noopener noreferrer">
-																	<span class="wf-hidden-xs"><?php esc_html_e('See recent traffic', 'wordfence'); ?></span><span class="wf-visible-xs"><?php esc_html_e('Recent', 'wordfence'); ?></span>
-																</a>
-																<span data-bind="if: action() == 'blocked:waf'">
+                                                                <a class="wf-btn wf-btn-default wf-btn-sm"
+                                                                   data-bind="click: showWhoisOverlay"
+                                                                   target="_blank"
+                                                                   rel="noopener noreferrer"><?php esc_html_e('Run Whois', 'wordfence') ?>
+                                                                    <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                                                                <a class="wf-btn wf-btn-default wf-btn-sm"
+                                                                   data-bind="click: showRecentTraffic" target="_blank"
+                                                                   rel="noopener noreferrer">
+                                                                    <span class="wf-hidden-xs"><?php esc_html_e('See recent traffic', 'wordfence'); ?></span><span
+                                                                            class="wf-visible-xs"><?php esc_html_e('Recent', 'wordfence'); ?></span>
+                                                                </a>
+                                                                <span data-bind="if: action() == 'blocked:waf'">
 																	<a class="wf-btn wf-btn-default wf-btn-sm"
-																			data-bind="click: function () { $root.whitelistWAFParamKey(actionData().path, actionData().paramKey, actionData().failedRules) }"
-																			title="<?php esc_attr_e('If this is a false positive, you can exclude this parameter from being filtered by the firewall', 'wordfence') ?>">
+                                                                       data-bind="click: function () { $root.whitelistWAFParamKey(actionData().path, actionData().paramKey, actionData().failedRules) }"
+                                                                       title="<?php esc_attr_e('If this is a false positive, you can exclude this parameter from being filtered by the firewall', 'wordfence') ?>">
 																		<?php esc_html_e('Add Param to Firewall Allowlist', 'wordfence') ?>
 																	</a>
 																	<?php if (WFWAF_DEBUG): ?>
@@ -564,21 +584,23 @@ if (!wfConfig::liveTrafficEnabled($overridden)):
 				<?php endif; ?>
 			});
 		})(jQuery);
-	</script>
+    </script>
 
-	<script type="text/x-jquery-template" id="wfNewTour1">
-		<div>
-			<h3><?php esc_html_e('Live Traffic', 'wordfence'); ?></h3>
-			<p><?php echo wp_kses(__('Live traffic defaults to a summary view of all security-related traffic. Details are viewable by clicking anywhere within the summary record. To switch to the expanded view, click the <strong>Expand All Records</strong> switch.', 'wordfence'), array('strong'=>array())); ?></p>
-			<div class="wf-pointer-footer">
-				<ul class="wf-tour-pagination">
-					<li class="wf-active">&bullet;</li>
-				</ul>
-				<div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Got it', 'wordfence'); ?></a></div>
-			</div>
-			<div id="wf-tour-close"><a href="#"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
-		</div>
-	</script>
+    <script type="text/x-jquery-template" id="wfNewTour1">
+        <div>
+            <h3><?php esc_html_e('Live Traffic', 'wordfence'); ?></h3>
+            <p><?php echo wp_kses(__('Live traffic defaults to a summary view of all security-related traffic. Details are viewable by clicking anywhere within the summary record. To switch to the expanded view, click the <strong>Expand All Records</strong> switch.', 'wordfence'), array('strong' => array())); ?></p>
+            <div class="wf-pointer-footer">
+                <ul class="wf-tour-pagination">
+                    <li class="wf-active">&bullet;</li>
+                </ul>
+                <div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"
+                                              role="button"><?php esc_html_e('Got it', 'wordfence'); ?></a></div>
+            </div>
+            <div id="wf-tour-close"><a href="#" role="button"><i class="wf-fa wf-fa-times-circle"
+                                                                 aria-hidden="true"></i></a></div>
+        </div>
+    </script>
 <?php endif; ?>
 
 <?php if (wfOnboardingController::willShowUpgradeTour(wfOnboardingController::TOUR_LIVE_TRAFFIC)): ?>
@@ -595,19 +617,22 @@ if (!wfConfig::liveTrafficEnabled($overridden)):
 				<?php endif; ?>
 			});
 		})(jQuery);
-	</script>
+    </script>
 
-	<script type="text/x-jquery-template" id="wfUpgradeTour1">
-		<div>
-			<h3><?php esc_html_e('Live Traffic', 'wordfence'); ?></h3>
-			<p><?php echo wp_kses(__('Live traffic now defaults to a summary view. Details are viewable by clicking anywhere within the summary record. To switch to the expanded view, click the <strong>Expand All Records</strong> switch. New installations will only log security-related traffic by default, though your previous setting has been preserved.', 'wordfence'), array('strong'=>array())); ?></p>
-			<div class="wf-pointer-footer">
-				<ul class="wf-tour-pagination">
-					<li class="wf-active">&bullet;</li>
-				</ul>
-				<div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Got it', 'wordfence'); ?></a></div>
-			</div>
-			<div id="wf-tour-close"><a href="#"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
-		</div>
-	</script>
+    <script type="text/x-jquery-template" id="wfUpgradeTour1">
+        <div>
+            <h3><?php esc_html_e('Live Traffic', 'wordfence'); ?></h3>
+            <p><?php echo wp_kses(__('Live traffic now defaults to a summary view. Details are viewable by clicking anywhere within the summary record. To switch to the expanded view, click the <strong>Expand All Records</strong> switch. New installations will only log security-related traffic by default, though your previous setting has been preserved.', 'wordfence'), array('strong' => array())); ?></p>
+            <div class="wf-pointer-footer">
+                <ul class="wf-tour-pagination">
+                    <li class="wf-active">&bullet;</li>
+                </ul>
+                <div id="wf-tour-continue"><a href="#" role="button"
+                                              class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Got it', 'wordfence'); ?></a>
+                </div>
+            </div>
+            <div id="wf-tour-close"><a href="#" role="button"><i class="wf-fa wf-fa-times-circle"
+                                                                 aria-hidden="true"></i></a></div>
+        </div>
+    </script>
 <?php endif; ?>

@@ -57,8 +57,7 @@ class wfWAFView {
 
 		if (!defined('WFWAF_VIEW_RENDERING')) { define('WFWAF_VIEW_RENDERING', true); }
 		ob_start();
-		/** @noinspection PhpIncludeInspection */
-		include $viewPath;
+        include $viewPath;
 		return ob_get_clean();
 	}
 

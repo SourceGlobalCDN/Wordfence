@@ -1,18 +1,35 @@
 <?php
 
-class wfAdminNoticeQueue {
-	protected static function _notices() {
-		return wfConfig::get_ser('adminNoticeQueue', array());
-	}
-	
-	protected static function _setNotices($notices) {
-		wfConfig::set_ser('adminNoticeQueue', $notices);
-	}
-	
-	/**
-	 * Adds an admin notice to the display queue.
-	 * 
-	 * @param string $severity
+class wfAdminNoticeQueue
+{
+    protected static function _notices()
+    {
+        return self::_purgeObsoleteNotices(wfConfig::get_ser('adminNoticeQueue', array()));
+    }
+
+    private static function _purgeObsoleteNotices($notices)
+    {
+        $altered = false;
+        foreach ($notices as $id => $notice) {
+            if ($notice['category'] === 'php8') {
+                unset($notices[$id]);
+                $altered = true;
+            }
+        }
+        if ($altered)
+            self::_setNotices($notices);
+        return $notices;
+    }
+
+    protected static function _setNotices($notices)
+    {
+        wfConfig::set_ser('adminNoticeQueue', $notices);
+    }
+
+    /**
+     * Adds an admin notice to the display queue.
+     *
+     * @param string $severity
 	 * @param string $messageHTML
 	 * @param bool|string $category If not false, notices with the same category will be removed prior to adding this one.
 	 * @param bool|array $users If not false, an array of user IDs the notice should show for.
@@ -74,7 +91,7 @@ class wfAdminNoticeQueue {
 			$category = false;
 			$users = false;
 		}
-		
+
 		$notices = self::_notices();
 		$found = false;
 		foreach ($notices as $nid => $n) {
@@ -176,7 +193,7 @@ class wfAdminNotice {
 		else if ($this->_severity == self::SEVERITY_WARNING) {
 			$severityClass = 'notice-warning';
 		}
-		
-		echo '<div class="wf-admin-notice notice ' . $severityClass . '" data-notice-id="' . esc_attr($this->_id) . '"><p>' . $this->_messageHTML . '</p><p><a class="wf-btn wf-btn-default wf-btn-sm wf-dismiss-link" href="#" onclick="wordfenceExt.dismissAdminNotice(\'' . esc_attr($this->_id) . '\'); return false;">' . esc_html__('Dismiss', 'wordfence') . '</a></p></div>';
+
+        echo '<div class="wf-admin-notice notice ' . $severityClass . '" data-notice-id="' . esc_attr($this->_id) . '"><p>' . $this->_messageHTML . '</p><p><a class="wf-btn wf-btn-default wf-btn-sm wf-dismiss-link" href="#" onclick="wordfenceExt.dismissAdminNotice(\'' . esc_attr($this->_id) . '\'); return false;" role="button">' . esc_html__('Dismiss', 'wordfence') . '</a></p></div>';
 	}
 }
