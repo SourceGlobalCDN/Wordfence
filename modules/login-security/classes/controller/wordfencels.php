@@ -335,11 +335,11 @@ END
 			));
 		}
 		else {
-			wp_enqueue_style('wordfence-ls-admin-global', Model_Asset::css('admin-global.css'), array(), WORDFENCE_LS_VERSION);
+			wp_enqueue_style('wordfence-ls-admin-global', Model_Asset::css('admin-global.css', 'modules/login-security/css/'), array(), WORDFENCE_LS_VERSION);
 		}
 
         if (Controller_Notices::shared()->has_notice(wp_get_current_user()) || in_array($hookSuffix, array('user-edit.php', 'user-new.php', 'profile.php'))) {
-            wp_enqueue_script('wordfence-ls-admin-global', Model_Asset::js('admin-global.js'), array('jquery'), WORDFENCE_LS_VERSION);
+            wp_enqueue_script('wordfence-ls-admin-global', Model_Asset::js('admin-global.js', 'modules/login-security/js/'), array('jquery'), WORDFENCE_LS_VERSION);
 
             wp_localize_script('wordfence-ls-admin-global', 'GWFLSVars', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),

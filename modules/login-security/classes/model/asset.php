@@ -2,20 +2,27 @@
 
 namespace WordfenceLS;
 
-abstract class Model_Asset {
-	public static function js($file): string
+abstract class Model_Asset
+{
+    public static function js($file, string $path = null): string
     {
-		return WORDFENCE_CDN_URL . 'js/' . self::_versionedFileName($file);
-	}
-	
-	public static function css($file): string
+        if ($path != null) {
+            return WORDFENCE_CDN_URL . $path . self::_versionedFileName($file);
+        }
+        return WORDFENCE_CDN_URL . 'js/' . self::_versionedFileName($file);
+    }
+
+    public static function css($file, string $path = null): string
     {
-		return WORDFENCE_CDN_URL . 'css/' . self::_versionedFileName($file);
-	}
-	
-	public static function img($file): string
+        if ($path != null) {
+            return WORDFENCE_CDN_URL . $path . self::_versionedFileName($file);
+        }
+        return WORDFENCE_CDN_URL . 'css/' . self::_versionedFileName($file);
+    }
+
+    public static function img($file): string
     {
-		return WORDFENCE_CDN_URL . 'img/' . $file;
+        return WORDFENCE_CDN_URL . 'img/' . $file;
 	}
 	
 	protected static function _pluginBaseURL(): string
