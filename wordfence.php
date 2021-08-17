@@ -12,6 +12,8 @@ Network: true
 Requires at least: 3.9
 Requires PHP: 5.3
 */
+const WORDFENCE_CDN_URL = "https://cdn.jsdelivr.net/wp/Wordfence/".WORDFENCE_VERSION."/";
+
 if (defined('WP_INSTALLING') && WP_INSTALLING) {
     return;
 }
@@ -19,8 +21,8 @@ if (defined('WP_INSTALLING') && WP_INSTALLING) {
 if (!defined('ABSPATH')) {
     exit;
 }
-define('WORDFENCE_VERSION', '7.5.5');
-define('WORDFENCE_BUILD_NUMBER', '1629122067');
+const WORDFENCE_VERSION = '7.5.5';
+const WORDFENCE_BUILD_NUMBER = '1629122067';
 define('WORDFENCE_BASENAME', function_exists('plugin_basename') ? plugin_basename(__FILE__) :
     basename(dirname(__FILE__)) . '/' . basename(__FILE__));
 
@@ -33,10 +35,8 @@ foreach ($wp_plugin_paths as $dir => $realdir) {
     }
 }
 if (!defined('WORDFENCE_FCPATH')) {
-	/** @noinspection PhpConstantReassignmentInspection */
-	define('WORDFENCE_FCPATH', __FILE__);
-	/** @noinspection PhpConstantReassignmentInspection */
-	define('WORDFENCE_PATH', trailingslashit(dirname(WORDFENCE_FCPATH)));
+    define('WORDFENCE_FCPATH', __FILE__);
+    define('WORDFENCE_PATH', trailingslashit(dirname(WORDFENCE_FCPATH)));
 }
 if (!defined('WF_IS_WP_ENGINE')) {
 	define('WF_IS_WP_ENGINE', isset($_SERVER['IS_WPE']));
