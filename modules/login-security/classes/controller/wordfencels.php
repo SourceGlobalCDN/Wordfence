@@ -286,7 +286,7 @@ END
 				}
 			}
 			
-			wp_enqueue_script('wordfence-ls-login', Model_Asset::js('login.js','modules/login-security/css/'), array('jquery'), WORDFENCE_LS_VERSION);
+			wp_enqueue_script('wordfence-ls-login', Model_Asset::js('login.js','modules/login-security/js/'), array('jquery'), WORDFENCE_LS_VERSION);
 			wp_enqueue_style('wordfence-ls-login', Model_Asset::css('login.css','modules/login-security/css/'), array(), WORDFENCE_LS_VERSION);
 			wp_localize_script('wordfence-ls-login', 'WFLSVars', array(
 				'ajaxurl' => admin_url('admin-ajax.php'),
