@@ -6,7 +6,7 @@ class Controller_CAPTCHA {
 	const RESPONSE_MODE_ALLOW = 'allow';
 	const RESPONSE_MODE_REQUIRE_VERIFICATION = 'verify';
 	
-	const RECAPTCHA_ENDPOINT = 'https://www.google.com/recaptcha/api/siteverify';
+	const RECAPTCHA_ENDPOINT = 'https://www.recaptcha.net/recaptcha/api/siteverify';
 	
 	/**
 	 * Returns the singleton Controller_CAPTCHA.

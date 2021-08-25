@@ -193,7 +193,7 @@ class Controller_Settings {
 					return true;
 				}
 
-                $response = wp_remote_get('https://www.google.com/recaptcha/api.js?render=' . urlencode($value));
+                $response = wp_remote_get('https://www.recaptcha.net/recaptcha/api.js?render=' . urlencode($value));
 				
 				if (!is_wp_error($response)) {
 					$status = wp_remote_retrieve_response_code($response);
