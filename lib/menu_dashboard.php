@@ -104,20 +104,30 @@ else if (wfConfig::get('touppPromptNeeded')) {
 										<?php elseif (wfConfig::get('keyType') == wfAPI::KEY_TYPE_PAID_DELETED): ?>
 											<?php
 											echo wfView::create('common/status-critical', array(
-												'id' => 'wf-premium-alert',
-												'title' => __('Premium Protection Disabled', 'wordfence'),
-												'subtitleHtml' => wp_kses(__('The license you were using has been removed from your account. Please reach out to <a href="mailto:billing@wordfence.com">billing@wordfence.com</a> or create a Premium support case at <a href="https://support.wordfence.com/support/tickets" target="_blank">https://support.wordfence.com/support/tickets</a> for more information. Our staff is happy to help.', 'wordfence'), array('a'=>array('href'=>array(), 'target'=>array()))),
-												'link' => null,
-												'linkLabel' => null
-											))->render();
+                                                'id' => 'wf-premium-alert',
+                                                'title' => __('Premium Protection Disabled', 'wordfence'),
+                                                'subtitleHtml' => wp_kses(__('The license you were using has been removed from your account. Please reach out to <a href="mailto:billing@wordfence.com">billing@wordfence.com</a> or create a Premium support case at <a href="https://support.wordfence.com/support/tickets" target="_blank">https://support.wordfence.com/support/tickets<span class="screen-reader-text"> (opens in new tab)</span></a> for more information. Our staff is happy to help.', 'wordfence'), array('a' => array('href' => array(), 'target' => array()), 'span' => array('class' => array()))),
+                                                'link' => null,
+                                                'linkLabel' => null
+                                            ))->render();
 											?>
 										<?php elseif (wfConfig::get('keyType') == wfAPI::KEY_TYPE_FREE || wfConfig::get('keyType') === false): ?>
-											<div>
-												<p><h3><?php esc_html_e('Premium Protection Disabled', 'wordfence'); ?></h3></p>
-												<p><?php esc_html_e('As a free Wordfence user, you are currently using the Community version of the Threat Defense Feed. Premium users are protected by additional firewall rules and malware signatures. Upgrade to Premium today to improve your protection.', 'wordfence'); ?></p>
-												<p><a class="wf-btn wf-btn-primary wf-btn-callout-subtle" href="https://www.wordfence.com/gnl1dashboardUpgrade/wordfence-signup/#premium-order-form" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Upgrade to Premium', 'wordfence'); ?></a>&nbsp;&nbsp;<a class="wf-btn wf-btn-callout-subtle wf-btn-default" href="https://www.wordfence.com/gnl1dashboardLearn/wordfence-signup/" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Learn More', 'wordfence'); ?></a></p>
-											</div>
-										<?php elseif (wfConfig::get('keyExpDays') < 30 && (wfConfig::get('premiumAutoRenew', null) === '0' || wfConfig::get('premiumAutoRenew', null) === 0)): ?>
+                                            <div>
+                                                <p>
+                                                <h3><?php esc_html_e('Premium Protection Disabled', 'wordfence'); ?></h3></p>
+                                                <p><?php esc_html_e('As a free Wordfence user, you are currently using the Community version of the Threat Defense Feed. Premium users are protected by additional firewall rules and malware signatures. Upgrade to Premium today to improve your protection.', 'wordfence'); ?></p>
+                                                <p><a class="wf-btn wf-btn-primary wf-btn-callout-subtle"
+                                                      href="https://www.wordfence.com/gnl1dashboardUpgrade/wordfence-signup/#premium-order-form"
+                                                      target="_blank"
+                                                      rel="noopener noreferrer"><?php esc_html_e('Upgrade to Premium', 'wordfence'); ?></a>&nbsp;&nbsp;<a
+                                                            class="wf-btn wf-btn-callout-subtle wf-btn-default"
+                                                            href="https://www.wordfence.com/gnl1dashboardLearn/wordfence-signup/"
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"><?php esc_html_e('Learn More', 'wordfence'); ?>
+                                                        <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                                                </p>
+                                            </div>
+                                        <?php elseif (wfConfig::get('keyExpDays') < 30 && (wfConfig::get('premiumAutoRenew', null) === '0' || wfConfig::get('premiumAutoRenew', null) === 0)): ?>
 											<?php
 											echo wfView::create('common/status-critical', array(
 												'id' => 'wf-premium-alert',
@@ -289,54 +299,66 @@ else if (wfConfig::get('touppPromptNeeded')) {
 	})(jQuery);
 </script>
 
-<script type="text/x-jquery-template" id="wfNewTour1">
-	<div>
-		<h3><?php esc_html_e('This is your Dashboard', 'wordfence'); ?></h3>
-		<p><?php esc_html_e('The Wordfence Dashboard provides valuable insights into the current state of your site\'s security. You\'ll find useful data summarized here as well as important status updates and notifications.', 'wordfence'); ?></p>
-		<div class="wf-pointer-footer">
-			<ul class="wf-tour-pagination">
-				<li class="wf-active">&bullet;</li>
-				<li>&bullet;</li>
-				<li>&bullet;</li>
-			</ul>
-			<div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Next', 'wordfence'); ?></a></div>
-		</div>
-		<div id="wf-tour-close"><a href="#"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
-	</div>
-</script>
-<script type="text/x-jquery-template" id="wfNewTour2">
-	<div>
-		<h3><?php esc_html_e('Easily Monitor Your Wordfence Protection', 'wordfence'); ?></h3>
-		<p><?php esc_html_e('Each feature contains a status that reminds you what\'s enabled, disabled or needs attention. The Notifications section will highlight actions you need to take.', 'wordfence'); ?></p>
-		<div class="wf-pointer-footer">
-			<ul class="wf-tour-pagination">
-				<li>&bullet;</li>
-				<li class="wf-active">&bullet;</li>
-				<li>&bullet;</li>
-			</ul>
-			<div id="wf-tour-previous"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-default"><?php esc_html_e('Previous', 'wordfence'); ?></a></div>
-			<div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Next', 'wordfence'); ?></a></div>
-		</div>
-		<div id="wf-tour-close"><a href="#"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
-	</div>
-</script>
-<script type="text/x-jquery-template" id="wfNewTour3">
-	<div>
-		<h3><?php esc_html_e('Global Wordfence Options', 'wordfence'); ?></h3>
-		<p class="wf-center"><svg viewBox="0 0 100.11 100.11" class="wf-icon"><path d="M99.59,41.42a2.06,2.06,0,0,0-1.37-.82L86.3,38.78a39.34,39.34,0,0,0-2.67-6.39q1.17-1.63,3.52-4.6t3.32-4.33A2.52,2.52,0,0,0,91,22a2.1,2.1,0,0,0-.46-1.43Q88.18,17.2,79.78,9.45a2.52,2.52,0,0,0-1.63-.65,2.12,2.12,0,0,0-1.57.59l-9.25,7a40.09,40.09,0,0,0-5.87-2.41L59.64,2a1.92,1.92,0,0,0-.75-1.4A2.46,2.46,0,0,0,57.29,0H42.82a2.19,2.19,0,0,0-2.34,1.82,106,106,0,0,0-1.89,12.12,37.62,37.62,0,0,0-5.93,2.48l-9-7A2.78,2.78,0,0,0,22,8.8q-1.44,0-6.16,4.66a64.88,64.88,0,0,0-6.42,7A2.75,2.75,0,0,0,8.8,22a2.44,2.44,0,0,0,.65,1.56q4.37,5.28,7,9a32.38,32.38,0,0,0-2.54,6L1.76,40.34a2,2,0,0,0-1.24.85A2.5,2.5,0,0,0,0,42.69V57.16a2.44,2.44,0,0,0,.52,1.53,2,2,0,0,0,1.37.82l11.93,1.76a31.91,31.91,0,0,0,2.67,6.45Q15.31,69.35,13,72.31T9.65,76.65a2.54,2.54,0,0,0-.07,3q2.54,3.52,10.75,11a2.25,2.25,0,0,0,1.63.71,2.35,2.35,0,0,0,1.63-.59l9.19-7a40.54,40.54,0,0,0,5.87,2.41l1.82,12a1.92,1.92,0,0,0,.75,1.4,2.45,2.45,0,0,0,1.6.55H57.29a2.2,2.2,0,0,0,2.35-1.82,107.41,107.41,0,0,0,1.89-12.12,37.19,37.19,0,0,0,5.93-2.48l9,7a3.18,3.18,0,0,0,1.69.59q1.43,0,6.13-4.62a65.86,65.86,0,0,0,6.45-7,2.16,2.16,0,0,0,.59-1.5,2.51,2.51,0,0,0-.65-1.63q-4.69-5.74-7-9a41.57,41.57,0,0,0,2.54-5.93l12.06-1.82a2,2,0,0,0,1.3-.85,2.52,2.52,0,0,0,.52-1.5V43a2.46,2.46,0,0,0-.52-1.53ZM61.85,61.86a16.08,16.08,0,0,1-11.8,4.89A16.69,16.69,0,0,1,33.37,50.06,16.69,16.69,0,0,1,50.06,33.37,16.69,16.69,0,0,1,66.74,50.06a16.08,16.08,0,0,1-4.89,11.8Zm0,0"></path></svg></p>
-		<p><?php echo wp_kses(__('You\'ll find this icon throughout the plugin. Clicking it will show you the options and features for each section of Wordfence. From the dashboard, you can find the <strong>Global Options</strong> for Wordfence such as alerts, automatic updates, and managing your site\'s Premium License.', 'wordfence'), array('strong'=>array())); ?></p>
-		<div class="wf-pointer-footer">
-			<ul class="wf-tour-pagination">
-				<li>&bullet;</li>
-				<li>&bullet;</li>
-				<li class="wf-active">&bullet;</li>
-			</ul>
-			<div id="wf-tour-previous"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-default"><?php esc_html_e('Previous', 'wordfence'); ?></a></div>
-			<div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Got it', 'wordfence'); ?></a></div>
-		</div>
-		<div id="wf-tour-close"><a href="#"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
-	</div>
-</script>
+    <script type="text/x-jquery-template" id="wfNewTour1">
+        <div>
+            <h3><?php esc_html_e('This is your Dashboard', 'wordfence'); ?></h3>
+            <p><?php esc_html_e('The Wordfence Dashboard provides valuable insights into the current state of your site\'s security. You\'ll find useful data summarized here as well as important status updates and notifications.', 'wordfence'); ?></p>
+            <div class="wf-pointer-footer">
+                <ul class="wf-tour-pagination">
+                    <li class="wf-active">&bullet;</li>
+                    <li>&bullet;</li>
+                    <li>&bullet;</li>
+                </ul>
+                <div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"
+                                              role="button"><?php esc_html_e('Next', 'wordfence'); ?></a></div>
+            </div>
+            <div id="wf-tour-close"><a href="#" role="button"><i class="wf-fa wf-fa-times-circle"
+                                                                 aria-hidden="true"></i></a></div>
+        </div>
+    </script>
+    <script type="text/x-jquery-template" id="wfNewTour2">
+        <div>
+            <h3><?php esc_html_e('Easily Monitor Your Wordfence Protection', 'wordfence'); ?></h3>
+            <p><?php esc_html_e('Each feature contains a status that reminds you what\'s enabled, disabled or needs attention. The Notifications section will highlight actions you need to take.', 'wordfence'); ?></p>
+            <div class="wf-pointer-footer">
+                <ul class="wf-tour-pagination">
+                    <li>&bullet;</li>
+                    <li class="wf-active">&bullet;</li>
+                    <li>&bullet;</li>
+                </ul>
+                <div id="wf-tour-previous"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-default"
+                                              role="button"><?php esc_html_e('Previous', 'wordfence'); ?></a></div>
+                <div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"
+                                              role="button"><?php esc_html_e('Next', 'wordfence'); ?></a></div>
+            </div>
+            <div id="wf-tour-close"><a href="#" role="button"><i class="wf-fa wf-fa-times-circle"
+                                                                 aria-hidden="true"></i></a></div>
+        </div>
+    </script>
+    <script type="text/x-jquery-template" id="wfNewTour3">
+        <div>
+            <h3><?php esc_html_e('Global Wordfence Options', 'wordfence'); ?></h3>
+            <p class="wf-center">
+                <svg viewBox="0 0 100.11 100.11" class="wf-icon">
+                    <path d="M99.59,41.42a2.06,2.06,0,0,0-1.37-.82L86.3,38.78a39.34,39.34,0,0,0-2.67-6.39q1.17-1.63,3.52-4.6t3.32-4.33A2.52,2.52,0,0,0,91,22a2.1,2.1,0,0,0-.46-1.43Q88.18,17.2,79.78,9.45a2.52,2.52,0,0,0-1.63-.65,2.12,2.12,0,0,0-1.57.59l-9.25,7a40.09,40.09,0,0,0-5.87-2.41L59.64,2a1.92,1.92,0,0,0-.75-1.4A2.46,2.46,0,0,0,57.29,0H42.82a2.19,2.19,0,0,0-2.34,1.82,106,106,0,0,0-1.89,12.12,37.62,37.62,0,0,0-5.93,2.48l-9-7A2.78,2.78,0,0,0,22,8.8q-1.44,0-6.16,4.66a64.88,64.88,0,0,0-6.42,7A2.75,2.75,0,0,0,8.8,22a2.44,2.44,0,0,0,.65,1.56q4.37,5.28,7,9a32.38,32.38,0,0,0-2.54,6L1.76,40.34a2,2,0,0,0-1.24.85A2.5,2.5,0,0,0,0,42.69V57.16a2.44,2.44,0,0,0,.52,1.53,2,2,0,0,0,1.37.82l11.93,1.76a31.91,31.91,0,0,0,2.67,6.45Q15.31,69.35,13,72.31T9.65,76.65a2.54,2.54,0,0,0-.07,3q2.54,3.52,10.75,11a2.25,2.25,0,0,0,1.63.71,2.35,2.35,0,0,0,1.63-.59l9.19-7a40.54,40.54,0,0,0,5.87,2.41l1.82,12a1.92,1.92,0,0,0,.75,1.4,2.45,2.45,0,0,0,1.6.55H57.29a2.2,2.2,0,0,0,2.35-1.82,107.41,107.41,0,0,0,1.89-12.12,37.19,37.19,0,0,0,5.93-2.48l9,7a3.18,3.18,0,0,0,1.69.59q1.43,0,6.13-4.62a65.86,65.86,0,0,0,6.45-7,2.16,2.16,0,0,0,.59-1.5,2.51,2.51,0,0,0-.65-1.63q-4.69-5.74-7-9a41.57,41.57,0,0,0,2.54-5.93l12.06-1.82a2,2,0,0,0,1.3-.85,2.52,2.52,0,0,0,.52-1.5V43a2.46,2.46,0,0,0-.52-1.53ZM61.85,61.86a16.08,16.08,0,0,1-11.8,4.89A16.69,16.69,0,0,1,33.37,50.06,16.69,16.69,0,0,1,50.06,33.37,16.69,16.69,0,0,1,66.74,50.06a16.08,16.08,0,0,1-4.89,11.8Zm0,0"></path>
+                </svg>
+            </p>
+            <p><?php echo wp_kses(__('You\'ll find this icon throughout the plugin. Clicking it will show you the options and features for each section of Wordfence. From the dashboard, you can find the <strong>Global Options</strong> for Wordfence such as alerts, automatic updates, and managing your site\'s Premium License.', 'wordfence'), array('strong' => array())); ?></p>
+            <div class="wf-pointer-footer">
+                <ul class="wf-tour-pagination">
+                    <li>&bullet;</li>
+                    <li>&bullet;</li>
+                    <li class="wf-active">&bullet;</li>
+                </ul>
+                <div id="wf-tour-previous"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-default"
+                                              role="button"><?php esc_html_e('Previous', 'wordfence'); ?></a></div>
+                <div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"
+                                              role="button"><?php esc_html_e('Got it', 'wordfence'); ?></a></div>
+            </div>
+            <div id="wf-tour-close"><a href="#" role="button"><i class="wf-fa wf-fa-times-circle"
+                                                                 aria-hidden="true"></i></a></div>
+        </div>
+    </script>
 <?php endif; ?>
 
 <?php if (wfOnboardingController::willShowUpgradeTour(wfOnboardingController::TOUR_DASHBOARD)): ?>
@@ -360,81 +382,96 @@ else if (wfConfig::get('touppPromptNeeded')) {
 			<?php if (wfOnboardingController::shouldShowUpgradeTour(wfOnboardingController::TOUR_DASHBOARD) && !isset($_GET['onboarding'])): ?>
 			if (!WFAD.isSmallScreen) { WFAD.tour1(); }
 			<?php endif; ?>
-		});
-	})(jQuery);
+        });
+    })(jQuery);
 </script>
 
-<script type="text/x-jquery-template" id="wfUpgradeTour1">
-	<div>
-		<h3><?php printf(
-				/* translators: Wordfence version. */
-				esc_html__('You have successfully updated to Wordfence %s', 'wordfence'), WORDFENCE_VERSION); ?></h3>
-		<p><?php esc_html_e('This update includes a number of significant interface changes. We\'d like to walk you through  some of them, but you can bypass the tour for a section at any time by closing the dialogs.', 'wordfence'); ?></p>
-		<p><?php echo wp_kses(__('We welcome your feedback and comments at <a href="mailto:feedback@wordfence.com">feedback@wordfence.com</a>. For a deeper dive on all of the changes, <a href="https://www.wordfence.com/blog/2018/01/introducing-wordfence-7/" target="_blank" rel="noopener noreferrer">click here</a>.', 'wordfence'), array('a'=>array('href'=>array(), 'target'=>array()))); ?></p>
-		<div class="wf-pointer-footer">
-			<ul class="wf-tour-pagination">
-				<li class="wf-active">&bullet;</li>
-				<li>&bullet;</li>
-				<li>&bullet;</li>
-				<li>&bullet;</li>
-			</ul>
-			<div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Next', 'wordfence'); ?></a></div>
-		</div>
-		<div id="wf-tour-close"><a href="#"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
-	</div>
-</script>
-<script type="text/x-jquery-template" id="wfUpgradeTour2">
-	<div>
-		<h3><?php esc_html_e('Monitor Your Wordfence Protection', 'wordfence'); ?></h3>
-		<p><?php esc_html_e('Each feature contains a status percentage reminding you at a high level of what\'s enabled, disabled, or needing your attention. The Notifications section highlights actions you need to take.', 'wordfence'); ?></p>
-		<div class="wf-pointer-footer">
-			<ul class="wf-tour-pagination">
-				<li>&bullet;</li>
-				<li class="wf-active">&bullet;</li>
-				<li>&bullet;</li>
-				<li>&bullet;</li>
-			</ul>
-			<div id="wf-tour-previous"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-default"><?php esc_html_e('Previous', 'wordfence'); ?></a></div>
-			<div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Next', 'wordfence'); ?></a></div>
-		</div>
-		<div id="wf-tour-close"><a href="#"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
-	</div>
-</script>
-<script type="text/x-jquery-template" id="wfUpgradeTour3">
-	<div>
-		<h3><?php esc_html_e('Global Wordfence Options', 'wordfence'); ?></h3>
-		<p class="wf-center"><svg viewBox="0 0 100.11 100.11" class="wf-icon"><path d="M99.59,41.42a2.06,2.06,0,0,0-1.37-.82L86.3,38.78a39.34,39.34,0,0,0-2.67-6.39q1.17-1.63,3.52-4.6t3.32-4.33A2.52,2.52,0,0,0,91,22a2.1,2.1,0,0,0-.46-1.43Q88.18,17.2,79.78,9.45a2.52,2.52,0,0,0-1.63-.65,2.12,2.12,0,0,0-1.57.59l-9.25,7a40.09,40.09,0,0,0-5.87-2.41L59.64,2a1.92,1.92,0,0,0-.75-1.4A2.46,2.46,0,0,0,57.29,0H42.82a2.19,2.19,0,0,0-2.34,1.82,106,106,0,0,0-1.89,12.12,37.62,37.62,0,0,0-5.93,2.48l-9-7A2.78,2.78,0,0,0,22,8.8q-1.44,0-6.16,4.66a64.88,64.88,0,0,0-6.42,7A2.75,2.75,0,0,0,8.8,22a2.44,2.44,0,0,0,.65,1.56q4.37,5.28,7,9a32.38,32.38,0,0,0-2.54,6L1.76,40.34a2,2,0,0,0-1.24.85A2.5,2.5,0,0,0,0,42.69V57.16a2.44,2.44,0,0,0,.52,1.53,2,2,0,0,0,1.37.82l11.93,1.76a31.91,31.91,0,0,0,2.67,6.45Q15.31,69.35,13,72.31T9.65,76.65a2.54,2.54,0,0,0-.07,3q2.54,3.52,10.75,11a2.25,2.25,0,0,0,1.63.71,2.35,2.35,0,0,0,1.63-.59l9.19-7a40.54,40.54,0,0,0,5.87,2.41l1.82,12a1.92,1.92,0,0,0,.75,1.4,2.45,2.45,0,0,0,1.6.55H57.29a2.2,2.2,0,0,0,2.35-1.82,107.41,107.41,0,0,0,1.89-12.12,37.19,37.19,0,0,0,5.93-2.48l9,7a3.18,3.18,0,0,0,1.69.59q1.43,0,6.13-4.62a65.86,65.86,0,0,0,6.45-7,2.16,2.16,0,0,0,.59-1.5,2.51,2.51,0,0,0-.65-1.63q-4.69-5.74-7-9a41.57,41.57,0,0,0,2.54-5.93l12.06-1.82a2,2,0,0,0,1.3-.85,2.52,2.52,0,0,0,.52-1.5V43a2.46,2.46,0,0,0-.52-1.53ZM61.85,61.86a16.08,16.08,0,0,1-11.8,4.89A16.69,16.69,0,0,1,33.37,50.06,16.69,16.69,0,0,1,50.06,33.37,16.69,16.69,0,0,1,66.74,50.06a16.08,16.08,0,0,1-4.89,11.8Zm0,0"></path></svg></p>
-		<p><?php esc_html_e('Manage your Wordfence license, see alerts and automatic plugin updates, and import/export your settings.', 'wordfence'); ?></p>
-		<div class="wf-pointer-footer">
-			<ul class="wf-tour-pagination">
-				<li>&bullet;</li>
-				<li>&bullet;</li>
-				<li class="wf-active">&bullet;</li>
-				<li>&bullet;</li>
-			</ul>
-			<div id="wf-tour-previous"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-default"><?php esc_html_e('Previous', 'wordfence'); ?></a></div>
-			<div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Next', 'wordfence'); ?></a></div>
-		</div>
-		<div id="wf-tour-close"><a href="#"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
-	</div>
-</script>
-<script type="text/x-jquery-template" id="wfUpgradeTour4">
-	<div>
-		<h3><?php esc_html_e('Updated Navigation', 'wordfence'); ?></h3>
-		<p><?php echo wp_kses(__('The main navigation no longer includes an <strong>Options</strong> link. Options are now accessed via the <strong>Options</strong> link on each feature\'s main page. Live Traffic is now located in the Tools section, and blocking is found under the Firewall. Shortcuts to add a <strong>Blocking</strong> link back to the main navigation are available under Blocking options.', 'wordfence'), array('strong'=>array())); ?></p>
-		<div class="wf-pointer-footer">
-			<ul class="wf-tour-pagination">
-				<li>&bullet;</li>
-				<li>&bullet;</li>
-				<li>&bullet;</li>
-				<li class="wf-active">&bullet;</li>
-			</ul>
-			<div id="wf-tour-previous"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-default"><?php esc_html_e('Previous', 'wordfence'); ?></a></div>
-			<div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Got it', 'wordfence'); ?></a></div>
-		</div>
-		<div id="wf-tour-close"><a href="#"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
-	</div>
-</script>
+    <script type="text/x-jquery-template" id="wfUpgradeTour1">
+        <div>
+            <h3><?php printf(
+                /* translators: Wordfence version. */
+                    esc_html__('You have successfully updated to Wordfence %s', 'wordfence'), WORDFENCE_VERSION); ?></h3>
+            <p><?php esc_html_e('This update includes a number of significant interface changes. We\'d like to walk you through  some of them, but you can bypass the tour for a section at any time by closing the dialogs.', 'wordfence'); ?></p>
+            <p><?php echo wp_kses(__('We welcome your feedback and comments at <a href="mailto:feedback@wordfence.com">feedback@wordfence.com</a>. For a deeper dive on all of the changes, <a href="https://www.wordfence.com/blog/2018/01/introducing-wordfence-7/" target="_blank" rel="noopener noreferrer">click here<span class="screen-reader-text"> (opens in new tab)</span></a>.', 'wordfence'), array('a' => array('href' => array(), 'target' => array()), 'span' => array('class' => array()))); ?></p>
+            <div class="wf-pointer-footer">
+                <ul class="wf-tour-pagination">
+                    <li class="wf-active">&bullet;</li>
+                    <li>&bullet;</li>
+                    <li>&bullet;</li>
+                    <li>&bullet;</li>
+                </ul>
+                <div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"
+                                              role="button"><?php esc_html_e('Next', 'wordfence'); ?></a></div>
+            </div>
+            <div id="wf-tour-close"><a href="#" role="button"><i class="wf-fa wf-fa-times-circle"
+                                                                 aria-hidden="true"></i></a></div>
+        </div>
+    </script>
+    <script type="text/x-jquery-template" id="wfUpgradeTour2">
+        <div>
+            <h3><?php esc_html_e('Monitor Your Wordfence Protection', 'wordfence'); ?></h3>
+            <p><?php esc_html_e('Each feature contains a status percentage reminding you at a high level of what\'s enabled, disabled, or needing your attention. The Notifications section highlights actions you need to take.', 'wordfence'); ?></p>
+            <div class="wf-pointer-footer">
+                <ul class="wf-tour-pagination">
+                    <li>&bullet;</li>
+                    <li class="wf-active">&bullet;</li>
+                    <li>&bullet;</li>
+                    <li>&bullet;</li>
+                </ul>
+                <div id="wf-tour-previous"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-default"
+                                              role="button"><?php esc_html_e('Previous', 'wordfence'); ?></a></div>
+                <div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"
+                                              role="button"><?php esc_html_e('Next', 'wordfence'); ?></a></div>
+            </div>
+            <div id="wf-tour-close"><a href="#" role="button"><i class="wf-fa wf-fa-times-circle"
+                                                                 aria-hidden="true"></i></a></div>
+        </div>
+    </script>
+    <script type="text/x-jquery-template" id="wfUpgradeTour3">
+        <div>
+            <h3><?php esc_html_e('Global Wordfence Options', 'wordfence'); ?></h3>
+            <p class="wf-center">
+                <svg viewBox="0 0 100.11 100.11" class="wf-icon">
+                    <path d="M99.59,41.42a2.06,2.06,0,0,0-1.37-.82L86.3,38.78a39.34,39.34,0,0,0-2.67-6.39q1.17-1.63,3.52-4.6t3.32-4.33A2.52,2.52,0,0,0,91,22a2.1,2.1,0,0,0-.46-1.43Q88.18,17.2,79.78,9.45a2.52,2.52,0,0,0-1.63-.65,2.12,2.12,0,0,0-1.57.59l-9.25,7a40.09,40.09,0,0,0-5.87-2.41L59.64,2a1.92,1.92,0,0,0-.75-1.4A2.46,2.46,0,0,0,57.29,0H42.82a2.19,2.19,0,0,0-2.34,1.82,106,106,0,0,0-1.89,12.12,37.62,37.62,0,0,0-5.93,2.48l-9-7A2.78,2.78,0,0,0,22,8.8q-1.44,0-6.16,4.66a64.88,64.88,0,0,0-6.42,7A2.75,2.75,0,0,0,8.8,22a2.44,2.44,0,0,0,.65,1.56q4.37,5.28,7,9a32.38,32.38,0,0,0-2.54,6L1.76,40.34a2,2,0,0,0-1.24.85A2.5,2.5,0,0,0,0,42.69V57.16a2.44,2.44,0,0,0,.52,1.53,2,2,0,0,0,1.37.82l11.93,1.76a31.91,31.91,0,0,0,2.67,6.45Q15.31,69.35,13,72.31T9.65,76.65a2.54,2.54,0,0,0-.07,3q2.54,3.52,10.75,11a2.25,2.25,0,0,0,1.63.71,2.35,2.35,0,0,0,1.63-.59l9.19-7a40.54,40.54,0,0,0,5.87,2.41l1.82,12a1.92,1.92,0,0,0,.75,1.4,2.45,2.45,0,0,0,1.6.55H57.29a2.2,2.2,0,0,0,2.35-1.82,107.41,107.41,0,0,0,1.89-12.12,37.19,37.19,0,0,0,5.93-2.48l9,7a3.18,3.18,0,0,0,1.69.59q1.43,0,6.13-4.62a65.86,65.86,0,0,0,6.45-7,2.16,2.16,0,0,0,.59-1.5,2.51,2.51,0,0,0-.65-1.63q-4.69-5.74-7-9a41.57,41.57,0,0,0,2.54-5.93l12.06-1.82a2,2,0,0,0,1.3-.85,2.52,2.52,0,0,0,.52-1.5V43a2.46,2.46,0,0,0-.52-1.53ZM61.85,61.86a16.08,16.08,0,0,1-11.8,4.89A16.69,16.69,0,0,1,33.37,50.06,16.69,16.69,0,0,1,50.06,33.37,16.69,16.69,0,0,1,66.74,50.06a16.08,16.08,0,0,1-4.89,11.8Zm0,0"></path>
+                </svg>
+            </p>
+            <p><?php esc_html_e('Manage your Wordfence license, see alerts and automatic plugin updates, and import/export your settings.', 'wordfence'); ?></p>
+            <div class="wf-pointer-footer">
+                <ul class="wf-tour-pagination">
+                    <li>&bullet;</li>
+                    <li>&bullet;</li>
+                    <li class="wf-active">&bullet;</li>
+                    <li>&bullet;</li>
+                </ul>
+                <div id="wf-tour-previous"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-default"
+                                              role="button"><?php esc_html_e('Previous', 'wordfence'); ?></a></div>
+                <div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"
+                                              role="button"><?php esc_html_e('Next', 'wordfence'); ?></a></div>
+            </div>
+            <div id="wf-tour-close"><a href="#" role="button"><i class="wf-fa wf-fa-times-circle"
+                                                                 aria-hidden="true"></i></a></div>
+        </div>
+    </script>
+    <script type="text/x-jquery-template" id="wfUpgradeTour4">
+        <div>
+            <h3><?php esc_html_e('Updated Navigation', 'wordfence'); ?></h3>
+            <p><?php echo wp_kses(__('The main navigation no longer includes an <strong>Options</strong> link. Options are now accessed via the <strong>Options</strong> link on each feature\'s main page. Live Traffic is now located in the Tools section, and blocking is found under the Firewall. Shortcuts to add a <strong>Blocking</strong> link back to the main navigation are available under Blocking options.', 'wordfence'), array('strong' => array())); ?></p>
+            <div class="wf-pointer-footer">
+                <ul class="wf-tour-pagination">
+                    <li>&bullet;</li>
+                    <li>&bullet;</li>
+                    <li>&bullet;</li>
+                    <li class="wf-active">&bullet;</li>
+                </ul>
+                <div id="wf-tour-previous"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-default"
+                                              role="button"><?php esc_html_e('Previous', 'wordfence'); ?></a></div>
+                <div id="wf-tour-continue"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary"
+                                              role="button"><?php esc_html_e('Got it', 'wordfence'); ?></a></div>
+            </div>
+            <div id="wf-tour-close"><a href="#" role="button"><i class="wf-fa wf-fa-times-circle"
+                                                                 aria-hidden="true"></i></a></div>
+        </div>
+    </script>
 <?php endif; ?>
 <?php
 $hostSetting = false;

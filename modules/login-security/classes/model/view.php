@@ -58,8 +58,7 @@ class Model_View {
 		extract($this->data, EXTR_SKIP);
 		
 		ob_start();
-		/** @noinspection PhpIncludeInspection */
-		include $path;
+        include $path;
 		return ob_get_clean();
 	}
 	

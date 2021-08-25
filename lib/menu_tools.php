@@ -11,30 +11,30 @@ if (wfOnboardingController::shouldShowAttempt3()) {
 }
 else if (wfConfig::get('touppPromptNeeded')) {
 	echo wfView::create('gdpr/disabled-overlay')->render();
-	echo wfView::create('gdpr/banner')->render();
+    echo wfView::create('gdpr/banner')->render();
 }
 ?>
 <div class="wrap wordfence">
-	<div class="wf-container-fluid">
-		<?php
-		$tabsArray = array();
-		if (wfCredentialsController::allowLegacy2FA()) {
-			$tabsArray[] = array('twofactor', __('Two-Factor Authentication'));
-		}
-		$tabsArray[] = array('livetraffic', __('Live Traffic'));
-		$tabsArray[] = array('whois', __('Whois Lookup'));
-		$tabsArray[] = array('importexport', __('Import/Export Options'));
-		$tabsArray[] = array('diagnostics', __('Diagnostics'));
+    <div class="wf-container-fluid">
+        <?php
+        $tabsArray = array();
+        if (wfCredentialsController::allowLegacy2FA()) {
+            $tabsArray[] = array('twofactor', __('Two-Factor Authentication', 'wordfence'));
+        }
+        $tabsArray[] = array('livetraffic', __('Live Traffic', 'wordfence'));
+        $tabsArray[] = array('whois', __('Whois Lookup', 'wordfence'));
+        $tabsArray[] = array('importexport', __('Import/Export Options', 'wordfence'));
+        $tabsArray[] = array('diagnostics', __('Diagnostics', 'wordfence'));
 
-		$tabs = array();
-		foreach ($tabsArray as $tab) {
-			list($tabID, $tabLabel) = $tab;
-			$tabs[] = new wfTab($tabID,
-				network_admin_url('admin.php?page=WordfenceTools&subpage=' . rawurlencode($tabID)),
-				$tabLabel, $tabLabel, $subpage === $tabID);
-		}
+        $tabs = array();
+        foreach ($tabsArray as $tab) {
+            list($tabID, $tabLabel) = $tab;
+            $tabs[] = new wfTab($tabID,
+                network_admin_url('admin.php?page=WordfenceTools&subpage=' . rawurlencode($tabID)),
+                $tabLabel, $tabLabel, $subpage === $tabID);
+        }
 
-		echo wfView::create('common/page-fixed-tabbar', array(
+        echo wfView::create('common/page-fixed-tabbar', array(
 			'tabs' => $tabs,
 		))->render();
 		?>

@@ -6,7 +6,7 @@ class Controller_CAPTCHA {
 	const RESPONSE_MODE_ALLOW = 'allow';
 	const RESPONSE_MODE_REQUIRE_VERIFICATION = 'verify';
 	
-	const RECAPTCHA_ENDPOINT = 'https://recaptcha.net/recaptcha/api/siteverify';
+	const RECAPTCHA_ENDPOINT = 'https://www.google.com/recaptcha/api/siteverify';
 	
 	/**
 	 * Returns the singleton Controller_CAPTCHA.
@@ -117,14 +117,44 @@ class Controller_CAPTCHA {
 	 * Returns true if the score is >= the threshold to be considered a human request.
 	 * 
 	 * @param float $score
-	 * @return bool
-	 */
-	public function is_human($score) {
-		if ($this->test_mode()) {
-			return true;
-		}
-		
-		$threshold = $this->threshold();
-		return ($score >= $threshold || abs($score - $threshold) < 0.0001);
-	}
+     * @return bool
+     */
+    public function is_human($score)
+    {
+        if ($this->test_mode()) {
+            return true;
+        }
+
+        $threshold = $this->threshold();
+        return ($score >= $threshold || abs($score - $threshold) < 0.0001);
+    }
+
+    /**
+     * Check if the current request is an XML RPC request
+     * @return bool
+     */
+    private static function is_xml_rpc()
+    {
+        return defined('XMLRPC_REQUEST') && XMLRPC_REQUEST;
+    }
+
+    /**
+     * Check if captcha is required for the current request
+     * @return bool
+     */
+    public function is_captcha_required()
+    {
+        $required = $this->enabled() && !self::is_xml_rpc();
+        return apply_filters('wordfence_ls_require_captcha', $required);
+    }
+
+    /**
+     * Get the captcha token provided with the current request
+     * @param string $key if specified, override the default token parameter
+     * @return string|null the captcha token, if present, null otherwise
+     */
+    public function get_token($key = 'wfls-captcha-token')
+    {
+        return (isset($_POST[$key]) && is_string($_POST[$key]) && !empty($_POST[$key]) ? $_POST[$key] : null);
+    }
 }

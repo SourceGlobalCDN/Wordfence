@@ -164,46 +164,59 @@ class Controller_Permissions {
 	public function allow_2fa_self($role_name) {
 		$this->on_role_change();
 		if (is_multisite()) {
-			$this->_add_cap_multisite($role_name, self::CAP_ACTIVATE_2FA_SELF, $this->get_primary_sites());
+			return $this->_add_cap_multisite($role_name, self::CAP_ACTIVATE_2FA_SELF, $this->get_primary_sites());
 		}
 		else {
-			$this->_add_cap($role_name, self::CAP_ACTIVATE_2FA_SELF);
+            return $this->_add_cap($role_name, self::CAP_ACTIVATE_2FA_SELF);
 		}
 	}
 	
 	public function disallow_2fa_self($role_name) {
 		$this->on_role_change();
 		if (is_multisite()) {
-			$this->_remove_cap_multisite($role_name, self::CAP_ACTIVATE_2FA_SELF, $this->get_primary_sites());
+            return $this->_remove_cap_multisite($role_name, self::CAP_ACTIVATE_2FA_SELF, $this->get_primary_sites());
 		}
 		else {
 			if ($role_name == 'administrator') {
-				return;
+                return true;
 			}
-			$this->_remove_cap($role_name, self::CAP_ACTIVATE_2FA_SELF);
+            return $this->_remove_cap($role_name, self::CAP_ACTIVATE_2FA_SELF);
 		}
 	}
-	
-	public function can_manage_settings($user = false) {
-		if ($user === false) {
-			$user = wp_get_current_user();
-		}
-		
-		if (!($user instanceof \WP_User)) {
-			return false;
-		}
-		return $user->has_cap(self::CAP_MANAGE_SETTINGS);
-	}
-	
-	private function _wp_roles($site_id = null) {
-		require(ABSPATH . 'wp-includes/version.php'); /** @var string $wp_version */
-		if (version_compare($wp_version, '4.9', '>=')) {
-			return new \WP_Roles($site_id);
-		}
-		
-		//\WP_Roles in WP < 4.9 initializes based on the current blog ID
-		if (is_multisite()) {
-			switch_to_blog($site_id);
+
+    public function can_manage_settings($user = false)
+    {
+        if ($user === false) {
+            $user = wp_get_current_user();
+        }
+
+        if (!($user instanceof \WP_User)) {
+            return false;
+        }
+        return $user->has_cap(self::CAP_MANAGE_SETTINGS);
+    }
+
+    public function can_role_manage_settings($role)
+    {
+        if (is_string($role)) {
+            $role = get_role($role);
+        }
+        if ($role)
+            return $role->has_cap(self::CAP_MANAGE_SETTINGS);
+        return false;
+    }
+
+    private function _wp_roles($site_id = null)
+    {
+        require(ABSPATH . 'wp-includes/version.php');
+        /** @var string $wp_version */
+        if (version_compare($wp_version, '4.9', '>=')) {
+            return new \WP_Roles($site_id);
+        }
+
+        //\WP_Roles in WP < 4.9 initializes based on the current blog ID
+        if (is_multisite()) {
+            switch_to_blog($site_id);
 		}
 		$wp_roles = new \WP_Roles();
 		if (is_multisite()) {
@@ -212,15 +225,20 @@ class Controller_Permissions {
 		return $wp_roles;
 	}
 	
-	private function _add_cap_multisite($role_name, $cap, $blog_ids=null) {
-		global $wpdb;
-		$blogs = $blog_ids===null?$wpdb->get_col("SELECT `blog_id` FROM `{$wpdb->blogs}` WHERE `deleted` = 0"):$blog_ids;
-		foreach ($blogs as $id) {
-			$wp_roles = $this->_wp_roles($id);
-			switch_to_blog($id);
-			$this->_add_cap($role_name, $cap, $wp_roles);
-			restore_current_blog();
-		}
+	private function _add_cap_multisite($role_name, $cap, $blog_ids=null)
+    {
+        if ($role_name === 'super-admin')
+            return true;
+        global $wpdb;
+        $blogs = $blog_ids === null ? $wpdb->get_col("SELECT `blog_id` FROM `{$wpdb->blogs}` WHERE `deleted` = 0") : $blog_ids;
+        $added = false;
+        foreach ($blogs as $id) {
+            $wp_roles = $this->_wp_roles($id);
+            switch_to_blog($id);
+            $added = $this->_add_cap($role_name, $cap, $wp_roles) || $added;
+            restore_current_blog();
+        }
+        return $added;
 	}
 	
 	private function _add_cap($role_name, $cap, $wp_roles = null) {
@@ -234,25 +252,51 @@ class Controller_Permissions {
 		return true;
 	}
 	
-	private function _remove_cap_multisite($role_name, $cap, $blog_ids=null) {
-		global $wpdb;
-		$blogs = $blog_ids===null?$wpdb->get_col("SELECT `blog_id` FROM `{$wpdb->blogs}` WHERE `deleted` = 0"):$blog_ids;
-		foreach ($blogs as $id) {
-			$wp_roles = $this->_wp_roles($id);
-			switch_to_blog($id);
-			$this->_remove_cap($role_name, $cap, $wp_roles);
-			restore_current_blog();
-		}
+	private function _remove_cap_multisite($role_name, $cap, $blog_ids=null)
+    {
+        if ($role_name === 'super-admin')
+            return false;
+        global $wpdb;
+        $blogs = $blog_ids === null ? $wpdb->get_col("SELECT `blog_id` FROM `{$wpdb->blogs}` WHERE `deleted` = 0") : $blog_ids;
+        $removed = false;
+        foreach ($blogs as $id) {
+            $wp_roles = $this->_wp_roles($id);
+            switch_to_blog($id);
+            $removed = $this->_remove_cap($role_name, $cap, $wp_roles) || $removed;
+            restore_current_blog();
+        }
+        return $removed;
 	}
-	
-	private function _remove_cap($role_name, $cap, $wp_roles = null) {
-		if ($wp_roles === null) { $wp_roles = $this->_wp_roles(); }
-		$role = $wp_roles->get_role($role_name);
-		if ($role === null) {
-			return false;
-		}
-		
-		$wp_roles->remove_cap($role_name, $cap);
-		return true;
-	}
+
+    private function _remove_cap($role_name, $cap, $wp_roles = null)
+    {
+        if ($wp_roles === null) {
+            $wp_roles = $this->_wp_roles();
+        }
+        $role = $wp_roles->get_role($role_name);
+        if ($role === null) {
+            return false;
+        }
+
+        $wp_roles->remove_cap($role_name, $cap);
+        return true;
+    }
+
+    public function get_all_roles($user)
+    {
+        if (is_multisite()) {
+            $roles = array();
+            if (is_super_admin($user->ID))
+                $roles[] = 'super-admin';
+            foreach (get_blogs_of_user($user->ID) as $id => $blog) {
+                switch_to_blog($id);
+                $blogUser = new \WP_User($user->ID);
+                $roles = array_merge($roles, $blogUser->roles);
+                restore_current_blog();
+            }
+            return array_unique($roles);
+        } else {
+            return $user->roles;
+        }
+    }
 }

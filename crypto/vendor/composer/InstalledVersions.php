@@ -5,10 +5,6 @@ namespace Composer;
 use Composer\Semver\VersionParser;
 
 
-
-
-
-
 class InstalledVersions
 {
 private static $installed = array (

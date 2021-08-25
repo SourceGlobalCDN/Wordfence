@@ -18,52 +18,70 @@ if (!isset($collapseable)) {
 		<div class="wf-block<?php if (!$collapseable) { echo ' wf-always-active'; } else { echo (wfPersistenceController::shared()->isActive($stateKey) ? ' wf-active' : ''); } ?>" data-persistence-key="<?php echo esc_attr($stateKey); ?>">
 			<div class="wf-block-header">
 				<div class="wf-block-header-content">
-					<div class="wf-block-title">
-						<strong><?php esc_html_e('Import/Export Options', 'wordfence'); ?></strong>
-					</div>
-					<?php if ($collapseable): ?><div class="wf-block-header-action"><div class="wf-block-header-action-disclosure" role="checkbox" aria-checked="<?php echo (wfPersistenceController::shared()->isActive($stateKey) ? 'true' : 'false'); ?>" tabindex="0"></div></div><?php endif; ?>
-				</div>
-			</div>
-			<div class="wf-block-content">
-				<ul class="wf-block-list">
-					<li>
-						<ul id="wf-option-exportOptions" class="wf-flex-horizontal wf-flex-vertical-xs wf-flex-full-width wf-add-top wf-add-bottom">
-							<li><?php esc_html_e('Export this site\'s Wordfence options for import on another site', 'wordfence'); ?> <a href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_DASHBOARD_OPTION_EXPORT); ?>"  target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i></a></li>
-							<li class="wf-right wf-left-xs wf-padding-add-top-xs-small">
-								<a href="#" class="wf-btn wf-btn-primary wf-btn-callout-subtle" id="wf-export-options"><?php echo wp_kses(__('Export<span class="wf-hidden-xs"> Wordfence</span> Options', 'wordfence'), array('span'=>array('class'=>array()))); ?></a>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<ul id="wf-option-importOptions" class="wf-flex-vertical wf-flex-full-width wf-add-bottom">
-							<li>
-								<ul class="wf-option wf-option-text">
-									<li class="wf-option-content">
-										<ul>
-											<li class="wf-option-title">
-												<?php esc_html_e('Import Wordfence options from another site using a token', 'wordfence'); ?> <a href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_DASHBOARD_OPTION_IMPORT); ?>"  target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i></a>
-											</li>
-											<li class="wf-option-text wf-option-full-width wf-no-right">
-												<input type="text" value="" id="wf-import-token">
-											</li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-							<li>
-								<ul class="wf-flex-horizontal wf-flex-full-width">
-									<li class="wf-right wf-left-xs" id="wf-license-controls">
-										<a href="#" class="wf-btn wf-btn-primary wf-btn-callout-subtle wf-disabled" id="wf-import-options"><?php echo wp_kses(__('Import<span class="wf-hidden-xs"> Wordfence</span> Options', 'wordfence'), array('span'=>array('class'=>array()))); ?></a>
-									</li>
-								</ul>
-							</li>
-						</ul>
-					</li>
-				</ul>
-				<script type="application/javascript">
-					(function($) {
-						$(function() {
-							$('#wf-export-options').on('click', function(e) {
+                    <div class="wf-block-title">
+                        <strong><?php esc_html_e('Import/Export Options', 'wordfence'); ?></strong>
+                    </div>
+                    <?php if ($collapseable): ?>
+                        <div class="wf-block-header-action">
+                        <div class="wf-block-header-action-disclosure" role="checkbox"
+                             aria-checked="<?php echo(wfPersistenceController::shared()->isActive($stateKey) ? 'true' : 'false'); ?>"
+                             tabindex="0"></div></div><?php endif; ?>
+                </div>
+            </div>
+            <div class="wf-block-content">
+                <ul class="wf-block-list">
+                    <li>
+                        <ul id="wf-option-exportOptions"
+                            class="wf-flex-horizontal wf-flex-vertical-xs wf-flex-full-width wf-add-top wf-add-bottom">
+                            <li><?php esc_html_e('Export this site\'s Wordfence options for import on another site', 'wordfence'); ?>
+                                <a href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_DASHBOARD_OPTION_EXPORT); ?>"
+                                   target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i
+                                            class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i><span
+                                            class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                            </li>
+                            <li class="wf-right wf-left-xs wf-padding-add-top-xs-small">
+                                <a href="#" class="wf-btn wf-btn-primary wf-btn-callout-subtle" id="wf-export-options"
+                                   role="button"><?php echo wp_kses(__('Export<span class="wf-hidden-xs"> Wordfence</span> Options', 'wordfence'), array('span' => array('class' => array()))); ?></a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul id="wf-option-importOptions" class="wf-flex-vertical wf-flex-full-width wf-add-bottom">
+                            <li>
+                                <ul class="wf-option wf-option-text">
+                                    <li class="wf-option-content">
+                                        <ul>
+                                            <li class="wf-option-title">
+                                                <?php esc_html_e('Import Wordfence options from another site using a token', 'wordfence'); ?>
+                                                <a href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_DASHBOARD_OPTION_IMPORT); ?>"
+                                                   target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i
+                                                            class="wf-fa wf-fa-question-circle-o"
+                                                            aria-hidden="true"></i><span
+                                                            class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                                            </li>
+                                            <li class="wf-option-text wf-option-full-width wf-no-right">
+                                                <input type="text" value="" id="wf-import-token">
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <ul class="wf-flex-horizontal wf-flex-full-width">
+                                    <li class="wf-right wf-left-xs" id="wf-license-controls">
+                                        <a href="#" class="wf-btn wf-btn-primary wf-btn-callout-subtle wf-disabled"
+                                           id="wf-import-options"
+                                           role="button"><?php echo wp_kses(__('Import<span class="wf-hidden-xs"> Wordfence</span> Options', 'wordfence'), array('span' => array('class' => array()))); ?></a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <script type="application/javascript">
+                    (function ($) {
+                        $(function () {
+                            $('#wf-export-options').on('click', function (e) {
 								e.preventDefault();
 								e.stopPropagation();
 

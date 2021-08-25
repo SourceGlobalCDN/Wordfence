@@ -35,10 +35,18 @@ if (isset($backLabel) && !isset($backLabelHTML)) {
 				</ul>
 			</li>
 			<?php if (!isset($suppressControls) || !$suppressControls): ?>
-				<li class="wf-right">
-					<a id="wf-restore-defaults" class="wf-btn wf-btn-default wf-btn-callout-subtle" href="#" data-restore-defaults-section="<?php echo esc_attr($restoreDefaultsSection); ?>"><?php echo wp_kses(__('<span class="wf-hidden-xs">Restore </span>Defaults', 'wordfence'), array('span'=>array('class'=>array()))); ?></a>&nbsp;&nbsp;<a id="wf-cancel-changes" class="wf-btn wf-btn-default wf-btn-callout-subtle wf-disabled" href="#"><?php echo wp_kses(__('Cancel<span class="wf-hidden-xs wf-hidden-sm"> Changes</span>', 'wordfence'), array('span'=>array('class'=>array()))); ?></a>&nbsp;&nbsp;<a id="wf-save-changes" class="wf-btn wf-btn-primary wf-btn-callout-subtle wf-disabled" href="#"><?php echo wp_kses(__('Save<span class="wf-hidden-xs wf-hidden-sm"> Changes</span>', 'wordfence'), array('span'=>array('class'=>array()))); ?></a>
-				</li>
-			<?php endif; ?>
+                <li class="wf-right">
+                    <a id="wf-restore-defaults" class="wf-btn wf-btn-default wf-btn-callout-subtle" href="#"
+                       data-restore-defaults-section="<?php echo esc_attr($restoreDefaultsSection); ?>"
+                       role="button"><?php echo wp_kses(__('<span class="wf-hidden-xs">Restore </span>Defaults', 'wordfence'), array('span' => array('class' => array()))); ?></a>&nbsp;&nbsp;<a
+                            id="wf-cancel-changes" class="wf-btn wf-btn-default wf-btn-callout-subtle wf-disabled"
+                            href="#"
+                            role="button"><?php echo wp_kses(__('Cancel<span class="wf-hidden-xs wf-hidden-sm"> Changes</span>', 'wordfence'), array('span' => array('class' => array()))); ?></a>&nbsp;&nbsp;<a
+                            id="wf-save-changes" class="wf-btn wf-btn-primary wf-btn-callout-subtle wf-disabled"
+                            href="#"
+                            role="button"><?php echo wp_kses(__('Save<span class="wf-hidden-xs wf-hidden-sm"> Changes</span>', 'wordfence'), array('span' => array('class' => array()))); ?></a>
+                </li>
+            <?php endif; ?>
 		</ul>
 		<ul class="wf-block-left-center-right wf-hidden-sm wf-hidden-md wf-hidden-lg">
 			<li class="wf-left">
@@ -58,10 +66,11 @@ if (isset($backLabel) && !isset($backLabelHTML)) {
 				</select>
 			</li>
 			<?php if (!isset($suppressControls) || !$suppressControls): ?>
-				<li class="wf-right">
-					<a id="wf-mobile-controls" href="#" data-restore-defaults-section="<?php echo esc_attr($restoreDefaultsSection); ?>">&bullet;&bullet;&bullet;</a>
-				</li>
-			<?php endif; ?>
+                <li class="wf-right">
+                    <a id="wf-mobile-controls" href="#"
+                       data-restore-defaults-section="<?php echo esc_attr($restoreDefaultsSection); ?>" role="button">&bullet;&bullet;&bullet;</a>
+                </li>
+            <?php endif; ?>
 		</ul>
 	</div>
 </div>

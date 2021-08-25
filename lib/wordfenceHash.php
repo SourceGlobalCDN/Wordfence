@@ -530,10 +530,10 @@ class wordfenceHash {
 									sprintf(/* translators: File path. */ __('Modified plugin file: %s', 'wordfence'), $file),
 									sprintf(
 										/* translators: 1. Plugin name. 2. Plugin version. 3. Support URL. */
-										__('This file belongs to plugin "%1$s" version "%2$s" and has been modified from the file that is distributed by WordPress.org for this version. Please use the link to see how the file has changed. If you have modified this file yourself, you can safely ignore this warning. If you see a lot of changed files in a plugin that have been made by the author, then try uninstalling and reinstalling the plugin to force an upgrade. Doing this is a workaround for plugin authors who don\'t manage their code correctly. <a href="%3$s" target="_blank" rel="noopener noreferrer">Learn More</a>', 'wordfence'),
-										$itemName,
-										$itemVersion,
-										wfSupportController::esc_supportURL(wfSupportController::ITEM_SCAN_RESULT_MODIFIED_PLUGIN)
+										__('This file belongs to plugin "%1$s" version "%2$s" and has been modified from the file that is distributed by WordPress.org for this version. Please use the link to see how the file has changed. If you have modified this file yourself, you can safely ignore this warning. If you see a lot of changed files in a plugin that have been made by the author, then try uninstalling and reinstalling the plugin to force an upgrade. Doing this is a workaround for plugin authors who don\'t manage their code correctly. <a href="%3$s" target="_blank" rel="noopener noreferrer">Learn More<span class="screen-reader-text"> (' . esc_html__('opens in new tab', 'wordfence') . ')</span></a>', 'wordfence'),
+                                        $itemName,
+                                        $itemVersion,
+                                        wfSupportController::esc_supportURL(wfSupportController::ITEM_SCAN_RESULT_MODIFIED_PLUGIN)
 									),
 									array(
 										'file' => $file,
@@ -576,10 +576,10 @@ class wordfenceHash {
 									sprintf(/* translators: File path. */ __('Modified theme file: %s', 'wordfence'), $file),
 									sprintf(
 										/* translators: 1. Plugin name. 2. Plugin version. 3. Support URL. */
-										__('This file belongs to theme "%1$s" version "%2$s" and has been modified from the original distribution. It is common for site owners to modify their theme files, so if you have modified this file yourself you can safely ignore this warning. <a href="%3$s" target="_blank" rel="noopener noreferrer">Learn More</a>', 'wordfence'),
-										$itemName,
-										$itemVersion,
-										wfSupportController::esc_supportURL(wfSupportController::ITEM_SCAN_RESULT_MODIFIED_THEME)
+                                        __('This file belongs to theme "%1$s" version "%2$s" and has been modified from the original distribution. It is common for site owners to modify their theme files, so if you have modified this file yourself you can safely ignore this warning. <a href="%3$s" target="_blank" rel="noopener noreferrer">Learn More<span class="screen-reader-text"> (' . esc_html__('opens in new tab', 'wordfence') . ')</span></a>', 'wordfence'),
+                                        $itemName,
+                                        $itemVersion,
+                                        wfSupportController::esc_supportURL(wfSupportController::ITEM_SCAN_RESULT_MODIFIED_THEME)
 									),
 									array(
 										'file' => $file,
@@ -642,19 +642,19 @@ class wordfenceHash {
 							}
 							else {
 								$added = $this->engine->addIssue(
-									'knownfile',
-									wfIssues::SEVERITY_HIGH,
-									'coreUnknown' . $file,
-									'coreUnknown' . $file . $md5,
-									sprintf(/* translators: File path. */ __('Unknown file in WordPress core: %s', 'wordfence'), $file),
-									sprintf(/* translators: Support URL. */ __('This file is in a WordPress core location but is not distributed with this version of WordPress. This scan often includes files left over from a previous WordPress version, but it may also find files added by another plugin, files added by your host, or malicious files added by an attacker. <a href="%s" target="_blank" rel="noopener noreferrer">Learn More</a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_SCAN_RESULT_UNKNOWN_FILE_CORE)),
-									array(
-										'file' => $file,
-										'cType' => 'core',
-										'canDiff' => false,
-										'canFix' => false,
-										'canDelete' => true,
-									)
+                                    'knownfile',
+                                    wfIssues::SEVERITY_HIGH,
+                                    'coreUnknown' . $file,
+                                    'coreUnknown' . $file . $md5,
+                                    sprintf(/* translators: File path. */ __('Unknown file in WordPress core: %s', 'wordfence'), $file),
+                                    sprintf(/* translators: Support URL. */ __('This file is in a WordPress core location but is not distributed with this version of WordPress. This scan often includes files left over from a previous WordPress version, but it may also find files added by another plugin, files added by your host, or malicious files added by an attacker. <a href="%s" target="_blank" rel="noopener noreferrer">Learn More<span class="screen-reader-text"> (' . esc_html__('opens in new tab', 'wordfence') . ')</span></a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_SCAN_RESULT_UNKNOWN_FILE_CORE)),
+                                    array(
+                                        'file' => $file,
+                                        'cType' => 'core',
+                                        'canDiff' => false,
+                                        'canFix' => false,
+                                        'canDelete' => true,
+                                    )
 								);
 							}
 						}
@@ -755,14 +755,14 @@ class wordfenceHash {
 			$i = $c['issue'];
 			$haveIssuesType = $i['data']['haveIssues'];
 			$added = $this->engine->addIssue(
-				$i['type'],
-				$i['severity'],
-				$i['ignoreP'],
-				$i['ignoreC'],
-				$i['shortMsg'] . ($count > 1 ? ' ' . sprintf(/* translators: Number of scan results. */ __('(+ %d more)', 'wordfence'), $count - 1) : ''),
-				$i['longMsg'] . ($count > 1 ? ' ' . ($count > 2 ? sprintf(/* translators: Number of files. */ __('%d more similar files were found.', 'wordfence'), $count - 1) : __('1 more similar file was found.', 'wordfence')) : '') . (isset($i['data']['learnMore']) ? ' ' . sprintf(__('<a href="%s" target="_blank" rel="noopener noreferrer">Learn More</a>', 'wordfence'), esc_attr($i['data']['learnMore'])) : ''),
-				$i['data'],
-				true //Prevent ignoreP and ignoreC from being hashed again
+                $i['type'],
+                $i['severity'],
+                $i['ignoreP'],
+                $i['ignoreC'],
+                $i['shortMsg'] . ($count > 1 ? ' ' . sprintf(/* translators: Number of scan results. */ __('(+ %d more)', 'wordfence'), $count - 1) : ''),
+                $i['longMsg'] . ($count > 1 ? ' ' . ($count > 2 ? sprintf(/* translators: Number of files. */ __('%d more similar files were found.', 'wordfence'), $count - 1) : __('1 more similar file was found.', 'wordfence')) : '') . (isset($i['data']['learnMore']) ? ' ' . sprintf(__('<a href="%s" target="_blank" rel="noopener noreferrer">Learn More<span class="screen-reader-text"> (' . esc_html__('opens in new tab', 'wordfence') . ')</span></a>', 'wordfence'), esc_attr($i['data']['learnMore'])) : ''),
+                $i['data'],
+                true //Prevent ignoreP and ignoreC from being hashed again
 			);
 			if ($added == wfIssues::ISSUE_ADDED || $added == wfIssues::ISSUE_UPDATED) { $this->haveIssues[$haveIssuesType] = wfIssues::STATUS_PROBLEM; }
 			else if ($this->haveIssues[$haveIssuesType] != wfIssues::STATUS_PROBLEM && ($added == wfIssues::ISSUE_IGNOREP || $added == wfIssues::ISSUE_IGNOREC)) { $this->haveIssues[$haveIssuesType] = wfIssues::STATUS_IGNORED; }

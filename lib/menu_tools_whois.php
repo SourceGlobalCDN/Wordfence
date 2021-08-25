@@ -6,40 +6,41 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
 		$(function() {
 			document.title = "<?php esc_attr_e('Whois Lookup', 'wordfence'); ?>" + " \u2039 " + WFAD.basePageName;
 		});
-	})(jQuery);
+    })(jQuery);
 </script>
 
 <div class="wordfenceModeElem" id="wordfenceMode_whois"></div>
 
 <div id="wf-tools-whois">
-	<div class="wf-section-title">
-		<h2><?php esc_html_e('Whois Lookup', 'wordfence') ?></h2>
-		<span><?php echo wp_kses(sprintf(
-				/* translators: URL to support page. */
-				__('<a href="%s" target="_blank" rel="noopener noreferrer" class="wf-help-link">Learn more<span class="wf-hidden-xs"> about Whois Lookup</span></a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_TOOLS_WHOIS_LOOKUP)), array('a'=>array('href'=>array(), 'target'=>array(), 'rel'=>array(), 'class'=>array()), 'span'=>array('class'=>array()))); ?>
+    <div class="wf-section-title">
+        <h2><?php esc_html_e('Whois Lookup', 'wordfence') ?></h2>
+        <span><?php echo wp_kses(sprintf(
+            /* translators: URL to support page. */
+                __('<a href="%s" target="_blank" rel="noopener noreferrer" class="wf-help-link">Learn more<span class="wf-hidden-xs"> about Whois Lookup</span><span class="screen-reader-text"> (opens in new tab)</span></a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_TOOLS_WHOIS_LOOKUP)), array('a' => array('href' => array(), 'target' => array(), 'rel' => array(), 'class' => array()), 'span' => array('class' => array()))); ?>
 			<i class="wf-fa wf-fa-external-link" aria-hidden="true"></i></span>
-	</div>
+    </div>
 
-	<p><?php esc_html_e("The whois service gives you a way to look up who owns an IP address or domain name that is visiting your website or is engaging in malicious activity on your website.", 'wordfence') ?></p>
+    <p><?php esc_html_e("The whois service gives you a way to look up who owns an IP address or domain name that is visiting your website or is engaging in malicious activity on your website.", 'wordfence') ?></p>
 
-	<div>
+    <div>
 
-		<div class="wf-form wf-flex-row">
-			<div class="wf-flex-row-1">
-				<input type="text" class="wf-form-control" name="whois" id="wfwhois" value="" maxlength="255" onkeydown="if(event.keyCode == 13){ whois(jQuery('#wfwhois').val()) }"/>
+        <div class="wf-form wf-flex-row">
+            <div class="wf-flex-row-1">
+                <input type="text" class="wf-form-control" name="whois" id="wfwhois" value="" maxlength="255"
+                       onkeydown="if(event.keyCode == 13){ whois(jQuery('#wfwhois').val()) }"/>
 			</div>
 			<div class="wf-flex-row-0 wf-padding-add-left">
 				<input type="button" name="whoisbutton" id="whoisbutton" class="wf-btn wf-btn-primary" value="Look up IP or Domain" onclick="whois(jQuery('#wfwhois').val());">
 			</div>
 		</div>
 		<?php if (isset($_GET['wfnetworkblock']) && $_GET['wfnetworkblock']) { ?>
-			<h2><?php esc_html_e('How to block a network', 'wordfence') ?></h2>
-			<p style="width: 600px;">
-				<?php echo wp_kses(sprintf(
-				/* translators: Hostname or IP address. */
-						__("You've chosen to block the network that <span style=\"color: #F00;\">%s</span> is part of. We've marked the networks we found that this IP address belongs to in red below. Make sure you read all the WHOIS information so that you see all networks this IP belongs to. We recommend blocking the network with the lowest number of addresses. You may find this is listed at the end as part of the 'rWHOIS' query which contacts the local WHOIS server that is run by the network administrator."), esc_html($_GET['whoisval'])), array('span'=>array('style'=>array()))); ?>
-			</p>
-		<?php } ?>
+            <h2><?php esc_html_e('How to block a network', 'wordfence') ?></h2>
+            <p style="width: 600px;">
+                <?php echo wp_kses(sprintf(
+                /* translators: Hostname or IP address. */
+                    __("You've chosen to block the network that <span style=\"color: #F00;\">%s</span> is part of. We've marked the networks we found that this IP address belongs to in red below. Make sure you read all the WHOIS information so that you see all networks this IP belongs to. We recommend blocking the network with the lowest number of addresses. You may find this is listed at the end as part of the 'rWHOIS' query which contacts the local WHOIS server that is run by the network administrator.", 'wordfence'), esc_html($_GET['whoisval'])), array('span' => array('style' => array()))); ?>
+            </p>
+        <?php } ?>
 		<div id="wfrawhtml" class="wf-padding-add-top"></div>
 	</div>
 	<script type="text/x-jquery-template" id="wfBlockedRangesTmpl">

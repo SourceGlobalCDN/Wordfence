@@ -9,23 +9,36 @@
 	<?php if (isset($wantsLiveActivity) && $wantsLiveActivity): ?><div class="wf-col-xs-12"><?php include('live_activity.php'); ?></div><?php endif; ?>
 	<div class="wf-col-xs-12">
 		<?php if (isset($options)): ?>
-			<h2 class="wf-hidden-xs nav-tab-wrapper<?php if (count($options) <= 1 || (isset($hideBar) && $hideBar)) { echo ' wf-hidden'; } ?>" id="wordfenceTopTabs">
-				<?php foreach ($options as $info): ?>
-					<a class="nav-tab" id="<?php echo esc_html($info['a']); ?>-tab" href="#top#<?php echo esc_html($info['a']); ?>"><?php echo esc_html($info['t']); ?></a>
-				<?php endforeach; ?>
-			</h2>
-			<ul class="wf-nav wf-nav-pills wf-visible-xs">
-				<li class="wf-navbar-brand"><?php esc_html_e('Go:', 'wordfence') ?></li>
-				<li class="wf-dropdown">
-					<a href="#" id="wordfenceTopTabsMobile" class="wf-dropdown-toggle wf-mobile-dropdown" data-toggle="wf-dropdown"><span id="wordfenceTopTabsMobileTitle"><?php esc_html_e('Go to', 'wordfence') ?></span> <span class="wf-caret"></span></a>
-					<ul class="wf-dropdown-menu">
-						<?php foreach ($options as $info): ?>
-							<li><a id="<?php echo esc_html($info['a']); ?>-tab-mobile" href="#top#<?php echo esc_html($info['a']); ?>"><?php echo esc_html($info['t']); ?></a></li>
-						<?php endforeach; ?>
-					</ul>
-				</li>
-			</ul>
-		<?php endif; ?>
-		<?php if (isset($helpLink)): ?><div class="wordfenceHelpLink"><a href="<?php echo $helpLink; ?>" target="_blank" rel="noopener noreferrer" class="wfhelp"></a><a href="<?php echo $helpLink; ?>" target="_blank" rel="noopener noreferrer"><?php echo $helpLabel; ?></a></div><?php endif; ?>
-	</div>
+            <h2 class="wf-hidden-xs nav-tab-wrapper<?php if (count($options) <= 1 || (isset($hideBar) && $hideBar)) {
+                echo ' wf-hidden';
+            } ?>" id="wordfenceTopTabs">
+                <?php foreach ($options as $info): ?>
+                    <a class="nav-tab" id="<?php echo esc_html($info['a']); ?>-tab"
+                       href="#top#<?php echo esc_html($info['a']); ?>"><?php echo esc_html($info['t']); ?></a>
+                <?php endforeach; ?>
+            </h2>
+            <ul class="wf-nav wf-nav-pills wf-visible-xs">
+                <li class="wf-navbar-brand"><?php esc_html_e('Go:', 'wordfence') ?></li>
+                <li class="wf-dropdown">
+                    <a href="#" id="wordfenceTopTabsMobile" class="wf-dropdown-toggle wf-mobile-dropdown"
+                       data-toggle="wf-dropdown" role="button"><span
+                                id="wordfenceTopTabsMobileTitle"><?php esc_html_e('Go to', 'wordfence') ?></span> <span
+                                class="wf-caret"></span></a>
+                    <ul class="wf-dropdown-menu">
+                        <?php foreach ($options as $info): ?>
+                            <li><a id="<?php echo esc_html($info['a']); ?>-tab-mobile"
+                                   href="#top#<?php echo esc_html($info['a']); ?>"><?php echo esc_html($info['t']); ?></a>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </li>
+            </ul>
+        <?php endif; ?>
+        <?php if (isset($helpLink)): ?>
+            <div class="wordfenceHelpLink"><a href="<?php echo $helpLink; ?>" target="_blank" rel="noopener noreferrer"
+                                              class="wfhelp"></a><a href="<?php echo $helpLink; ?>" target="_blank"
+                                                                    rel="noopener noreferrer"><?php echo $helpLabel; ?>
+                <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+            </div><?php endif; ?>
+    </div>
 </div>

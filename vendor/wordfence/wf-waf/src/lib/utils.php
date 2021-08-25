@@ -1077,61 +1077,72 @@ class wfWAFUtils {
 	 * @param $file
 	 * @return array|bool
 	 */
-	public static function extractCredentialsWPConfig($file) {
-		$configContents = file_get_contents($file);
-		$tokens = token_get_all($configContents);
-		$tokens = array_values(array_filter($tokens, 'wfWAFUtils::_removeUnneededTokens'));
+	public static function extractCredentialsWPConfig($file, &$return = array())
+    {
+        $configContents = file_get_contents($file);
+        $tokens = token_get_all($configContents);
+        $tokens = array_values(array_filter($tokens, 'wfWAFUtils::_removeUnneededTokens'));
 
-		$parsedConstants = array();
-		$parsedVariables = array();
-		for ($i = 0; $i < count($tokens); $i++) {
-			$token = $tokens[$i];
-			if (is_array($token)) {
-				if (token_name($token[0]) === 'T_STRING' && strtolower($token[1]) === 'define') {
+        $parsedConstants = array();
+        $parsedVariables = array();
+        for ($i = 0; $i < count($tokens); $i++) {
+            $token = $tokens[$i];
+            if (is_array($token)) {
+                if (token_name($token[0]) === 'T_STRING' && strtolower($token[1]) === 'define') {
 					$startParenToken = $tokens[$i + 1];
 					$constantNameToken = $tokens[$i + 2];
 					$commaToken = $tokens[$i + 3];
 					$constantValueToken = $tokens[$i + 4];
 					$endParenToken = $tokens[$i + 5];
 					if (
-						!is_array($startParenToken) && $startParenToken === '(' &&
-						is_array($constantNameToken) && token_name($constantNameToken[0]) === 'T_CONSTANT_ENCAPSED_STRING' &&
-						!is_array($commaToken) && $commaToken === ',' &&
-						is_array($constantValueToken) && token_name($constantValueToken[0]) === 'T_CONSTANT_ENCAPSED_STRING' &&
-						!is_array($endParenToken) && $endParenToken === ')'
+                        !is_array($startParenToken) && $startParenToken === '(' &&
+                        is_array($constantNameToken) && token_name($constantNameToken[0]) === 'T_CONSTANT_ENCAPSED_STRING' &&
+                        !is_array($commaToken) && $commaToken === ',' &&
+                        is_array($constantValueToken) && in_array(token_name($constantValueToken[0]), array('T_CONSTANT_ENCAPSED_STRING', 'T_STRING')) &&
+                        !is_array($endParenToken) && $endParenToken === ')'
 					) {
-						$parsedConstants[self::substr($constantNameToken[1], 1, -1)] = self::substr($constantValueToken[1], 1, -1);
-					}
+                        if (token_name($constantValueToken[0]) === 'T_STRING') {
+                            $value = constant($constantValueToken[1]);
+                        } else {
+                            $value = self::substr($constantValueToken[1], 1, -1);
+                        }
+                        $parsedConstants[self::substr($constantNameToken[1], 1, -1)] = $value;
+                    }
 				}
 				if (token_name($token[0]) === 'T_VARIABLE') {
 					$assignmentToken = $tokens[$i + 1];
 					$variableValueToken = $tokens[$i + 2];
-					if (
-						!is_array($assignmentToken) && $assignmentToken === '=' &&
-						is_array($variableValueToken) && token_name($variableValueToken[0]) === 'T_CONSTANT_ENCAPSED_STRING'
-					) {
-						$parsedVariables[$token[1]] = self::substr($variableValueToken[1], 1, -1);
-					}
-				}
-			}
-		}
+                    if (
+                        !is_array($assignmentToken) && $assignmentToken === '=' &&
+                        is_array($variableValueToken) && token_name($variableValueToken[0]) === 'T_CONSTANT_ENCAPSED_STRING'
+                    ) {
+                        $parsedVariables[$token[1]] = self::substr($variableValueToken[1], 1, -1);
+                    }
+                }
+            }
+        }
 
-		$constants = array(
-			'user'      => 'DB_USER',
-			'pass'      => 'DB_PASSWORD',
-			'database'  => 'DB_NAME',
-			'host'      => 'DB_HOST',
-			'charset'   => 'DB_CHARSET',
-			'collation' => 'DB_COLLATE',
-		);
-		$return = array();
-		foreach ($constants as $key => $constant) {
-			if (array_key_exists($constant, $parsedConstants)) {
-				$return[$key] = $parsedConstants[$constant];
-			} else {
-				return false;
-			}
-		}
+        $optionalConstants = array(
+            'flags' => 'MYSQL_CLIENT_FLAGS'
+        );
+        $constants = array(
+            'user' => 'DB_USER',
+            'pass' => 'DB_PASSWORD',
+            'database' => 'DB_NAME',
+            'host' => 'DB_HOST',
+            'charset' => 'DB_CHARSET',
+            'collation' => 'DB_COLLATE'
+        );
+        $constants += $optionalConstants;
+        foreach ($constants as $key => $constant) {
+            if (array_key_exists($key, $return)) {
+                continue;
+            } else if (array_key_exists($constant, $parsedConstants)) {
+                $return[$key] = $parsedConstants[$constant];
+            } else if (!array_key_exists($key, $optionalConstants)) {
+                return ($return = false);
+            }
+        }
 
 		/**
 		 * @see \wpdb::parse_db_host
@@ -1152,23 +1163,25 @@ class wfWAFUtils {
 		$matches = array();
 		$result = preg_match($pattern, $return['host'], $matches);
 
-		if (1 !== $result) {
-			return false;
-		}
+        if (1 !== $result) {
+            return ($return = false);
+        }
 
-		foreach (array('host', 'port') as $component) {
-			if (!empty($matches[$component])) {
-				$return[$component] = $matches[$component];
-			}
-		}
+        foreach (array('host', 'port') as $component) {
+            if (!empty($matches[$component])) {
+                $return[$component] = $matches[$component];
+            }
+        }
 
-		if (array_key_exists('$table_prefix', $parsedVariables)) {
-			$return['tablePrefix'] = $parsedVariables['$table_prefix'];
-		} else {
-			return false;
-		}
-		return $return;
-	}
+        if (!array_key_exists('tablePrefix', $return)) {
+            if (array_key_exists('$table_prefix', $parsedVariables)) {
+                $return['tablePrefix'] = $parsedVariables['$table_prefix'];
+            } else {
+                return ($return = false);
+            }
+        }
+        return $return;
+    }
 
 	protected static function _removeUnneededTokens($token) {
 		if (is_array($token)) {

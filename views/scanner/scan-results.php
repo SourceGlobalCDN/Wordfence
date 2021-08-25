@@ -17,27 +17,37 @@ $tabs = array(
   new wfTab('ignored', 'ignored', __('Ignored<span class="wf-hidden-xs"> Results</span>', 'wordfence'), ''),
 )
 ?>
-<ul class="wf-scan-tabs">
-  <?php foreach ($tabs as $index => $t): ?> 
-	<?php
-	$a = $t->a;
-	if (!preg_match('/^https?:\/\//i', $a)) {
-	  $a = '#' . urlencode($a);
-	}
-	?>
-	<li class="wf-tab<?php if ($index == 0) { echo ' wf-active'; } ?>" id="wf-scan-tab-<?php echo esc_attr($t->id); ?>" data-target="<?php echo esc_attr($t->id); ?>" data-tab-title="<?php echo esc_attr($t->tabTitle); ?>"><a href="<?php echo esc_attr($a); ?>"><?php echo $t->tabTitle; ?></a></li>
-  <?php endforeach; ?>
-	<li id="wf-scan-bulk-buttons"><span class="wf-hidden-xs"><a href="#" id="wf-scan-bulk-buttons-delete" class="wf-btn wf-btn-default wf-btn-callout-subtle<?php echo ($hasDeleteableIssue ? '' : ' wf-disabled'); ?>"><?php esc_html_e('Delete All Deletable Files', 'wordfence'); ?></a>&nbsp;&nbsp;&nbsp;<a href="#" id="wf-scan-bulk-buttons-repair" class="wf-btn wf-btn-default wf-btn-callout-subtle<?php echo ($hasRepairableIssue ? '' : ' wf-disabled'); ?>"><?php esc_html_e('Repair All Repairable Files', 'wordfence'); ?></a></span></li>
+<ul class="wf-scan-tabs" role="tablist">
+    <?php foreach ($tabs as $index => $t): ?>
+        <?php
+        $a = $t->a;
+        if (!preg_match('/^https?:\/\//i', $a)) {
+            $a = '#' . urlencode($a);
+        }
+        ?>
+        <li class="wf-tab<?php if ($index == 0) {
+            echo ' wf-active';
+        } ?>" id="wf-scan-tab-<?php echo esc_attr($t->id); ?>" data-target="<?php echo esc_attr($t->id); ?>"
+            data-tab-title="<?php echo esc_attr($t->tabTitle); ?>"><a href="<?php echo esc_attr($a); ?>"
+                                                                      aria-selected="<?php echo json_encode($index == 0) ?>"
+                                                                      role="tab"><?php echo $t->tabTitle; ?></a></li>
+    <?php endforeach; ?>
+    <li id="wf-scan-bulk-buttons"><span class="wf-hidden-xs"><a href="#" id="wf-scan-bulk-buttons-delete"
+                                                                class="wf-btn wf-btn-default wf-btn-callout-subtle<?php echo($hasDeleteableIssue ? '' : ' wf-disabled'); ?>"
+                                                                role="button"><?php esc_html_e('Delete All Deletable Files', 'wordfence'); ?></a>&nbsp;&nbsp;&nbsp;<a
+                    href="#" id="wf-scan-bulk-buttons-repair"
+                    class="wf-btn wf-btn-default wf-btn-callout-subtle<?php echo($hasRepairableIssue ? '' : ' wf-disabled'); ?>"
+                    role="button"><?php esc_html_e('Repair All Repairable Files', 'wordfence'); ?></a></span></li>
 </ul>
 <ul class="wf-scan-results">
-	<li class="wf-scan-results-stats">
-		<div class="wf-block wf-active">
-			<div class="wf-block-content">
-				<ul class="wf-block-list wf-block-list-horizontal wf-block-list-horizontal-5 wf-block-list-equal wf-hidden-xs">
-					<li>
-						<ul class="wf-flex-horizontal wf-flex-full-width">
-							<li><?php esc_html_e('Posts, Comments, &amp; Files', 'wordfence'); ?></li>
-							<li class="wf-scan-results-stats-postscommentsfiles"><?php echo $scanner->getSummaryItem(wfScanner::SUMMARY_SCANNED_POSTS, 0) + $scanner->getSummaryItem(wfScanner::SUMMARY_SCANNED_COMMENTS, 0) + $scanner->getSummaryItem(wfScanner::SUMMARY_SCANNED_FILES, 0); ?></li>
+    <li class="wf-scan-results-stats">
+        <div class="wf-block wf-active">
+            <div class="wf-block-content">
+                <ul class="wf-block-list wf-block-list-horizontal wf-block-list-horizontal-5 wf-block-list-equal wf-hidden-xs">
+                    <li>
+                        <ul class="wf-flex-horizontal wf-flex-full-width">
+                            <li><?php esc_html_e('Posts, Comments, &amp; Files', 'wordfence'); ?></li>
+                            <li class="wf-scan-results-stats-postscommentsfiles"><?php echo $scanner->getSummaryItem(wfScanner::SUMMARY_SCANNED_POSTS, 0) + $scanner->getSummaryItem(wfScanner::SUMMARY_SCANNED_COMMENTS, 0) + $scanner->getSummaryItem(wfScanner::SUMMARY_SCANNED_FILES, 0); ?></li>
 						</ul>
 					</li>
 					<li>
@@ -123,31 +133,32 @@ $tabs = array(
 				}, WFAD.scanIssuesOffset, null, WFAD.scanIssuesIgnoredOffset);
 			}
 			else if (currentScrollBottom < scrollThreshold) {
-				hasScrolled = true;
-				// console.log('no infinite scroll');
-			}
-		});
-		
-		$(function() {
-			$('.wf-scan-tabs .wf-tab a').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+                hasScrolled = true;
+                // console.log('no infinite scroll');
+            }
+        });
 
-				$('.wf-scan-tabs').find('.wf-tab').removeClass('wf-active');
-				$('.wf-scan-results-issues').removeClass('wf-active');
+        $(function () {
+            $('.wf-scan-tabs .wf-tab a').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-				var tab = $(this).closest('.wf-tab');
-				tab.addClass('wf-active');
-				var content = $('#wf-scan-results-' + tab.data('target'));
-				content.addClass('wf-active');
-			});
-			
-			$('#wf-scan-bulk-buttons-delete').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+                $('.wf-scan-tabs').find('.wf-tab').removeClass('wf-active').find('a').attr('aria-selected', false);
+                $('.wf-scan-results-issues').removeClass('wf-active');
 
-				var prompt = $('#wfTmpl_scannerDelete').tmpl();
-				var promptHTML = $("<div />").append(prompt).html();
+                var tab = $(this).closest('.wf-tab');
+                tab.addClass('wf-active');
+                tab.find('a').attr('aria-selected', 'true');
+                var content = $('#wf-scan-results-' + tab.data('target'));
+                content.addClass('wf-active');
+            });
+
+            $('#wf-scan-bulk-buttons-delete').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var prompt = $('#wfTmpl_scannerDelete').tmpl();
+                var promptHTML = $("<div />").append(prompt).html();
 				WFAD.colorboxHTML((WFAD.isSmallScreen ? '300px' : '700px'), promptHTML, {overlayClose: false, closeButton: false, className: 'wf-modal', onComplete: function() {
 					$('#wf-scanner-prompt-cancel').on('click', function(e) { 
 						e.preventDefault();
