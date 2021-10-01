@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 const WORDFENCE_VERSION = '7.5.5';
 const WORDFENCE_BUILD_NUMBER = '1629122067';
-const WORDFENCE_CDN_URL = "https://cdn.jsdelivr.net/wp/wordfence/tags/" . WORDFENCE_VERSION . "/";
+const WORDFENCE_CDN_URL = "https://source.ahdark.com/wordpress/plugin/wordfence/" . WORDFENCE_VERSION . "/";
 define('WORDFENCE_BASENAME', function_exists('plugin_basename') ? plugin_basename(__FILE__) :
     basename(dirname(__FILE__)) . '/' . basename(__FILE__));
 
