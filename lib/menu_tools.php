@@ -1,16 +1,17 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * @var string $subpage
  */
 ?>
 <?php
 if (wfOnboardingController::shouldShowAttempt3()) {
-	echo wfView::create('onboarding/disabled-overlay')->render();
-	echo wfView::create('onboarding/banner')->render();
-}
-else if (wfConfig::get('touppPromptNeeded')) {
-	echo wfView::create('gdpr/disabled-overlay')->render();
+    echo wfView::create('onboarding/disabled-overlay')->render();
+    echo wfView::create('onboarding/banner')->render();
+} else if (wfConfig::get('touppPromptNeeded')) {
+    echo wfView::create('gdpr/disabled-overlay')->render();
     echo wfView::create('gdpr/banner')->render();
 }
 ?>
@@ -35,15 +36,15 @@ else if (wfConfig::get('touppPromptNeeded')) {
         }
 
         echo wfView::create('common/page-fixed-tabbar', array(
-			'tabs' => $tabs,
-		))->render();
-		?>
-		<div class="wf-row">
-			<div class="<?php echo wfStyle::contentClasses(); ?>">
-				<div class="wf-tab-content wf-active">
-					<?php echo $content ?>
-				</div>
-			</div> <!-- end content block -->
-		</div> <!-- end row -->
-	</div> <!-- end container -->
+            'tabs' => $tabs,
+        ))->render();
+        ?>
+        <div class="wf-row">
+            <div class="<?php echo wfStyle::contentClasses(); ?>">
+                <div class="wf-tab-content wf-active">
+                    <?php echo $content ?>
+                </div>
+            </div> <!-- end content block -->
+        </div> <!-- end row -->
+    </div> <!-- end container -->
 </div>

@@ -1,19 +1,25 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the fresh install modal.
  */
 ?>
 <div id="wf-onboarding-fresh-install" class="wf-onboarding-modal">
-	<div id="wf-onboarding-fresh-install-1" class="wf-onboarding-modal-content"<?php if (wfConfig::get('onboardingAttempt1') == wfOnboardingController::ONBOARDING_FIRST_EMAILS) { echo ' style="display: none;"'; } ?>>
-		<div class="wf-onboarding-logo"><img src="<?php echo esc_attr(wfUtils::getBaseURL() . 'images/wf-horizontal.svg'); ?>" alt="<?php esc_html_e('Wordfence - Securing your WordPress Website', 'wordfence'); ?>"></div>
-		<h3><?php printf(/* translators: Wordfence version. */ esc_html__('You have successfully installed Wordfence %s', 'wordfence'), WORDFENCE_VERSION); ?></h3>
-		<h4><?php esc_html_e('Please tell us where Wordfence should send you security alerts for your website:', 'wordfence'); ?></h4>
-		<input type="text" id="wf-onboarding-alerts" placeholder="you@example.com" value="<?php echo esc_attr(implode(',', wfConfig::getAlertEmails())); ?>">
-		<p id="wf-onboarding-alerts-disclaimer"><?php esc_html_e('We do not use this email address for any other purpose unless you opt-in to receive other mailings. You can turn off alerts in the options.', 'wordfence'); ?></p>
-		<div id="wf-onboarding-subscribe">
-			<label for="wf-onboarding-email-list"><?php esc_html_e('Would you also like to join our WordPress security mailing list to receive WordPress security alerts and Wordfence news?', 'wordfence'); ?></label>
-			<div id="wf-onboarding-subscribe-controls">
+    <div id="wf-onboarding-fresh-install-1" class="wf-onboarding-modal-content"<?php if (wfConfig::get('onboardingAttempt1') == wfOnboardingController::ONBOARDING_FIRST_EMAILS) {
+        echo ' style="display: none;"';
+    } ?>>
+        <div class="wf-onboarding-logo">
+            <img src="<?php echo esc_attr(wfUtils::getBaseURL() . 'images/wf-horizontal.svg'); ?>" alt="<?php esc_html_e('Wordfence - Securing your WordPress Website', 'wordfence'); ?>">
+        </div>
+        <h3><?php printf(/* translators: Wordfence version. */ esc_html__('You have successfully installed Wordfence %s', 'wordfence'), WORDFENCE_VERSION); ?></h3>
+        <h4><?php esc_html_e('Please tell us where Wordfence should send you security alerts for your website:', 'wordfence'); ?></h4>
+        <input type="text" id="wf-onboarding-alerts" placeholder="you@example.com" value="<?php echo esc_attr(implode(',', wfConfig::getAlertEmails())); ?>">
+        <p id="wf-onboarding-alerts-disclaimer"><?php esc_html_e('We do not use this email address for any other purpose unless you opt-in to receive other mailings. You can turn off alerts in the options.', 'wordfence'); ?></p>
+        <div id="wf-onboarding-subscribe">
+            <label for="wf-onboarding-email-list"><?php esc_html_e('Would you also like to join our WordPress security mailing list to receive WordPress security alerts and Wordfence news?', 'wordfence'); ?></label>
+            <div id="wf-onboarding-subscribe-controls">
                 <ul id="wf-onboarding-email-list" class="wf-switch">
                     <li data-option-value="1"><?php esc_html_e('Yes', 'wordfence'); ?></li>
                     <li data-option-value="0"><?php esc_html_e('No', 'wordfence'); ?></li>
@@ -73,45 +79,45 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
             setTimeout(function () {
                 $('#wf-onboarding-subscribe-controls > p').show();
             }, 30000);
-			
-			$('#wf-onboarding-subscribe .wf-switch > li').each(function(index, element) {
-				$(element).on('click', function(e) {
-					e.preventDefault();
-					e.stopPropagation();
 
-					var control = $(this).closest('.wf-switch');
-					control.find('li').removeClass('wf-active');
-					$(this).addClass('wf-active');
+            $('#wf-onboarding-subscribe .wf-switch > li').each(function (index, element) {
+                $(element).on('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-					$('#wf-onboarding-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding-alerts').val()).length == 0 || !($('#wf-onboarding-agree').is(':checked')) || $('#wf-onboarding-subscribe .wf-switch > li.wf-active').length == 0);
-				});
-			});
-			
-			$('#wf-onboarding-agree').on('change', function() {
-				$('#wf-onboarding-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding-alerts').val()).length == 0 || !($('#wf-onboarding-agree').is(':checked')) || $('#wf-onboarding-subscribe .wf-switch > li.wf-active').length == 0);
-			});
-			
-			$('#wf-onboarding-alerts').on('change paste keyup', function() {
-				setTimeout(function() {
-					$('#wf-onboarding-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding-alerts').val()).length == 0 || !($('#wf-onboarding-agree').is(':checked')) || $('#wf-onboarding-subscribe .wf-switch > li.wf-active').length == 0);
-				}, 100);
-			}).trigger('change');
-			
-			$('#wf-onboarding-continue').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				
-				var touppAgreed = !!$('#wf-onboarding-agree').is(':checked');
-				if (!touppAgreed) {
-					return;
-				}
-				
-				var emails = wordfenceExt.parseEmails($('#wf-onboarding-alerts').val());
-				if (emails.length > 0) {
-					var subscribe = !!parseInt($('#wf-onboarding-subscribe .wf-switch > li.wf-active').data('optionValue'));
-					wordfenceExt.onboardingProcessEmails(emails, subscribe, touppAgreed);
-					
-					<?php if (wfConfig::get('isPaid')): ?>
+                    var control = $(this).closest('.wf-switch');
+                    control.find('li').removeClass('wf-active');
+                    $(this).addClass('wf-active');
+
+                    $('#wf-onboarding-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding-alerts').val()).length == 0 || !($('#wf-onboarding-agree').is(':checked')) || $('#wf-onboarding-subscribe .wf-switch > li.wf-active').length == 0);
+                });
+            });
+
+            $('#wf-onboarding-agree').on('change', function () {
+                $('#wf-onboarding-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding-alerts').val()).length == 0 || !($('#wf-onboarding-agree').is(':checked')) || $('#wf-onboarding-subscribe .wf-switch > li.wf-active').length == 0);
+            });
+
+            $('#wf-onboarding-alerts').on('change paste keyup', function () {
+                setTimeout(function () {
+                    $('#wf-onboarding-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding-alerts').val()).length == 0 || !($('#wf-onboarding-agree').is(':checked')) || $('#wf-onboarding-subscribe .wf-switch > li.wf-active').length == 0);
+                }, 100);
+            }).trigger('change');
+
+            $('#wf-onboarding-continue').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                var touppAgreed = !!$('#wf-onboarding-agree').is(':checked');
+                if (!touppAgreed) {
+                    return;
+                }
+
+                var emails = wordfenceExt.parseEmails($('#wf-onboarding-alerts').val());
+                if (emails.length > 0) {
+                    var subscribe = !!parseInt($('#wf-onboarding-subscribe .wf-switch > li.wf-active').data('optionValue'));
+                    wordfenceExt.onboardingProcessEmails(emails, subscribe, touppAgreed);
+
+                    <?php if (wfConfig::get('isPaid')): ?>
                     $('#wf-onboarding-dismiss').trigger('click');
                     wordfenceExt.setOption('onboardingAttempt1', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_FIRST_LICENSE); ?>');
                     $('#wf-onboarding-plugin-header').slideUp();
@@ -125,19 +131,19 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                         className: 'wf-modal'
                     });
                     <?php else: ?>
-					wordfenceExt.setOption('onboardingAttempt1', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_FIRST_EMAILS); ?>');
-					$('#wf-onboarding-fresh-install-1').fadeOut(400, function() {
-						$('#wf-onboarding-fresh-install-2').fadeIn();
-					});
-					<?php endif; ?>
-				}
-			});
+                    wordfenceExt.setOption('onboardingAttempt1', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_FIRST_EMAILS); ?>');
+                    $('#wf-onboarding-fresh-install-1').fadeOut(400, function () {
+                        $('#wf-onboarding-fresh-install-2').fadeIn();
+                    });
+                    <?php endif; ?>
+                }
+            });
 
-			$('#wf-onboarding-license input').on('change paste keyup', function() {
-				setTimeout(function() {
-					$('#wf-onboarding-license-install').toggleClass('wf-disabled', $('#wf-onboarding-license input').val().length == 0);
-				}, 100);
-			}).trigger('change');
+            $('#wf-onboarding-license input').on('change paste keyup', function () {
+                setTimeout(function () {
+                    $('#wf-onboarding-license-install').toggleClass('wf-disabled', $('#wf-onboarding-license input').val().length == 0);
+                }, 100);
+            }).trigger('change');
 
             $('#wf-onboarding-license-install').on('click', function (e) {
                 e.preventDefault();
@@ -181,27 +187,26 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                         });
                     });
             });
-			
-			$('#wf-onboarding-no-thanks').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
 
-				$('#wf-onboarding-dismiss').trigger('click');
-			});
-			
-			$('#wf-onboarding-fresh-install').on('click', function(e) {
-				e.stopPropagation();
-			});
+            $('#wf-onboarding-no-thanks').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-			$(window).on('wfOnboardingDismiss', function() {
-				if ($('#wf-onboarding-fresh-install-1').is(':visible')) {
-					wordfenceExt.setOption('onboardingAttempt1', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_FIRST_SKIPPED); ?>');
-				}
-				else {
-					wordfenceExt.setOption('onboardingAttempt1', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_FIRST_LICENSE); ?>');
-					$('#wf-onboarding-plugin-header').slideUp();
-				}
-			});
-		});
-	})(jQuery);
+                $('#wf-onboarding-dismiss').trigger('click');
+            });
+
+            $('#wf-onboarding-fresh-install').on('click', function (e) {
+                e.stopPropagation();
+            });
+
+            $(window).on('wfOnboardingDismiss', function () {
+                if ($('#wf-onboarding-fresh-install-1').is(':visible')) {
+                    wordfenceExt.setOption('onboardingAttempt1', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_FIRST_SKIPPED); ?>');
+                } else {
+                    wordfenceExt.setOption('onboardingAttempt1', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_FIRST_LICENSE); ?>');
+                    $('#wf-onboarding-plugin-header').slideUp();
+                }
+            });
+        });
+    })(jQuery);
 </script>

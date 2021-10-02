@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the scanner status.
  *
@@ -10,15 +12,15 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 ?>
 <ul class="wf-block-list wf-block-list-horizontal">
-	<?php if ($scanner->isEnabled() == 'enabled' && $scanner->signatureMode() == wfScanner::SIGNATURE_MODE_PREMIUM): ?>
-		<li>
-			<div class="wf-block-labeled-value wf-scan-status wf-scan-status-full-enabled">
-				<div class="wf-block-labeled-value-label"><?php esc_html_e('Wordfence Scan &amp; Premium Enabled', 'wordfence'); ?></div>
-			</div>
-		</li>
-	<?php else: ?>
-		<li>
-			<?php if (!$scanner->isEnabled()): ?>
+    <?php if ($scanner->isEnabled() == 'enabled' && $scanner->signatureMode() == wfScanner::SIGNATURE_MODE_PREMIUM): ?>
+        <li>
+            <div class="wf-block-labeled-value wf-scan-status wf-scan-status-full-enabled">
+                <div class="wf-block-labeled-value-label"><?php esc_html_e('Wordfence Scan &amp; Premium Enabled', 'wordfence'); ?></div>
+            </div>
+        </li>
+    <?php else: ?>
+        <li>
+            <?php if (!$scanner->isEnabled()): ?>
                 <div class="wf-scan-status-disabled">
                     <p>
                     <h3><?php esc_html_e('Wordfence Scan Deactivated', 'wordfence'); ?></h3></p>
@@ -38,21 +40,21 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                                         WFAD.setOption('scheduledScansEnabled', 1, function () {
                                             window.location.reload(true);
                                         });
-									});
-								});
-							})(jQuery);
-						</script>
-					</p>
-				</div>
-			<?php else: ?>
-				<div class="wf-block-labeled-value wf-scan-status wf-scan-status-enabled">
-					<div class="wf-block-labeled-value-value"><i class="wf-fa wf-fa-check" aria-hidden="true"></i></div>
-					<div class="wf-block-labeled-value-label"><?php esc_html_e('Wordfence Scan Enabled', 'wordfence'); ?></div>
-				</div>
-			<?php endif; ?>
-		</li>
-		<li>
-			<?php if ($scanner->signatureMode() == wfScanner::SIGNATURE_MODE_COMMUNITY): ?>
+                                    });
+                                });
+                            })(jQuery);
+                        </script>
+                    </p>
+                </div>
+            <?php else: ?>
+                <div class="wf-block-labeled-value wf-scan-status wf-scan-status-enabled">
+                    <div class="wf-block-labeled-value-value"><i class="wf-fa wf-fa-check" aria-hidden="true"></i></div>
+                    <div class="wf-block-labeled-value-label"><?php esc_html_e('Wordfence Scan Enabled', 'wordfence'); ?></div>
+                </div>
+            <?php endif; ?>
+        </li>
+        <li>
+            <?php if ($scanner->signatureMode() == wfScanner::SIGNATURE_MODE_COMMUNITY): ?>
                 <div>
                     <p>
                     <h3><?php esc_html_e('Premium Protection Disabled', 'wordfence'); ?></h3></p>
@@ -68,11 +70,11 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                     </p>
                 </div>
             <?php else: ?>
-				<div class="wf-block-labeled-value wf-protection-status wf-protection-status-<?php echo esc_attr($scanner->signatureMode()); ?>">
-					<div class="wf-block-labeled-value-value"><i class="wf-fa wf-fa-check" aria-hidden="true"></i></div>
-					<div class="wf-block-labeled-value-label"><?php esc_html_e('Premium Protection Enabled', 'wordfence'); ?></div>
-				</div>
-			<?php endif; ?>
-		</li>
-	<?php endif; ?>
+                <div class="wf-block-labeled-value wf-protection-status wf-protection-status-<?php echo esc_attr($scanner->signatureMode()); ?>">
+                    <div class="wf-block-labeled-value-value"><i class="wf-fa wf-fa-check" aria-hidden="true"></i></div>
+                    <div class="wf-block-labeled-value-label"><?php esc_html_e('Premium Protection Enabled', 'wordfence'); ?></div>
+                </div>
+            <?php endif; ?>
+        </li>
+    <?php endif; ?>
 </ul>

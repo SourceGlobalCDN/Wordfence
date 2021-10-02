@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents a boolean option with a checkbox toggle control and a sub-option toggle.
  *
@@ -14,7 +16,7 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  * @var string $htmlTitle The unescaped title shown for the option.
  * @var string $helpLink If defined, the link to the corresponding external help page.
  * @var bool $premium If defined, the option will be tagged as premium only and not allow its value to change for free users.
- * 
+ *
  * @var string $subOptionName The sub-option name.
  * @var string $subEnabledValue The value to save in $subOptionName if the toggle is enabled.
  * @var string $subDisabledValue The value to save in $subOptionName if the toggle is disabled.
@@ -26,11 +28,11 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (isset($title) && !isset($htmlTitle)) {
-	$htmlTitle = esc_html($title);
+    $htmlTitle = esc_html($title);
 }
 
 if (isset($subTitle) && !isset($subHtmlTitle)) {
-	$subHtmlTitle = esc_html($subTitle);
+    $subHtmlTitle = esc_html($subTitle);
 }
 
 $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $optionName);

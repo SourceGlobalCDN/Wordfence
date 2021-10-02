@@ -11,14 +11,14 @@ if (class_exists('ParagonIE_Sodium_Core32_XChaCha20', false)) {
 class ParagonIE_Sodium_Core32_XChaCha20 extends ParagonIE_Sodium_Core32_HChaCha20
 {
     /**
-     * @internal You should not use this directly from another application
-     *
      * @param int $len
      * @param string $nonce
      * @param string $key
      * @return string
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function stream($len = 64, $nonce = '', $key = '')
     {
@@ -38,8 +38,6 @@ class ParagonIE_Sodium_Core32_XChaCha20 extends ParagonIE_Sodium_Core32_HChaCha2
     }
 
     /**
-     * @internal You should not use this directly from another application
-     *
      * @param string $message
      * @param string $nonce
      * @param string $key
@@ -47,6 +45,8 @@ class ParagonIE_Sodium_Core32_XChaCha20 extends ParagonIE_Sodium_Core32_HChaCha2
      * @return string
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function streamXorIc($message, $nonce = '', $key = '', $ic = '')
     {

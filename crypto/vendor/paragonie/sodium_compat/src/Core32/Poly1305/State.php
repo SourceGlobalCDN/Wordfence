@@ -11,44 +11,39 @@ if (class_exists('ParagonIE_Sodium_Core32_Poly1305_State', false)) {
 class ParagonIE_Sodium_Core32_Poly1305_State extends ParagonIE_Sodium_Core32_Util
 {
     /**
+     * @var array<int, ParagonIE_Sodium_Core32_Int32>
+     */
+    public $h;
+    /**
+     * @var array<int, ParagonIE_Sodium_Core32_Int32>
+     */
+    public $r;
+    /**
+     * @var array<int, ParagonIE_Sodium_Core32_Int64>
+     */
+    public $pad;
+    /**
      * @var array<int, int>
      */
     protected $buffer = array();
-
     /**
      * @var bool
      */
     protected $final = false;
-
-    /**
-     * @var array<int, ParagonIE_Sodium_Core32_Int32>
-     */
-    public $h;
-
     /**
      * @var int
      */
     protected $leftover = 0;
 
     /**
-     * @var array<int, ParagonIE_Sodium_Core32_Int32>
-     */
-    public $r;
-
-    /**
-     * @var array<int, ParagonIE_Sodium_Core32_Int64>
-     */
-    public $pad;
-
-    /**
      * ParagonIE_Sodium_Core32_Poly1305_State constructor.
-     *
-     * @internal You should not use this directly from another application
      *
      * @param string $key
      * @throws InvalidArgumentException
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public function __construct($key = '')
     {
@@ -111,12 +106,12 @@ class ParagonIE_Sodium_Core32_Poly1305_State extends ParagonIE_Sodium_Core32_Uti
     }
 
     /**
-     * @internal You should not use this directly from another application
-     *
      * @param string $message
      * @return self
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public function update($message = '')
     {
@@ -170,26 +165,26 @@ class ParagonIE_Sodium_Core32_Poly1305_State extends ParagonIE_Sodium_Core32_Uti
                 $mi = self::chrToInt($message[$i]);
                 $this->buffer[$this->leftover + $i] = $mi;
             }
-            $this->leftover = (int) $this->leftover + $bytes;
+            $this->leftover = (int)$this->leftover + $bytes;
         }
         return $this;
     }
 
     /**
-     * @internal You should not use this directly from another application
-     *
      * @param string $message
      * @param int $bytes
      * @return self
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public function blocks($message, $bytes)
     {
         if (self::strlen($message) < 16) {
             $message = str_pad($message, 16, "\x00", STR_PAD_RIGHT);
         }
-        $hibit = ParagonIE_Sodium_Core32_Int32::fromInt((int) ($this->final ? 0 : 1 << 24)); /* 1 << 128 */
+        $hibit = ParagonIE_Sodium_Core32_Int32::fromInt((int)($this->final ? 0 : 1 << 24)); /* 1 << 128 */
         $hibit->setUnsignedInt(true);
         $zero = new ParagonIE_Sodium_Core32_Int64(array(0, 0, 0, 0), true);
         /**
@@ -329,11 +324,11 @@ class ParagonIE_Sodium_Core32_Poly1305_State extends ParagonIE_Sodium_Core32_Uti
     }
 
     /**
-     * @internal You should not use this directly from another application
-     *
      * @return string
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public function finish()
     {
@@ -396,22 +391,22 @@ class ParagonIE_Sodium_Core32_Poly1305_State extends ParagonIE_Sodium_Core32_Uti
 
         /* compute h + -p */
         $g0 = $h0->addInt(5);
-        $c  = $g0->shiftRight(26);
+        $c = $g0->shiftRight(26);
         $g0 = $g0->mask(0x3ffffff);
         $g1 = $h1->addInt32($c);
-        $c  = $g1->shiftRight(26);
+        $c = $g1->shiftRight(26);
         $g1 = $g1->mask(0x3ffffff);
         $g2 = $h2->addInt32($c);
-        $c  = $g2->shiftRight(26);
+        $c = $g2->shiftRight(26);
         $g2 = $g2->mask(0x3ffffff);
         $g3 = $h3->addInt32($c);
-        $c  = $g3->shiftRight(26);
+        $c = $g3->shiftRight(26);
         $g3 = $g3->mask(0x3ffffff);
         $g4 = $h4->addInt32($c)->subInt(1 << 26);
 
         # $mask = ($g4 >> 31) - 1;
         /* select h if h < p, or h + -p if h >= p */
-        $mask = (int) (($g4->toInt() >> 31) + 1);
+        $mask = (int)(($g4->toInt() >> 31) + 1);
 
         $g0 = $g0->mask($mask);
         $g1 = $g1->mask($mask);

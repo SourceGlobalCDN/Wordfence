@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents a block list element specifically for the start scan button.
  *
@@ -28,25 +30,23 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
 
             if ($(this).hasClass('wf-scan-starter-idle')) {
                 WFAD.startScan();
-				$('#wf-scan-running-bar').show();
-			}
-			else {
-				WFAD.killScan(function(success) {
-					WFAD.colorboxModal((WFAD.isSmallScreen ? '300px' : '400px'), success ? '<?php esc_attr_e('Scan Stopping', 'wordfence'); ?>' : '<?php esc_attr_e('Stop Failed', 'wordfence'); ?>', success ? '<?php esc_attr_e('A termination request has been sent to stop any running scans.', 'wordfence'); ?>' : '<?php esc_attr_e('We failed to send a termination request.', 'wordfence'); ?>');
-				});
-				$('#wf-scan-running-bar').hide();
-			}
-		});
-		
-		$(window).on('wfScanUpdateButtons', function() {
-			if (WFAD.scanRunning) {
-				$('.wf-scan-starter-idle').hide();
-				$('.wf-scan-starter-running').show();
-			}
-			else {
-				$('.wf-scan-starter-idle').show().toggleClass('wf-disabled', WFAD.scanStalled);
-				$('.wf-scan-starter-running').hide();
-			}
-		})
-	})(jQuery);
+                $('#wf-scan-running-bar').show();
+            } else {
+                WFAD.killScan(function (success) {
+                    WFAD.colorboxModal((WFAD.isSmallScreen ? '300px' : '400px'), success ? '<?php esc_attr_e('Scan Stopping', 'wordfence'); ?>' : '<?php esc_attr_e('Stop Failed', 'wordfence'); ?>', success ? '<?php esc_attr_e('A termination request has been sent to stop any running scans.', 'wordfence'); ?>' : '<?php esc_attr_e('We failed to send a termination request.', 'wordfence'); ?>');
+                });
+                $('#wf-scan-running-bar').hide();
+            }
+        });
+
+        $(window).on('wfScanUpdateButtons', function () {
+            if (WFAD.scanRunning) {
+                $('.wf-scan-starter-idle').hide();
+                $('.wf-scan-starter-running').show();
+            } else {
+                $('.wf-scan-starter-idle').show().toggleClass('wf-disabled', WFAD.scanStalled);
+                $('.wf-scan-starter-running').hide();
+            }
+        })
+    })(jQuery);
 </script>

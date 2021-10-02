@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the Import/Export Options group.
  *
@@ -10,14 +12,18 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (!isset($collapseable)) {
-	$collapseable = true;
+    $collapseable = true;
 }
 ?>
 <div class="wf-row">
-	<div class="wf-col-xs-12">
-		<div class="wf-block<?php if (!$collapseable) { echo ' wf-always-active'; } else { echo (wfPersistenceController::shared()->isActive($stateKey) ? ' wf-active' : ''); } ?>" data-persistence-key="<?php echo esc_attr($stateKey); ?>">
-			<div class="wf-block-header">
-				<div class="wf-block-header-content">
+    <div class="wf-col-xs-12">
+        <div class="wf-block<?php if (!$collapseable) {
+            echo ' wf-always-active';
+        } else {
+            echo(wfPersistenceController::shared()->isActive($stateKey) ? ' wf-active' : '');
+        } ?>" data-persistence-key="<?php echo esc_attr($stateKey); ?>">
+            <div class="wf-block-header">
+                <div class="wf-block-header-content">
                     <div class="wf-block-title">
                         <strong><?php esc_html_e('Import/Export Options', 'wordfence'); ?></strong>
                     </div>
@@ -82,117 +88,135 @@ if (!isset($collapseable)) {
                     (function ($) {
                         $(function () {
                             $('#wf-export-options').on('click', function (e) {
-								e.preventDefault();
-								e.stopPropagation();
+                                e.preventDefault();
+                                e.stopPropagation();
 
-								WFAD.ajax('wordfence_exportSettings', {}, function(res) {
-									if (res.ok && res.token) {
-										var prompt = $('#wfTmpl_exportPromptSuccess').tmpl(res);
-										var promptHTML = $("<div />").append(prompt).html();
-										WFAD.colorboxHTML((WFAD.isSmallScreen ? '300px' : '400px'), promptHTML, {overlayClose: false, closeButton: false, className: 'wf-modal', onComplete: function() {
-											$('#wf-export-prompt-close').on('click', function(e) {
-												e.preventDefault();
-												e.stopPropagation();
+                                WFAD.ajax('wordfence_exportSettings', {}, function (res) {
+                                    if (res.ok && res.token) {
+                                        var prompt = $('#wfTmpl_exportPromptSuccess').tmpl(res);
+                                        var promptHTML = $("<div />").append(prompt).html();
+                                        WFAD.colorboxHTML((WFAD.isSmallScreen ? '300px' : '400px'), promptHTML, {
+                                            overlayClose: false,
+                                            closeButton: false,
+                                            className: 'wf-modal',
+                                            onComplete: function () {
+                                                $('#wf-export-prompt-close').on('click', function (e) {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
 
-												WFAD.colorboxClose();
-											});
-										}});
-									}
-									else {
-										var prompt = $('#wfTmpl_exportPromptError').tmpl({err: res.err || 'An unknown error occurred during the export. We received an undefined error from your web server.'});
-										var promptHTML = $("<div />").append(prompt).html();
-										WFAD.colorboxHTML((WFAD.isSmallScreen ? '300px' : '400px'), promptHTML, {overlayClose: false, closeButton: false, className: 'wf-modal', onComplete: function() {
-											$('#wf-export-prompt-close').on('click', function(e) {
-												e.preventDefault();
-												e.stopPropagation();
+                                                    WFAD.colorboxClose();
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        var prompt = $('#wfTmpl_exportPromptError').tmpl({err: res.err || 'An unknown error occurred during the export. We received an undefined error from your web server.'});
+                                        var promptHTML = $("<div />").append(prompt).html();
+                                        WFAD.colorboxHTML((WFAD.isSmallScreen ? '300px' : '400px'), promptHTML, {
+                                            overlayClose: false,
+                                            closeButton: false,
+                                            className: 'wf-modal',
+                                            onComplete: function () {
+                                                $('#wf-export-prompt-close').on('click', function (e) {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
 
-												WFAD.colorboxClose();
-											});
-										}});
-									}
-								});
-							});
+                                                    WFAD.colorboxClose();
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            });
 
-							$('#wf-import-token').on('change paste keyup', function() {
-								setTimeout(function() {
-									$('#wf-import-options').toggleClass('wf-disabled', $('#wf-import-token').val() == '');
-								}, 4);
-							});
+                            $('#wf-import-token').on('change paste keyup', function () {
+                                setTimeout(function () {
+                                    $('#wf-import-options').toggleClass('wf-disabled', $('#wf-import-token').val() == '');
+                                }, 4);
+                            });
 
-							$('#wf-import-options').on('click', function(e) {
-								e.preventDefault();
-								e.stopPropagation();
+                            $('#wf-import-options').on('click', function (e) {
+                                e.preventDefault();
+                                e.stopPropagation();
 
-								WFAD.ajax('wordfence_importSettings', {token: $('#wf-import-token').val()}, function(res) {
-									if (res.ok) {
-										var prompt = $('#wfTmpl_importPromptSuccess').tmpl(res);
-										var promptHTML = $("<div />").append(prompt).html();
-										WFAD.colorboxHTML((WFAD.isSmallScreen ? '300px' : '400px'), promptHTML, {overlayClose: false, closeButton: false, className: 'wf-modal', onComplete: function() {
-											$('#wf-import-prompt-reload').on('click', function(e) {
-												e.preventDefault();
-												e.stopPropagation();
+                                WFAD.ajax('wordfence_importSettings', {token: $('#wf-import-token').val()}, function (res) {
+                                    if (res.ok) {
+                                        var prompt = $('#wfTmpl_importPromptSuccess').tmpl(res);
+                                        var promptHTML = $("<div />").append(prompt).html();
+                                        WFAD.colorboxHTML((WFAD.isSmallScreen ? '300px' : '400px'), promptHTML, {
+                                            overlayClose: false,
+                                            closeButton: false,
+                                            className: 'wf-modal',
+                                            onComplete: function () {
+                                                $('#wf-import-prompt-reload').on('click', function (e) {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
 
-												window.location.reload(true);
-											});
-										}});
-									}
-									else {
-										var prompt = $('#wfTmpl_importPromptError').tmpl({err: res.err || 'An unknown error occurred during the import.'});
-										var promptHTML = $("<div />").append(prompt).html();
-										WFAD.colorboxHTML((WFAD.isSmallScreen ? '300px' : '400px'), promptHTML, {overlayClose: false, closeButton: false, className: 'wf-modal', onComplete: function() {
-											$('#wf-import-prompt-close').on('click', function(e) {
-												e.preventDefault();
-												e.stopPropagation();
+                                                    window.location.reload(true);
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        var prompt = $('#wfTmpl_importPromptError').tmpl({err: res.err || 'An unknown error occurred during the import.'});
+                                        var promptHTML = $("<div />").append(prompt).html();
+                                        WFAD.colorboxHTML((WFAD.isSmallScreen ? '300px' : '400px'), promptHTML, {
+                                            overlayClose: false,
+                                            closeButton: false,
+                                            className: 'wf-modal',
+                                            onComplete: function () {
+                                                $('#wf-import-prompt-close').on('click', function (e) {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
 
-												WFAD.colorboxClose();
-											});
-										}});
-									}
-								});
-							});
-						});
-					})(jQuery);
-				</script>
-			</div>
-		</div>
-	</div>
+                                                    WFAD.colorboxClose();
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+                        });
+                    })(jQuery);
+                </script>
+            </div>
+        </div>
+    </div>
 </div> <!-- end import options -->
 <script type="text/x-jquery-template" id="wfTmpl_exportPromptSuccess">
-	<?php
-	echo wfView::create('common/modal-prompt', array(
-		'title' => __('Export Successful', 'wordfence'),
-		'messageHTML' => '<p>' . esc_html__('We successfully exported your site options. To import your site options on another site, copy and paste the token below into the import text box on the destination site. Keep this token secret &mdash; it is like a password. If anyone else discovers the token it will allow them to import your options excluding your license.', 'wordfence') . '</p><p><input type="text" class="wf-full-width" value="${token}" onclick="this.select();" /></p>',
-		'primaryButton' => array('id' => 'wf-export-prompt-close', 'label' => __('Close', 'wordfence'), 'link' => '#'),
-	))->render();
-	?>
+    <?php
+    echo wfView::create('common/modal-prompt', array(
+        'title' => __('Export Successful', 'wordfence'),
+        'messageHTML' => '<p>' . esc_html__('We successfully exported your site options. To import your site options on another site, copy and paste the token below into the import text box on the destination site. Keep this token secret &mdash; it is like a password. If anyone else discovers the token it will allow them to import your options excluding your license.', 'wordfence') . '</p><p><input type="text" class="wf-full-width" value="${token}" onclick="this.select();" /></p>',
+        'primaryButton' => array('id' => 'wf-export-prompt-close', 'label' => __('Close', 'wordfence'), 'link' => '#'),
+    ))->render();
+    ?>
 </script>
 
 <script type="text/x-jquery-template" id="wfTmpl_exportPromptError">
-	<?php
-	echo wfView::create('common/modal-prompt', array(
-		'title' => __('Error during Export', 'wordfence'),
-		'message' => '${err}',
-		'primaryButton' => array('id' => 'wf-export-prompt-close', 'label' => __('Close', 'wordfence'), 'link' => '#'),
-	))->render();
-	?>
+    <?php
+    echo wfView::create('common/modal-prompt', array(
+        'title' => __('Error during Export', 'wordfence'),
+        'message' => '${err}',
+        'primaryButton' => array('id' => 'wf-export-prompt-close', 'label' => __('Close', 'wordfence'), 'link' => '#'),
+    ))->render();
+    ?>
 </script>
 
 <script type="text/x-jquery-template" id="wfTmpl_importPromptSuccess">
-	<?php
-	echo wfView::create('common/modal-prompt', array(
-		'title' => __('Import Successful', 'wordfence'),
-		'messageHTML' => esc_html__('We successfully imported the site options.', 'wordfence'),
-		'primaryButton' => array('id' => 'wf-import-prompt-reload', 'label' => __('Reload', 'wordfence'), 'link' => '#'),
-	))->render();
-	?>
+    <?php
+    echo wfView::create('common/modal-prompt', array(
+        'title' => __('Import Successful', 'wordfence'),
+        'messageHTML' => esc_html__('We successfully imported the site options.', 'wordfence'),
+        'primaryButton' => array('id' => 'wf-import-prompt-reload', 'label' => __('Reload', 'wordfence'), 'link' => '#'),
+    ))->render();
+    ?>
 </script>
 
 <script type="text/x-jquery-template" id="wfTmpl_importPromptError">
-	<?php
-	echo wfView::create('common/modal-prompt', array(
-		'title' => __('Error during Import', 'wordfence'),
-		'message' => '${err}',
-		'primaryButton' => array('id' => 'wf-import-prompt-close', 'label' => __('Close', 'wordfence'), 'link' => '#'),
-	))->render();
-	?>
+    <?php
+    echo wfView::create('common/modal-prompt', array(
+        'title' => __('Error during Import', 'wordfence'),
+        'message' => '${err}',
+        'primaryButton' => array('id' => 'wf-import-prompt-close', 'label' => __('Close', 'wordfence'), 'link' => '#'),
+    ))->render();
+    ?>
 </script>

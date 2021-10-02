@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_LS_VERSION')) { exit; }
+if (!defined('WORDFENCE_LS_VERSION')) {
+    exit;
+}
 /**
  * Presents a text area option.
  *
@@ -15,41 +17,45 @@ if (!defined('WORDFENCE_LS_VERSION')) { exit; }
  */
 
 if (!isset($subtitlePosition)) { //May be 'title' to appear below the title or 'value' to appear below the field
-	$subtitlePosition = 'title';
+    $subtitlePosition = 'title';
 }
 
 $id = 'wfls-option-' . preg_replace('/[^a-z0-9]/i', '-', $textOptionName);
 ?>
 <ul id="<?php echo esc_attr($id); ?>" class="wfls-option wfls-option-textarea" data-text-option="<?php echo esc_attr($textOptionName); ?>" data-original-text-value="<?php echo esc_attr($textValue); ?>">
-	<?php if (!isset($noSpacer) || !$noSpacer): ?>
-	<li class="wfls-option-spacer"></li>
-	<?php endif; ?>
-	<li class="wfls-option-content wfls-no-right">
-		<ul>
-			<li class="wfls-option-title<?php if (isset($alignTitle)) { echo $alignTitle == 'top' ? ' wfls-option-title-top' : ($alignTitle == 'bottom' ? 'wfls-option-title-bottom' : ''); } ?>">
-				<?php if (isset($subtitleHTML) && $subtitlePosition == 'title'): ?>
-				<ul class="wfls-flex-vertical wfls-flex-align-left">
-					<li>
-				<?php endif; ?>
-						<span id="<?php echo esc_attr($id); ?>-label"><?php echo \WordfenceLS\Text\Model_HTML::esc_html($title); ?></span><?php if (isset($helpLink)) { echo ' <a href="' . esc_attr($helpLink) . '"  target="_blank" rel="noopener noreferrer" class="wfls-inline-help"><i class="' . (WORDFENCE_LS_FROM_CORE ? 'wf-fa wf-fa-question-circle-o' : 'wfls-fa wfls-fa-question-circle-o') . '" aria-hidden="true"></i></a>'; } ?>
-				<?php if (isset($subtitle) && $subtitlePosition == 'title'): ?>
-					</li>
-					<li class="wfls-option-subtitle"><?php echo \WordfenceLS\Text\Model_HTML::esc_html($subtitle); ?></li>
-				</ul>
-				<?php endif; ?>
-			</li>
-			<li class="wfls-option-textarea">
-				<?php if (isset($subtitle) && $subtitlePosition == 'value'): ?>
-				<ul class="wfls-flex-vertical wfls-flex-align-left wfls-flex-full-width">
-					<li>
-				<?php endif; ?>
-				<textarea aria-labelledby="<?php echo esc_attr($id); ?>-label"><?php echo esc_html($textValue); ?></textarea>
-				<?php if (isset($subtitle) && $subtitlePosition == 'value'): ?>
-					</li>
-					<li class="wfls-option-subtitle"><?php echo \WordfenceLS\Text\Model_HTML::esc_html($subtitle); ?></li>
-				</ul>
-				<?php endif; ?>
-			</li>
-		</ul>
-	</li>
+    <?php if (!isset($noSpacer) || !$noSpacer): ?>
+        <li class="wfls-option-spacer"></li>
+    <?php endif; ?>
+    <li class="wfls-option-content wfls-no-right">
+        <ul>
+            <li class="wfls-option-title<?php if (isset($alignTitle)) {
+                echo $alignTitle == 'top' ? ' wfls-option-title-top' : ($alignTitle == 'bottom' ? 'wfls-option-title-bottom' : '');
+            } ?>">
+                <?php if (isset($subtitleHTML) && $subtitlePosition == 'title'): ?>
+                <ul class="wfls-flex-vertical wfls-flex-align-left">
+                    <li>
+                        <?php endif; ?>
+                        <span id="<?php echo esc_attr($id); ?>-label"><?php echo \WordfenceLS\Text\Model_HTML::esc_html($title); ?></span><?php if (isset($helpLink)) {
+                            echo ' <a href="' . esc_attr($helpLink) . '"  target="_blank" rel="noopener noreferrer" class="wfls-inline-help"><i class="' . (WORDFENCE_LS_FROM_CORE ? 'wf-fa wf-fa-question-circle-o' : 'wfls-fa wfls-fa-question-circle-o') . '" aria-hidden="true"></i></a>';
+                        } ?>
+                        <?php if (isset($subtitle) && $subtitlePosition == 'title'): ?>
+                    </li>
+                    <li class="wfls-option-subtitle"><?php echo \WordfenceLS\Text\Model_HTML::esc_html($subtitle); ?></li>
+                </ul>
+            <?php endif; ?>
+            </li>
+            <li class="wfls-option-textarea">
+                <?php if (isset($subtitle) && $subtitlePosition == 'value'): ?>
+                <ul class="wfls-flex-vertical wfls-flex-align-left wfls-flex-full-width">
+                    <li>
+                        <?php endif; ?>
+                        <textarea aria-labelledby="<?php echo esc_attr($id); ?>-label"><?php echo esc_html($textValue); ?></textarea>
+                        <?php if (isset($subtitle) && $subtitlePosition == 'value'): ?>
+                    </li>
+                    <li class="wfls-option-subtitle"><?php echo \WordfenceLS\Text\Model_HTML::esc_html($subtitle); ?></li>
+                </ul>
+            <?php endif; ?>
+            </li>
+        </ul>
+    </li>
 </ul>

@@ -28,19 +28,19 @@
  */
 
 if (!is_callable('RandomCompat_intval')) {
-    
+
     /**
      * Cast to an integer if we can, safely.
-     * 
+     *
      * If you pass it a float in the range (~PHP_INT_MAX, PHP_INT_MAX)
      * (non-inclusive), it will sanely cast it to an int. If you it's equal to
-     * ~PHP_INT_MAX or PHP_INT_MAX, we let it fail as not an integer. Floats 
+     * ~PHP_INT_MAX or PHP_INT_MAX, we let it fail as not an integer. Floats
      * lose precision, so the <= and => operators might accidentally let a float
      * through.
-     * 
-     * @param int|float $number    The number we want to convert to an int
-     * @param bool      $fail_open Set to true to not throw an exception
-     * 
+     *
+     * @param int|float $number The number we want to convert to an int
+     * @param bool $fail_open Set to true to not throw an exception
+     *
      * @return float|int
      * @psalm-suppress InvalidReturnType
      *
@@ -50,7 +50,7 @@ if (!is_callable('RandomCompat_intval')) {
     {
         if (is_int($number) || is_float($number)) {
             $number += 0;
-        } elseif (is_numeric($number)) {
+        } else if (is_numeric($number)) {
             /** @psalm-suppress InvalidOperand */
             $number += 0;
         }
@@ -58,17 +58,17 @@ if (!is_callable('RandomCompat_intval')) {
 
         if (
             is_float($number)
-                &&
+            &&
             $number > ~PHP_INT_MAX
-                &&
+            &&
             $number < PHP_INT_MAX
         ) {
-            $number = (int) $number;
+            $number = (int)$number;
         }
 
         if (is_int($number)) {
-            return (int) $number;
-        } elseif (!$fail_open) {
+            return (int)$number;
+        } else if (!$fail_open) {
             throw new TypeError(
                 'Expected an integer.'
             );

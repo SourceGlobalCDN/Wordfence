@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * No issues found template view.
  *
@@ -14,13 +16,15 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 ?>
 <script type="text/x-jquery-template" id="issueTmpl_noneFound">
-	<ul class="wf-issue wf-issue-severity-good" data-issue-id="${id}">
-		<li class="wf-issue-summary"> 
-			<ul>
-				<li class="wf-issue-short"><div class="wf-issue-message">${shortMsg}</div></li>
-				<li class="wf-issue-stats"></li>
-				<li class="wf-issue-controls"></li>
-			</ul>
-		</li>
-	</ul>
+    <ul class="wf-issue wf-issue-severity-good" data-issue-id="${id}">
+        <li class="wf-issue-summary">
+            <ul>
+                <li class="wf-issue-short">
+                    <div class="wf-issue-message">${shortMsg}</div>
+                </li>
+                <li class="wf-issue-stats"></li>
+                <li class="wf-issue-controls"></li>
+            </ul>
+        </li>
+    </ul>
 </script>

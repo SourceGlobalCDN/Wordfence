@@ -25,22 +25,8 @@ class ParagonIE_Sodium_Core_Base64_UrlSafe
     }
 
     /**
-     * Encode into Base64, no = padding
-     *
-     * Base64 character set "[A-Z][a-z][0-9]+/"
-     *
      * @param string $src
-     * @return string
-     * @throws TypeError
-     */
-    public static function encodeUnpadded($src)
-    {
-        return self::doEncode($src, false);
-    }
-
-    /**
-     * @param string $src
-     * @param bool $pad   Include = padding?
+     * @param bool $pad Include = padding?
      * @return string
      * @throws TypeError
      */
@@ -57,10 +43,10 @@ class ParagonIE_Sodium_Core_Base64_UrlSafe
             $b2 = $chunk[3];
 
             $dest .=
-                self::encode6Bits(               $b0 >> 2       ) .
+                self::encode6Bits($b0 >> 2) .
                 self::encode6Bits((($b0 << 4) | ($b1 >> 4)) & 63) .
                 self::encode6Bits((($b1 << 2) | ($b2 >> 6)) & 63) .
-                self::encode6Bits(  $b2                     & 63);
+                self::encode6Bits($b2 & 63);
         }
         // The last chunk, which may have padding:
         if ($i < $srcLen) {
@@ -78,7 +64,7 @@ class ParagonIE_Sodium_Core_Base64_UrlSafe
                 }
             } else {
                 $dest .=
-                    self::encode6Bits( $b0 >> 2) .
+                    self::encode6Bits($b0 >> 2) .
                     self::encode6Bits(($b0 << 4) & 63);
                 if ($pad) {
                     $dest .= '==';
@@ -87,6 +73,47 @@ class ParagonIE_Sodium_Core_Base64_UrlSafe
         }
         return $dest;
     }
+
+    /**
+     * Uses bitwise operators instead of table-lookups to turn 8-bit integers
+     * into 6-bit integers.
+     *
+     * @param int $src
+     * @return string
+     */
+    protected static function encode6Bits($src)
+    {
+        $diff = 0x41;
+
+        // if ($src > 25) $diff += 0x61 - 0x41 - 26; // 6
+        $diff += ((25 - $src) >> 8) & 6;
+
+        // if ($src > 51) $diff += 0x30 - 0x61 - 26; // -75
+        $diff -= ((51 - $src) >> 8) & 75;
+
+        // if ($src > 61) $diff += 0x2d - 0x30 - 10; // -13
+        $diff -= ((61 - $src) >> 8) & 13;
+
+        // if ($src > 62) $diff += 0x5f - 0x2b - 1; // 3
+        $diff += ((62 - $src) >> 8) & 49;
+
+        return pack('C', $src + $diff);
+    }
+
+    /**
+     * Encode into Base64, no = padding
+     *
+     * Base64 character set "[A-Z][a-z][0-9]+/"
+     *
+     * @param string $src
+     * @return string
+     * @throws TypeError
+     */
+    public static function encodeUnpadded($src)
+    {
+        return self::doEncode($src, false);
+    }
+    // COPY ParagonIE_Sodium_Core_Base64_Common ENDING HERE
 
     /**
      * decode from base64 into binary
@@ -129,7 +156,7 @@ class ParagonIE_Sodium_Core_Base64_UrlSafe
             }
         } else {
             $src = rtrim($src, '=');
-            $srcLen =  ParagonIE_Sodium_Core_Util::strlen($src);
+            $srcLen = ParagonIE_Sodium_Core_Util::strlen($src);
         }
 
         $err = 0;
@@ -166,14 +193,14 @@ class ParagonIE_Sodium_Core_Base64_UrlSafe
                     ((($c1 << 4) | ($c2 >> 2)) & 0xff)
                 );
                 $err |= ($c0 | $c1 | $c2) >> 8;
-            } elseif ($i + 1 < $srcLen) {
+            } else if ($i + 1 < $srcLen) {
                 $c1 = self::decode6Bits($chunk[2]);
                 $dest .= pack(
                     'C',
                     ((($c0 << 2) | ($c1 >> 4)) & 0xff)
                 );
                 $err |= ($c0 | $c1) >> 8;
-            } elseif ($i < $srcLen && $strictPadding) {
+            } else if ($i < $srcLen && $strictPadding) {
                 $err |= 1;
             }
         }
@@ -186,7 +213,7 @@ class ParagonIE_Sodium_Core_Base64_UrlSafe
         }
         return $dest;
     }
-    // COPY ParagonIE_Sodium_Core_Base64_Common ENDING HERE
+
     /**
      * Uses bitwise operators instead of table-lookups to turn 6-bit integers
      * into 8-bit integers.
@@ -218,31 +245,5 @@ class ParagonIE_Sodium_Core_Base64_UrlSafe
         $ret += (((0x5e - $src) & ($src - 0x60)) >> 8) & 64;
 
         return $ret;
-    }
-
-    /**
-     * Uses bitwise operators instead of table-lookups to turn 8-bit integers
-     * into 6-bit integers.
-     *
-     * @param int $src
-     * @return string
-     */
-    protected static function encode6Bits($src)
-    {
-        $diff = 0x41;
-
-        // if ($src > 25) $diff += 0x61 - 0x41 - 26; // 6
-        $diff += ((25 - $src) >> 8) & 6;
-
-        // if ($src > 51) $diff += 0x30 - 0x61 - 26; // -75
-        $diff -= ((51 - $src) >> 8) & 75;
-
-        // if ($src > 61) $diff += 0x2d - 0x30 - 10; // -13
-        $diff -= ((61 - $src) >> 8) & 13;
-
-        // if ($src > 62) $diff += 0x5f - 0x2b - 1; // 3
-        $diff += ((62 - $src) >> 8) & 49;
-
-        return pack('C', $src + $diff);
     }
 }

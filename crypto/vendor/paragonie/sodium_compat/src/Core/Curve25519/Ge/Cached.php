@@ -5,6 +5,7 @@
 if (class_exists('ParagonIE_Sodium_Core_Curve25519_Ge_Cached', false)) {
     return;
 }
+
 /**
  * Class ParagonIE_Sodium_Core_Curve25519_Ge_Cached
  */
@@ -33,19 +34,20 @@ class ParagonIE_Sodium_Core_Curve25519_Ge_Cached
     /**
      * ParagonIE_Sodium_Core_Curve25519_Ge_Cached constructor.
      *
-     * @internal You should not use this directly from another application
-     *
      * @param ParagonIE_Sodium_Core_Curve25519_Fe|null $YplusX
      * @param ParagonIE_Sodium_Core_Curve25519_Fe|null $YminusX
      * @param ParagonIE_Sodium_Core_Curve25519_Fe|null $Z
      * @param ParagonIE_Sodium_Core_Curve25519_Fe|null $T2d
+     * @internal You should not use this directly from another application
+     *
      */
     public function __construct(
         ParagonIE_Sodium_Core_Curve25519_Fe $YplusX = null,
         ParagonIE_Sodium_Core_Curve25519_Fe $YminusX = null,
         ParagonIE_Sodium_Core_Curve25519_Fe $Z = null,
         ParagonIE_Sodium_Core_Curve25519_Fe $T2d = null
-    ) {
+    )
+    {
         if ($YplusX === null) {
             $YplusX = new ParagonIE_Sodium_Core_Curve25519_Fe();
         }

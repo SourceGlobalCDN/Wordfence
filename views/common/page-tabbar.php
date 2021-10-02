@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Expects $tabs to be defined as an array of wfTab instances
  */
@@ -22,6 +24,6 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                                                                                 href="<?php echo esc_attr($a); ?>"><?php echo esc_html($t->tabTitle); ?></a>
                 </li>
             <?php endforeach; ?>
-		</ul>
-	</div>
+        </ul>
+    </div>
 </div>

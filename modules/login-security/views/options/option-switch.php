@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_LS_VERSION')) { exit; }
+if (!defined('WORDFENCE_LS_VERSION')) {
+    exit;
+}
 /**
  * Presents a switch option.
  *
@@ -14,30 +16,36 @@ if (!defined('WORDFENCE_LS_VERSION')) { exit; }
 $id = 'wfls-option-' . preg_replace('/[^a-z0-9]/i', '-', $optionName);
 ?>
 <ul id="<?php echo esc_attr($id); ?>" class="wfls-option wfls-option-switch" data-option-name="<?php echo esc_attr($optionName); ?>" data-original-value="<?php echo esc_attr($value); ?>">
-	<?php if (!isset($noSpacer) || !$noSpacer): ?>
-	<li class="wfls-option-spacer"></li>
-	<?php endif; ?>
-	<li class="wfls-option-content wfls-no-right">
-		<ul>
-			<li class="wfls-option-title">
-			<?php if (isset($subtitle)): ?>
-				<ul class="wfls-flex-vertical wfls-flex-align-left">
-					<li>
-			<?php endif; ?>
-						<span id="<?php echo esc_attr($id); ?>-label"><?php echo \WordfenceLS\Text\Model_HTML::esc_html($title); ?></span><?php if (isset($helpLink)) { echo ' <a href="' . esc_attr($helpLink) . '"  target="_blank" rel="noopener noreferrer" class="wfls-inline-help"><i class="' . (WORDFENCE_LS_FROM_CORE ? 'wf-fa wf-fa-question-circle-o' : 'wfls-fa wfls-fa-question-circle-o') . '" aria-hidden="true"></i></a>'; } ?>
-			<?php if (isset($subtitle)): ?>
-					</li>
-					<li class="wfls-option-subtitle"><?php echo \WordfenceLS\Text\Model_HTML::esc_html($subtitle); ?></li>
-				</ul>
-			<?php endif; ?>
-			</li>
-			<li class="wfls-option-switch<?php if (isset($alignment)) { echo ' ' . $alignment; } ?> wfls-padding-add-top-xs-small">
-				<ul class="wfls-switch" role="radiogroup" aria-labelledby="<?php echo esc_attr($id); ?>-label">
-				<?php foreach ($states as $s): ?>
-					<li<?php if ($s['value'] == $value) { echo ' class="wfls-active"'; } ?> data-option-value="<?php echo esc_attr($s['value']); ?>" role="radio" aria-checked="<?php echo ($s['value'] == $value ? 'true' : 'false'); ?>" tabindex="0"><?php echo \WordfenceLS\Text\Model_HTML::esc_html($s['label']); ?></li>
-				<?php endforeach; ?>
-				</ul>
-			</li>
-		</ul>
-	</li>
+    <?php if (!isset($noSpacer) || !$noSpacer): ?>
+        <li class="wfls-option-spacer"></li>
+    <?php endif; ?>
+    <li class="wfls-option-content wfls-no-right">
+        <ul>
+            <li class="wfls-option-title">
+                <?php if (isset($subtitle)): ?>
+                <ul class="wfls-flex-vertical wfls-flex-align-left">
+                    <li>
+                        <?php endif; ?>
+                        <span id="<?php echo esc_attr($id); ?>-label"><?php echo \WordfenceLS\Text\Model_HTML::esc_html($title); ?></span><?php if (isset($helpLink)) {
+                            echo ' <a href="' . esc_attr($helpLink) . '"  target="_blank" rel="noopener noreferrer" class="wfls-inline-help"><i class="' . (WORDFENCE_LS_FROM_CORE ? 'wf-fa wf-fa-question-circle-o' : 'wfls-fa wfls-fa-question-circle-o') . '" aria-hidden="true"></i></a>';
+                        } ?>
+                        <?php if (isset($subtitle)): ?>
+                    </li>
+                    <li class="wfls-option-subtitle"><?php echo \WordfenceLS\Text\Model_HTML::esc_html($subtitle); ?></li>
+                </ul>
+            <?php endif; ?>
+            </li>
+            <li class="wfls-option-switch<?php if (isset($alignment)) {
+                echo ' ' . $alignment;
+            } ?> wfls-padding-add-top-xs-small">
+                <ul class="wfls-switch" role="radiogroup" aria-labelledby="<?php echo esc_attr($id); ?>-label">
+                    <?php foreach ($states as $s): ?>
+                        <li<?php if ($s['value'] == $value) {
+                            echo ' class="wfls-active"';
+                        } ?> data-option-value="<?php echo esc_attr($s['value']); ?>" role="radio" aria-checked="<?php echo($s['value'] == $value ? 'true' : 'false'); ?>" tabindex="0"><?php echo \WordfenceLS\Text\Model_HTML::esc_html($s['label']); ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
+        </ul>
+    </li>
 </ul>

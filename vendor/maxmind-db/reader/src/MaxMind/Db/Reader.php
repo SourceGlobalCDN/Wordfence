@@ -72,19 +72,46 @@ class Reader
         );
     }
 
+    private function findMetadataStart($filename)
+    {
+        $handle = $this->fileHandle;
+        $fstat = fstat($handle);
+        $fileSize = $fstat['size'];
+        $marker = self::$METADATA_START_MARKER;
+        $markerLength = self::$METADATA_START_MARKER_LENGTH;
+        $metadataMaxLengthExcludingMarker
+            = min(self::$METADATA_MAX_SIZE, $fileSize) - $markerLength;
+
+        for ($i = 0; $i <= $metadataMaxLengthExcludingMarker; ++$i) {
+            for ($j = 0; $j < $markerLength; ++$j) {
+                fseek($handle, $fileSize - $i - $j - 1);
+                $matchBit = fgetc($handle);
+                if ($matchBit !== $marker[$markerLength - $j - 1]) {
+                    continue 2;
+                }
+            }
+
+            return $fileSize - $i;
+        }
+        throw new InvalidDatabaseException(
+            "Error opening database file ($filename). " .
+            'Is this a valid MaxMind DB file?'
+        );
+    }
+
     /**
      * Looks up the <code>address</code> in the MaxMind DB.
      *
      * @param string $ipAddress
      *                          the IP address to look up
      *
-     * @throws \BadMethodCallException   if this method is called on a closed database
+     * @return array the record for the IP address
      * @throws \InvalidArgumentException if something other than a single IP address is passed to the method
      * @throws InvalidDatabaseException
      *                                   if the database is invalid or there is an error reading
      *                                   from it
      *
-     * @return array the record for the IP address
+     * @throws \BadMethodCallException   if this method is called on a closed database
      */
     public function get($ipAddress)
     {
@@ -143,7 +170,7 @@ class Reader
         if ($node === $this->metadata->nodeCount) {
             // Record is empty
             return 0;
-        } elseif ($node > $this->metadata->nodeCount) {
+        } else if ($node > $this->metadata->nodeCount) {
             // Record is a data pointer
             return $node;
         }
@@ -219,6 +246,12 @@ class Reader
         }
     }
 
+    /*
+     * This is an extremely naive but reasonably readable implementation. There
+     * are much faster algorithms (e.g., Boyer-Moore) for this if speed is ever
+     * an issue, but I suspect it won't be.
+     */
+
     private function resolveDataPointer($pointer)
     {
         $resolved = $pointer - $this->metadata->nodeCount
@@ -234,43 +267,11 @@ class Reader
         return $data;
     }
 
-    /*
-     * This is an extremely naive but reasonably readable implementation. There
-     * are much faster algorithms (e.g., Boyer-Moore) for this if speed is ever
-     * an issue, but I suspect it won't be.
-     */
-    private function findMetadataStart($filename)
-    {
-        $handle = $this->fileHandle;
-        $fstat = fstat($handle);
-        $fileSize = $fstat['size'];
-        $marker = self::$METADATA_START_MARKER;
-        $markerLength = self::$METADATA_START_MARKER_LENGTH;
-        $metadataMaxLengthExcludingMarker
-            = min(self::$METADATA_MAX_SIZE, $fileSize) - $markerLength;
-
-        for ($i = 0; $i <= $metadataMaxLengthExcludingMarker; ++$i) {
-            for ($j = 0; $j < $markerLength; ++$j) {
-                fseek($handle, $fileSize - $i - $j - 1);
-                $matchBit = fgetc($handle);
-                if ($matchBit !== $marker[$markerLength - $j - 1]) {
-                    continue 2;
-                }
-            }
-
-            return $fileSize - $i;
-        }
-        throw new InvalidDatabaseException(
-            "Error opening database file ($filename). " .
-            'Is this a valid MaxMind DB file?'
-        );
-    }
-
     /**
-     * @throws \InvalidArgumentException if arguments are passed to the method
+     * @return Metadata object for the database
      * @throws \BadMethodCallException   if the database has been closed
      *
-     * @return Metadata object for the database
+     * @throws \InvalidArgumentException if arguments are passed to the method
      */
     public function metadata()
     {

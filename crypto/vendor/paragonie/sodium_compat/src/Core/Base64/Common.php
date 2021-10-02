@@ -28,22 +28,8 @@ abstract class ParagonIE_Sodium_Core_Base64_Common
     }
 
     /**
-     * Encode into Base64, no = padding
-     *
-     * Base64 character set "[A-Z][a-z][0-9]+/"
-     *
      * @param string $src
-     * @return string
-     * @throws TypeError
-     */
-    public static function encodeUnpadded($src)
-    {
-        return self::doEncode($src, false);
-    }
-
-    /**
-     * @param string $src
-     * @param bool $pad   Include = padding?
+     * @param bool $pad Include = padding?
      * @return string
      * @throws TypeError
      */
@@ -60,10 +46,10 @@ abstract class ParagonIE_Sodium_Core_Base64_Common
             $b2 = $chunk[3];
 
             $dest .=
-                self::encode6Bits(               $b0 >> 2       ) .
+                self::encode6Bits($b0 >> 2) .
                 self::encode6Bits((($b0 << 4) | ($b1 >> 4)) & 63) .
                 self::encode6Bits((($b1 << 2) | ($b2 >> 6)) & 63) .
-                self::encode6Bits(  $b2                     & 63);
+                self::encode6Bits($b2 & 63);
         }
         // The last chunk, which may have padding:
         if ($i < $srcLen) {
@@ -81,7 +67,7 @@ abstract class ParagonIE_Sodium_Core_Base64_Common
                 }
             } else {
                 $dest .=
-                    self::encode6Bits( $b0 >> 2) .
+                    self::encode6Bits($b0 >> 2) .
                     self::encode6Bits(($b0 << 4) & 63);
                 if ($pad) {
                     $dest .= '==';
@@ -89,6 +75,29 @@ abstract class ParagonIE_Sodium_Core_Base64_Common
             }
         }
         return $dest;
+    }
+
+    /**
+     * Uses bitwise operators instead of table-lookups to turn 8-bit integers
+     * into 6-bit integers.
+     *
+     * @param int $src
+     * @return string
+     */
+    abstract protected static function encode6Bits($src);
+
+    /**
+     * Encode into Base64, no = padding
+     *
+     * Base64 character set "[A-Z][a-z][0-9]+/"
+     *
+     * @param string $src
+     * @return string
+     * @throws TypeError
+     */
+    public static function encodeUnpadded($src)
+    {
+        return self::doEncode($src, false);
     }
 
     /**
@@ -150,7 +159,7 @@ abstract class ParagonIE_Sodium_Core_Base64_Common
                 'CCC',
                 ((($c0 << 2) | ($c1 >> 4)) & 0xff),
                 ((($c1 << 4) | ($c2 >> 2)) & 0xff),
-                ((($c2 << 6) |  $c3      ) & 0xff)
+                ((($c2 << 6) | $c3) & 0xff)
             );
             $err |= ($c0 | $c1 | $c2 | $c3) >> 8;
         }
@@ -169,14 +178,14 @@ abstract class ParagonIE_Sodium_Core_Base64_Common
                     ((($c1 << 4) | ($c2 >> 2)) & 0xff)
                 );
                 $err |= ($c0 | $c1 | $c2) >> 8;
-            } elseif ($i + 1 < $srcLen) {
+            } else if ($i + 1 < $srcLen) {
                 $c1 = self::decode6Bits($chunk[2]);
                 $dest .= pack(
                     'C',
                     ((($c0 << 2) | ($c1 >> 4)) & 0xff)
                 );
                 $err |= ($c0 | $c1) >> 8;
-            } elseif ($i < $srcLen && $strictPadding) {
+            } else if ($i < $srcLen && $strictPadding) {
                 $err |= 1;
             }
         }
@@ -202,13 +211,4 @@ abstract class ParagonIE_Sodium_Core_Base64_Common
      * @return int
      */
     abstract protected static function decode6Bits($src);
-
-    /**
-     * Uses bitwise operators instead of table-lookups to turn 8-bit integers
-     * into 6-bit integers.
-     *
-     * @param int $src
-     * @return string
-     */
-    abstract protected static function encode6Bits($src);
 }

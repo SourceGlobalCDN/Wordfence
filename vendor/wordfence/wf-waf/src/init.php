@@ -1,5 +1,7 @@
 <?php
-if (defined('WFWAF_VERSION')) { exit(); }
+if (defined('WFWAF_VERSION')) {
+    exit();
+}
 
 define('WFWAF_VERSION', '1.0.4');
 define('WFWAF_PATH', dirname(__FILE__) . '/');
@@ -7,10 +9,10 @@ define('WFWAF_LIB_PATH', WFWAF_PATH . 'lib/');
 define('WFWAF_VIEW_PATH', WFWAF_PATH . 'views/');
 define('WFWAF_API_URL_SEC', 'https://noc4.wordfence.com/v1.11/');
 if (!defined('WFWAF_DEBUG')) {
-	define('WFWAF_DEBUG', false);
+    define('WFWAF_DEBUG', false);
 }
 if (!defined('WFWAF_ENABLED')) {
-	define('WFWAF_ENABLED', true);
+    define('WFWAF_ENABLED', true);
 }
 
 define('WFWAF_IS_WINDOWS', strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');

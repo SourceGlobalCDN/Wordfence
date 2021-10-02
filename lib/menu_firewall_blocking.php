@@ -1,124 +1,127 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 ?>
-<div class="wf-row">
-	<div class="wf-col-xs-12">
-		<div class="wf-block wf-block-no-header wf-active">
-			<div class="wf-block-content">
-				<ul class="wf-block-list">
-					<li>
-						<?php
-						echo wfView::create('blocking/blocking-status', array(
-						))->render();
-						?>
-					</li>
-				</ul>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="wf-row">
-	<div class="wf-col-xs-12">
-		<div class="wf-block wf-always-active">
-			<?php if (!wfConfig::get('firewallEnabled')): ?>
-                <ul class="wf-block-banner">
-                    <li><?php echo wp_kses(__('<strong>Note:</strong> Blocking is disabled when the option "Enable Rate Limiting and Advanced Blocking" is off.', 'wordfence'), array('strong' => array())); ?></li>
-                    <li><a href="#" class="wf-btn wf-btn-default" id="wf-blocking-enable"
-                           role="button"><?php esc_html_e('Turn On', 'wordfence'); ?></a></li>
-                </ul>
-            <?php endif; ?>
-			<?php if (version_compare(phpversion(), '5.4') < 0 && wfConfig::get('isPaid') && wfBlock::hasCountryBlock()): ?>
-                <ul class="wf-block-banner">
-                    <li><?php echo esc_html(sprintf(
-                        /* translators: PHP version. */
-                            __('<strong>Note:</strong> The GeoIP database that is required for country blocking has been updated to a new format. This new format requires sites to run PHP 5.4 or newer, and this site is on PHP %s. To ensure country blocking continues functioning, please update PHP.', 'wordfence'), wfUtils::cleanPHPVersion())); ?></li>
-                    <li>
-                        <a href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_SCAN_RESULT_GEOIP_UPDATE); ?>"
-                           class="wf-btn wf-btn-default" target="_blank"
-                           rel="noopener noreferrer"><?php esc_html_e('More Information', 'wordfence'); ?><span
-                                    class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
-                    </li>
-                </ul>
-            <?php endif; ?>
-			<div class="wf-block-header">
-				<div class="wf-block-header-content">
-					<div class="wf-block-title">
-						<strong id="wf-block-parameters-title" data-new-title="<?php esc_attr_e('Create a Blocking Rule', 'wordfence'); ?>" data-edit-title="<?php esc_attr_e('Edit Blocking Rule', 'wordfence'); ?>"><?php esc_html_e('Create a Blocking Rule', 'wordfence'); ?></strong>
-					</div>
-				</div>
-			</div>
-			<div class="wf-block-content">
-				<?php
-				echo wfView::create('blocking/blocking-create', array(
-				))->render();
-				?>
-			</div>
-		</div>
-	</div>
-</div> <!-- end firewall status -->
+    <div class="wf-row">
+        <div class="wf-col-xs-12">
+            <div class="wf-block wf-block-no-header wf-active">
+                <div class="wf-block-content">
+                    <ul class="wf-block-list">
+                        <li>
+                            <?php
+                            echo wfView::create('blocking/blocking-status', array())->render();
+                            ?>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wf-row">
+        <div class="wf-col-xs-12">
+            <div class="wf-block wf-always-active">
+                <?php if (!wfConfig::get('firewallEnabled')): ?>
+                    <ul class="wf-block-banner">
+                        <li><?php echo wp_kses(__('<strong>Note:</strong> Blocking is disabled when the option "Enable Rate Limiting and Advanced Blocking" is off.', 'wordfence'), array('strong' => array())); ?></li>
+                        <li><a href="#" class="wf-btn wf-btn-default" id="wf-blocking-enable"
+                               role="button"><?php esc_html_e('Turn On', 'wordfence'); ?></a></li>
+                    </ul>
+                <?php endif; ?>
+                <?php if (version_compare(phpversion(), '5.4') < 0 && wfConfig::get('isPaid') && wfBlock::hasCountryBlock()): ?>
+                    <ul class="wf-block-banner">
+                        <li><?php echo esc_html(sprintf(
+                            /* translators: PHP version. */
+                                __('<strong>Note:</strong> The GeoIP database that is required for country blocking has been updated to a new format. This new format requires sites to run PHP 5.4 or newer, and this site is on PHP %s. To ensure country blocking continues functioning, please update PHP.', 'wordfence'), wfUtils::cleanPHPVersion())); ?></li>
+                        <li>
+                            <a href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_SCAN_RESULT_GEOIP_UPDATE); ?>"
+                               class="wf-btn wf-btn-default" target="_blank"
+                               rel="noopener noreferrer"><?php esc_html_e('More Information', 'wordfence'); ?><span
+                                        class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                        </li>
+                    </ul>
+                <?php endif; ?>
+                <div class="wf-block-header">
+                    <div class="wf-block-header-content">
+                        <div class="wf-block-title">
+                            <strong id="wf-block-parameters-title" data-new-title="<?php esc_attr_e('Create a Blocking Rule', 'wordfence'); ?>" data-edit-title="<?php esc_attr_e('Edit Blocking Rule', 'wordfence'); ?>"><?php esc_html_e('Create a Blocking Rule', 'wordfence'); ?></strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="wf-block-content">
+                    <?php
+                    echo wfView::create('blocking/blocking-create', array())->render();
+                    ?>
+                </div>
+            </div>
+        </div>
+    </div> <!-- end firewall status -->
 <?php
-echo wfView::create('blocking/block-list', array(
-))->render();
+echo wfView::create('blocking/block-list', array())->render();
 ?>
-<div id="wf-overlay-wrapper" style="display: none">
-	<div class="wf-overlay">
-		<div class="wf-overlay-header"></div>
-		<div class="wf-overlay-body"></div>
-		<span class="wf-overlay-close wf-ion-android-close"></span>
-	</div>
-</div>
-<script type="application/javascript">
-	(function($) {
-		$(function() {
-			$('#wf-blocking-enable').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+    <div id="wf-overlay-wrapper" style="display: none">
+        <div class="wf-overlay">
+            <div class="wf-overlay-header"></div>
+            <div class="wf-overlay-body"></div>
+            <span class="wf-overlay-close wf-ion-android-close"></span>
+        </div>
+    </div>
+    <script type="application/javascript">
+        (function ($) {
+            $(function () {
+                $('#wf-blocking-enable').on('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-				WFAD.setOption('firewallEnabled', 1, function() {
-					window.location.reload(true);
-				});
-			});
-		});
-	})(jQuery);
-</script>
+                    WFAD.setOption('firewallEnabled', 1, function () {
+                        window.location.reload(true);
+                    });
+                });
+            });
+        })(jQuery);
+    </script>
 <?php if (wfOnboardingController::willShowNewTour(wfOnboardingController::TOUR_BLOCKING)): ?>
-	<script type="application/javascript">
-		(function($) {
-			$(function() {
-				WFAD.setUpBlockingTour = function() {
-					WFAD.tour1 = function () {
-						WFAD.tour('wfBlockingNewTour1', 'wf-section-blocking', 'top', 'left', null, WFAD.tour2);
-					};
-					WFAD.tour2 = function () {
-						WFAD.tour('wfBlockingNewTour2', 'wf-create-block', 'top', 'top', WFAD.tour1, WFAD.tour3);
-					};
-					WFAD.tour3 = function () {
-						WFAD.tour('wfBlockingNewTour3', 'wf-blocks-wrapper', 'bottom', 'bottom', WFAD.tour2, WFAD.tourComplete);
-					};
-					WFAD.tourComplete = function () {
-						WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_BLOCKING); ?>');
-					};
-				}
+    <script type="application/javascript">
+        (function ($) {
+            $(function () {
+                WFAD.setUpBlockingTour = function () {
+                    WFAD.tour1 = function () {
+                        WFAD.tour('wfBlockingNewTour1', 'wf-section-blocking', 'top', 'left', null, WFAD.tour2);
+                    };
+                    WFAD.tour2 = function () {
+                        WFAD.tour('wfBlockingNewTour2', 'wf-create-block', 'top', 'top', WFAD.tour1, WFAD.tour3);
+                    };
+                    WFAD.tour3 = function () {
+                        WFAD.tour('wfBlockingNewTour3', 'wf-blocks-wrapper', 'bottom', 'bottom', WFAD.tour2, WFAD.tourComplete);
+                    };
+                    WFAD.tourComplete = function () {
+                        WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_BLOCKING); ?>');
+                    };
+                }
 
-				WFAD.blockingTourShown = false;
-				<?php if (wfOnboardingController::shouldShowNewTour(wfOnboardingController::TOUR_BLOCKING)): ?>
-				$(window).on('wfTabChange', function(e, tab) {
-					if (tab == 'blocking' && !WFAD.blockingTourShown) {
-						WFAD.blockingTourShown = true;
-						WFAD.setUpBlockingTour();
-						if (!WFAD.isSmallScreen) { WFAD.tour1(); }
-					}
-				});
+                WFAD.blockingTourShown = false;
+                <?php if (wfOnboardingController::shouldShowNewTour(wfOnboardingController::TOUR_BLOCKING)): ?>
+                $(window).on('wfTabChange', function (e, tab) {
+                    if (tab == 'blocking' && !WFAD.blockingTourShown) {
+                        WFAD.blockingTourShown = true;
+                        WFAD.setUpBlockingTour();
+                        if (!WFAD.isSmallScreen) {
+                            WFAD.tour1();
+                        }
+                    }
+                });
 
-				if ($('#blocking').hasClass('wf-active')) {
-					WFAD.blockingTourShown = true;
-					WFAD.setUpBlockingTour();
-					if (!WFAD.isSmallScreen) { WFAD.tour1(); }
-				}
-				<?php endif; ?>
-			});
-		})(jQuery);
-	</script>
+                if ($('#blocking').hasClass('wf-active')) {
+                    WFAD.blockingTourShown = true;
+                    WFAD.setUpBlockingTour();
+                    if (!WFAD.isSmallScreen) {
+                        WFAD.tour1();
+                    }
+                }
+                <?php endif; ?>
+            });
+        })(jQuery);
+    </script>
 
     <script type="text/x-jquery-template" id="wfBlockingNewTour1">
         <div>
@@ -178,40 +181,44 @@ echo wfView::create('blocking/block-list', array(
 <?php endif; ?>
 
 <?php if (wfOnboardingController::willShowUpgradeTour(wfOnboardingController::TOUR_BLOCKING)): ?>
-	<script type="application/javascript">
-		(function($) {
-			$(function() {
-				WFAD.setUpBlockingTour = function() {
-					WFAD.tour1 = function () {
-						WFAD.tour('wfBlockingUpgradeTour1', 'wf-create-block', 'top', 'top', null, WFAD.tour2);
-					};
-					WFAD.tour2 = function () {
-						WFAD.tour('wfBlockingUpgradeTour2', 'wf-blocks-wrapper', 'bottom', 'bottom', WFAD.tour1, WFAD.tourComplete);
-					};
-					WFAD.tourComplete = function () {
-						WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_BLOCKING); ?>');
-					};
-				};
+    <script type="application/javascript">
+        (function ($) {
+            $(function () {
+                WFAD.setUpBlockingTour = function () {
+                    WFAD.tour1 = function () {
+                        WFAD.tour('wfBlockingUpgradeTour1', 'wf-create-block', 'top', 'top', null, WFAD.tour2);
+                    };
+                    WFAD.tour2 = function () {
+                        WFAD.tour('wfBlockingUpgradeTour2', 'wf-blocks-wrapper', 'bottom', 'bottom', WFAD.tour1, WFAD.tourComplete);
+                    };
+                    WFAD.tourComplete = function () {
+                        WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_BLOCKING); ?>');
+                    };
+                };
 
-				WFAD.blockingTourShown = false;
-				<?php if (wfOnboardingController::shouldShowUpgradeTour(wfOnboardingController::TOUR_BLOCKING)): ?>
-				$(window).on('wfTabChange', function(e, tab) {
-					if (tab == 'blocking' && !WFAD.blockingTourShown) {
-						WFAD.blockingTourShown = true;
-						WFAD.setUpBlockingTour();
-						if (!WFAD.isSmallScreen) { WFAD.tour1(); }
-					}
-				});
+                WFAD.blockingTourShown = false;
+                <?php if (wfOnboardingController::shouldShowUpgradeTour(wfOnboardingController::TOUR_BLOCKING)): ?>
+                $(window).on('wfTabChange', function (e, tab) {
+                    if (tab == 'blocking' && !WFAD.blockingTourShown) {
+                        WFAD.blockingTourShown = true;
+                        WFAD.setUpBlockingTour();
+                        if (!WFAD.isSmallScreen) {
+                            WFAD.tour1();
+                        }
+                    }
+                });
 
-				if ($('#blocking').hasClass('wf-active')) {
-					WFAD.blockingTourShown = true;
-					WFAD.setUpBlockingTour();
-					if (!WFAD.isSmallScreen) { WFAD.tour1(); }
-				}
-				<?php endif; ?>
-			});
-		})(jQuery);
-	</script>
+                if ($('#blocking').hasClass('wf-active')) {
+                    WFAD.blockingTourShown = true;
+                    WFAD.setUpBlockingTour();
+                    if (!WFAD.isSmallScreen) {
+                        WFAD.tour1();
+                    }
+                }
+                <?php endif; ?>
+            });
+        })(jQuery);
+    </script>
 
     <script type="text/x-jquery-template" id="wfBlockingUpgradeTour1">
         <div>

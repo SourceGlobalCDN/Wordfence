@@ -58,7 +58,7 @@ class CaBundle
      * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
      *
-     * @param  LoggerInterface $logger optional logger for information about which CA files were loaded
+     * @param LoggerInterface $logger optional logger for information about which CA files were loaded
      * @return string          path to a CA bundle file or directory
      */
     public static function getSystemCaRootBundlePath(LoggerInterface $logger = null)
@@ -113,7 +113,7 @@ class CaBundle
 
         foreach ($caBundlePaths as $caBundle) {
             $caBundle = dirname($caBundle);
-            if (@is_dir($caBundle) && glob($caBundle.'/*')) {
+            if (@is_dir($caBundle) && glob($caBundle . '/*')) {
                 return self::$caPath = $caBundle;
             }
         }
@@ -122,39 +122,10 @@ class CaBundle
     }
 
     /**
-     * Returns the path to the bundled CA file
-     *
-     * In case you don't want to trust the user or the system, you can use this directly
-     *
-     * @return string path to a CA bundle file
-     */
-    public static function getBundledCaBundlePath()
-    {
-        $caBundleFile = __DIR__.'/../res/cacert.pem';
-
-        // cURL does not understand 'phar://' paths
-        // see https://github.com/composer/ca-bundle/issues/10
-        if (0 === strpos($caBundleFile, 'phar://')) {
-            file_put_contents(
-                $tempCaBundleFile = tempnam(sys_get_temp_dir(), 'openssl-ca-bundle-'),
-                file_get_contents($caBundleFile)
-            );
-
-            register_shutdown_function(function() use ($tempCaBundleFile) {
-                @unlink($tempCaBundleFile);
-            });
-
-            $caBundleFile = $tempCaBundleFile;
-        }
-
-        return $caBundleFile;
-    }
-
-    /**
      * Validates a CA file using opensl_x509_parse only if it is safe to use
      *
-     * @param string          $filename
-     * @param LoggerInterface $logger   optional logger for information about which CA files were loaded
+     * @param string $filename
+     * @param LoggerInterface $logger optional logger for information about which CA files were loaded
      *
      * @return bool
      */
@@ -181,11 +152,11 @@ class CaBundle
 
             $isValid = !empty($contents);
         } else {
-            $isValid = (bool) openssl_x509_parse($contents);
+            $isValid = (bool)openssl_x509_parse($contents);
         }
 
         if ($logger) {
-            $logger->debug('Checked CA file '.realpath($filename).': '.($isValid ? 'valid' : 'invalid'));
+            $logger->debug('Checked CA file ' . realpath($filename) . ': ' . ($isValid ? 'valid' : 'invalid'));
         }
 
         return self::$caFileValidity[$filename] = $isValid;
@@ -214,7 +185,7 @@ class CaBundle
         // PHP 5.4.0 - PHP 5.4.22
         // PHP 5.5.0 - PHP 5.5.6
         if (
-               (PHP_VERSION_ID < 50400 && PHP_VERSION_ID >= 50328)
+            (PHP_VERSION_ID < 50400 && PHP_VERSION_ID >= 50328)
             || (PHP_VERSION_ID < 50500 && PHP_VERSION_ID >= 50423)
             || (PHP_VERSION_ID < 50600 && PHP_VERSION_ID >= 50507)
         ) {
@@ -228,10 +199,10 @@ class CaBundle
         }
 
         $compareDistroVersionPrefix = function ($prefix, $fixedVersion) {
-            $regex = '{^'.preg_quote($prefix).'([0-9]+)$}';
+            $regex = '{^' . preg_quote($prefix) . '([0-9]+)$}';
 
             if (preg_match($regex, PHP_VERSION, $m)) {
-                return ((int) $m[1]) >= $fixedVersion;
+                return ((int)$m[1]) >= $fixedVersion;
             }
 
             return false;
@@ -268,7 +239,7 @@ $info = openssl_x509_parse(base64_decode('%s'));
 var_dump(PHP_VERSION, $info['issuer']['emailAddress'], $info['validFrom_time_t']);
 
 EOT;
-        $script = '<'."?php\n".sprintf($script, $cert);
+        $script = '<' . "?php\n" . sprintf($script, $cert);
 
         try {
             $process = new PhpProcess($script);
@@ -294,6 +265,35 @@ EOT;
         }
 
         return self::$useOpensslParse = false;
+    }
+
+    /**
+     * Returns the path to the bundled CA file
+     *
+     * In case you don't want to trust the user or the system, you can use this directly
+     *
+     * @return string path to a CA bundle file
+     */
+    public static function getBundledCaBundlePath()
+    {
+        $caBundleFile = __DIR__ . '/../res/cacert.pem';
+
+        // cURL does not understand 'phar://' paths
+        // see https://github.com/composer/ca-bundle/issues/10
+        if (0 === strpos($caBundleFile, 'phar://')) {
+            file_put_contents(
+                $tempCaBundleFile = tempnam(sys_get_temp_dir(), 'openssl-ca-bundle-'),
+                file_get_contents($caBundleFile)
+            );
+
+            register_shutdown_function(function () use ($tempCaBundleFile) {
+                @unlink($tempCaBundleFile);
+            });
+
+            $caBundleFile = $tempCaBundleFile;
+        }
+
+        return $caBundleFile;
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the overlay.
  *
@@ -11,25 +13,25 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
 <div id="wf-onboarding-plugin-overlay">
     <a href="#" id="wf-onboarding-dismiss" role="button">&times;</a>
     <?php echo $contentHTML; ?>
-	<script type="application/javascript">
-		(function($) {
-			$(function() {
-				$('#wf-onboarding-dismiss, #wf-onboarding-plugin-overlay').on('click', function(e) {
-					e.preventDefault();
-					e.stopPropagation();
-					
-					$(window).trigger('wfOnboardingDismiss');
-					$('#wf-onboarding-plugin-overlay').fadeOut(400, function() {
-						$('#wf-onboarding-plugin-overlay').remove();
-					});
-				});
+    <script type="application/javascript">
+        (function ($) {
+            $(function () {
+                $('#wf-onboarding-dismiss, #wf-onboarding-plugin-overlay').on('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-				$(document).keyup(function(e) {
-					if (e.keyCode == 27) { //esc
-						$('#wf-onboarding-dismiss').trigger('click');
-					}
-				});
-			});
-		})(jQuery);
-	</script>
+                    $(window).trigger('wfOnboardingDismiss');
+                    $('#wf-onboarding-plugin-overlay').fadeOut(400, function () {
+                        $('#wf-onboarding-plugin-overlay').remove();
+                    });
+                });
+
+                $(document).keyup(function (e) {
+                    if (e.keyCode == 27) { //esc
+                        $('#wf-onboarding-dismiss').trigger('click');
+                    }
+                });
+            });
+        })(jQuery);
+    </script>
 </div>

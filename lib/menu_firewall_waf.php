@@ -1,7 +1,10 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 $waf = wfWAF::getInstance();
-$d = new wfDashboard(); unset($d->countriesNetwork);
+$d = new wfDashboard();
+unset($d->countriesNetwork);
 $firewall = new wfFirewall();
 $config = $waf->getStorageEngine();
 $wafConfigURL = network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_options#configureAutoPrepend');
@@ -9,239 +12,246 @@ $wafRemoveURL = network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_optio
 /** @var array $wafData */
 ?>
 
-<div class="wf-row">
-	<div class="wf-col-xs-12">
-		<div class="wf-block wf-active">
-			<div class="wf-block-content">
-				<ul class="wf-block-list">
-					<li>
-						<?php
-						echo wfView::create('waf/firewall-status', array(
-							'firewall' => $firewall,
-							'dashboard' => $d,
-						))->render();
-						?>
-					</li>
-					<li>
-						<ul class="wf-block-list wf-block-list-horizontal wf-block-list-nowrap wf-waf-coverage">
-							<li>
-								<?php
-								if (function_exists('network_admin_url') && is_multisite()) { $optionsURL = network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_options'); }
-								else { $optionsURL = admin_url('admin.php?page=WordfenceWAF&subpage=waf_options'); }
-								echo wfView::create('common/status-detail', array(
-									'id' => 'waf-coverage',
-									'percentage' => $firewall->wafStatus(),
-									'activeColor' => ($firewall->firewallMode() == wfFirewall::FIREWALL_MODE_LEARNING ? '#ececec' : null /* automatic */),
-									'title' => __('Web Application Firewall', 'wordfence'),
-									'subtitle' => ($firewall->firewallMode() == wfFirewall::FIREWALL_MODE_LEARNING ? __('Currently in Learning Mode', 'wordfence') : __('Stops Complex Attacks', 'wordfence')),
-									'link' => $optionsURL,
-									'linkLabel' => __('Manage WAF', 'wordfence'),
-									'statusTitle' => __('Web Application Firewall Status', 'wordfence'),
-									'statusList' => $firewall->wafStatusList(),
-									'statusExtra' => ($firewall->firewallMode() == wfFirewall::FIREWALL_MODE_LEARNING ? wfView::create('waf/status-tooltip-learning-mode')->render() : ''),
-									'helpLink' => __('https://www.wordfence.com/help/firewall/#firewall-status', 'wordfence'),
-								))->render();
-								?>
-							</li>
-							<li>
-								<?php
-								echo wfView::create('common/status-detail', array(
-									'id' => 'waf-rules',
-									'percentage' => $firewall->ruleStatus(),
-									'activeColor' => ($firewall->firewallMode() == wfFirewall::FIREWALL_MODE_LEARNING ? '#ececec' : null /* automatic */),
-									'title' => __('Firewall Rules: ', 'wordfence') . ($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM ? __('Premium', 'wordfence') : __('Community', 'wordfence')),
-									'subtitle' => ($firewall->firewallMode() == wfFirewall::FIREWALL_MODE_LEARNING ? __('Currently in Learning Mode', 'wordfence') : ($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM ? __('Rules updated in real-time', 'wordfence') : __('Rule updates delayed by 30 days', 'wordfence'))),
-									'link' => ($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM ? $optionsURL . '#waf-options-advanced' : 'https://www.wordfence.com/gnl1wafUpgrade/wordfence-signup/'),
-									'linkLabel' => ($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM ? __('Manage Firewall Rules', 'wordfence') : __('Upgrade to Premium', 'wordfence')),
-									'linkNewWindow' => ($firewall->ruleMode() != wfFirewall::RULE_MODE_PREMIUM),
-									'statusTitle' => __('Firewall Rules Status', 'wordfence'),
-									'statusList' => $firewall->wafStatusList('rules'),
-									'statusExtra' => ($firewall->firewallMode() == wfFirewall::FIREWALL_MODE_LEARNING ? wfView::create('waf/status-tooltip-learning-mode')->render() : ''),
-									'helpLink' => __('https://www.wordfence.com/help/firewall/#firewall-status', 'wordfence'),
-								))->render();
-								?>
-							</li>
-							<li>
-								<?php
-								echo wfView::create('common/status-detail', array(
-									'id' => 'waf-blacklist',
-									'percentage' => $firewall->blacklistStatus(),
-									'title' => __('Real-Time IP Blocklist: ', 'wordfence') . ($firewall->blacklistMode() == wfFirewall::BLACKLIST_MODE_ENABLED ? __('Enabled', 'wordfence') : __('Disabled', 'wordfence')),
-									'subtitle' => __('Blocks requests from known malicious IPs', 'wordfence'),
-									'link' => (($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM) ? network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_options') : 'https://www.wordfence.com/gnl1wafUpgrade/wordfence-signup/'),
-									'linkLabel' => $firewall->firewallMode() == wfFirewall::FIREWALL_MODE_DISABLED ? null : ($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM ? ($firewall->blacklistMode() == wfFirewall::BLACKLIST_MODE_ENABLED ? __('Manage Real-Time IP Blocklist', 'wordfence') : ($firewall->isSubDirectoryInstallation() ? null : __('Enable', 'wordfence'))) : __('Upgrade to Premium', 'wordfence')),
-									'linkNewWindow' => ($firewall->ruleMode() != wfFirewall::RULE_MODE_PREMIUM),
-									'statusTitle' => __('Blocklist Status', 'wordfence'),
-									'statusList' => $firewall->wafStatusList('blacklist'),
-									'helpLink' => __('https://www.wordfence.com/help/firewall/#firewall-status', 'wordfence'),
-								))->render();
-								
-								if ($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM && $firewall->blacklistMode() == wfFirewall::BLACKLIST_MODE_DISABLED):
-								?>
-								<script type="application/javascript">
-									(function($) {
-										$(function() {
-											$('#waf-blacklist a').on('click', function(e) {
-												e.preventDefault();
-												e.stopPropagation();
+    <div class="wf-row">
+        <div class="wf-col-xs-12">
+            <div class="wf-block wf-active">
+                <div class="wf-block-content">
+                    <ul class="wf-block-list">
+                        <li>
+                            <?php
+                            echo wfView::create('waf/firewall-status', array(
+                                'firewall' => $firewall,
+                                'dashboard' => $d,
+                            ))->render();
+                            ?>
+                        </li>
+                        <li>
+                            <ul class="wf-block-list wf-block-list-horizontal wf-block-list-nowrap wf-waf-coverage">
+                                <li>
+                                    <?php
+                                    if (function_exists('network_admin_url') && is_multisite()) {
+                                        $optionsURL = network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_options');
+                                    } else {
+                                        $optionsURL = admin_url('admin.php?page=WordfenceWAF&subpage=waf_options');
+                                    }
+                                    echo wfView::create('common/status-detail', array(
+                                        'id' => 'waf-coverage',
+                                        'percentage' => $firewall->wafStatus(),
+                                        'activeColor' => ($firewall->firewallMode() == wfFirewall::FIREWALL_MODE_LEARNING ? '#ececec' : null /* automatic */),
+                                        'title' => __('Web Application Firewall', 'wordfence'),
+                                        'subtitle' => ($firewall->firewallMode() == wfFirewall::FIREWALL_MODE_LEARNING ? __('Currently in Learning Mode', 'wordfence') : __('Stops Complex Attacks', 'wordfence')),
+                                        'link' => $optionsURL,
+                                        'linkLabel' => __('Manage WAF', 'wordfence'),
+                                        'statusTitle' => __('Web Application Firewall Status', 'wordfence'),
+                                        'statusList' => $firewall->wafStatusList(),
+                                        'statusExtra' => ($firewall->firewallMode() == wfFirewall::FIREWALL_MODE_LEARNING ? wfView::create('waf/status-tooltip-learning-mode')->render() : ''),
+                                        'helpLink' => __('https://www.wordfence.com/help/firewall/#firewall-status', 'wordfence'),
+                                    ))->render();
+                                    ?>
+                                </li>
+                                <li>
+                                    <?php
+                                    echo wfView::create('common/status-detail', array(
+                                        'id' => 'waf-rules',
+                                        'percentage' => $firewall->ruleStatus(),
+                                        'activeColor' => ($firewall->firewallMode() == wfFirewall::FIREWALL_MODE_LEARNING ? '#ececec' : null /* automatic */),
+                                        'title' => __('Firewall Rules: ', 'wordfence') . ($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM ? __('Premium', 'wordfence') : __('Community', 'wordfence')),
+                                        'subtitle' => ($firewall->firewallMode() == wfFirewall::FIREWALL_MODE_LEARNING ? __('Currently in Learning Mode', 'wordfence') : ($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM ? __('Rules updated in real-time', 'wordfence') : __('Rule updates delayed by 30 days', 'wordfence'))),
+                                        'link' => ($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM ? $optionsURL . '#waf-options-advanced' : 'https://www.wordfence.com/gnl1wafUpgrade/wordfence-signup/'),
+                                        'linkLabel' => ($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM ? __('Manage Firewall Rules', 'wordfence') : __('Upgrade to Premium', 'wordfence')),
+                                        'linkNewWindow' => ($firewall->ruleMode() != wfFirewall::RULE_MODE_PREMIUM),
+                                        'statusTitle' => __('Firewall Rules Status', 'wordfence'),
+                                        'statusList' => $firewall->wafStatusList('rules'),
+                                        'statusExtra' => ($firewall->firewallMode() == wfFirewall::FIREWALL_MODE_LEARNING ? wfView::create('waf/status-tooltip-learning-mode')->render() : ''),
+                                        'helpLink' => __('https://www.wordfence.com/help/firewall/#firewall-status', 'wordfence'),
+                                    ))->render();
+                                    ?>
+                                </li>
+                                <li>
+                                    <?php
+                                    echo wfView::create('common/status-detail', array(
+                                        'id' => 'waf-blacklist',
+                                        'percentage' => $firewall->blacklistStatus(),
+                                        'title' => __('Real-Time IP Blocklist: ', 'wordfence') . ($firewall->blacklistMode() == wfFirewall::BLACKLIST_MODE_ENABLED ? __('Enabled', 'wordfence') : __('Disabled', 'wordfence')),
+                                        'subtitle' => __('Blocks requests from known malicious IPs', 'wordfence'),
+                                        'link' => (($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM) ? network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_options') : 'https://www.wordfence.com/gnl1wafUpgrade/wordfence-signup/'),
+                                        'linkLabel' => $firewall->firewallMode() == wfFirewall::FIREWALL_MODE_DISABLED ? null : ($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM ? ($firewall->blacklistMode() == wfFirewall::BLACKLIST_MODE_ENABLED ? __('Manage Real-Time IP Blocklist', 'wordfence') : ($firewall->isSubDirectoryInstallation() ? null : __('Enable', 'wordfence'))) : __('Upgrade to Premium', 'wordfence')),
+                                        'linkNewWindow' => ($firewall->ruleMode() != wfFirewall::RULE_MODE_PREMIUM),
+                                        'statusTitle' => __('Blocklist Status', 'wordfence'),
+                                        'statusList' => $firewall->wafStatusList('blacklist'),
+                                        'helpLink' => __('https://www.wordfence.com/help/firewall/#firewall-status', 'wordfence'),
+                                    ))->render();
 
-												WFAD.setOption('disableWAFBlacklistBlocking', 0, function() {
-													window.location.reload(true);
-												});
-											});
-										});
-									})(jQuery);
-								</script>
-								<?php endif; ?>
-							</li>
-							<li>
-								<?php
-								echo wfView::create('common/status-detail', array(
-									'id' => 'waf-brute',
-									'percentage' => $firewall->bruteForceStatus(),
-									'title' => __('Brute Force Protection', 'wordfence') . ($firewall->bruteForceStatus() == 0 ? __(': Disabled', 'wordfence') : ''),
-									'subtitle' => __('Stops Password Guessing Attacks', 'wordfence'),
-									'link' => network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_options#waf-options-bruteforce'),
-									'linkLabel' => __('Manage Brute Force Protection', 'wordfence'),
-									'statusTitle' => __('Brute Force Protection Status', 'wordfence'),
-									'statusList' => $firewall->bruteForceStatusList(),
-									'helpLink' => __('https://www.wordfence.com/help/firewall/#firewall-status', 'wordfence'),
-								))->render();
-								?>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="wf-row">
-	<div class="wf-col-xs-12">
-		<div class="wf-block wf-active">
-			<div class="wf-block-content">
-				<ul class="wf-block-list">
-					<li>
-						<ul class="wf-block-list wf-block-list-horizontal wf-waf-navigation">
-							<li>
-								<?php
-								echo wfView::create('common/block-navigation-option', array(
-									'id' => 'waf-option-rate-limiting',
-									'img' => 'ratelimiting.svg',
-									'title' => __('Rate Limiting', 'wordfence'),
-									'subtitle' => __('Block crawlers that are using too many resources or stealing content', 'wordfence'),
-									'link' => network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_options#waf-options-ratelimiting'),
-								))->render();
-								?>
-							</li>
-							<li>
-								<?php
-								echo wfView::create('common/block-navigation-option', array(
-									'id' => 'waf-option-blocking',
-									'img' => 'blocking.svg',
-									'title' => __('Blocking', 'wordfence'),
-									'subtitle' => __('Block traffic by country, IP, IP range, user agent, referrer, or hostname', 'wordfence'),
-									'link' => '#top#blocking',
-								))->render();
-								?>
-							</li>
-						</ul>
-					</li>
-					<li>
-						<ul class="wf-block-list wf-block-list-horizontal wf-waf-navigation">
-							<li>
-								<?php
-								echo wfView::create('common/block-navigation-option', array(
-									'id' => 'waf-option-support',
-									'img' => 'support.svg',
-									'title' => __('Help', 'wordfence'),
-									'subtitle' => __('Find the documentation and help you need', 'wordfence'),
-									'link' => network_admin_url('admin.php?page=WordfenceSupport'),
-								))->render();
-								?>
-							</li>
-							<li>
-								<?php
-								echo wfView::create('common/block-navigation-option', array(
-									'id' => 'waf-option-all-options',
-									'img' => 'options.svg',
-									'title' => __('All Firewall Options', 'wordfence'),
-									'subtitle' => __('Manage global and advanced firewall options', 'wordfence'),
-									'link' => network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_options'),
-								))->render();
-								?>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="wf-row">
-	<div class="wf-col-xs-12 wf-col-lg-6 wf-col-lg-half-padding-right">
-		<!-- begin top ips blocked -->
-		<?php include(dirname(__FILE__) . '/dashboard/widget_ips.php'); ?>
-		<!-- end top ips blocked -->
-		<!-- begin countries blocked -->
-		<?php include(dirname(__FILE__) . '/dashboard/widget_countries.php'); ?>
-		<!-- end countries blocked -->
-	</div> <!-- end content block -->
-	<div class="wf-col-xs-12 wf-col-lg-6 wf-col-lg-half-padding-left">
-		<!-- begin firewall summary site -->
-		<?php include(dirname(__FILE__) . '/dashboard/widget_localattacks.php'); ?>
-		<!-- end firewall summary site -->
-		<!-- begin total attacks blocked network -->
-		<?php include(dirname(__FILE__) . '/dashboard/widget_networkattacks.php'); ?>
-		<!-- end total attacks blocked network -->
-		<!-- begin recent logins -->
-		<?php include(dirname(__FILE__) . '/dashboard/widget_logins.php'); ?>
-		<!-- end recent logins -->
-	</div> <!-- end content block -->
-</div> <!-- end row -->
+                                    if ($firewall->ruleMode() == wfFirewall::RULE_MODE_PREMIUM && $firewall->blacklistMode() == wfFirewall::BLACKLIST_MODE_DISABLED):
+                                        ?>
+                                        <script type="application/javascript">
+                                            (function ($) {
+                                                $(function () {
+                                                    $('#waf-blacklist a').on('click', function (e) {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+
+                                                        WFAD.setOption('disableWAFBlacklistBlocking', 0, function () {
+                                                            window.location.reload(true);
+                                                        });
+                                                    });
+                                                });
+                                            })(jQuery);
+                                        </script>
+                                    <?php endif; ?>
+                                </li>
+                                <li>
+                                    <?php
+                                    echo wfView::create('common/status-detail', array(
+                                        'id' => 'waf-brute',
+                                        'percentage' => $firewall->bruteForceStatus(),
+                                        'title' => __('Brute Force Protection', 'wordfence') . ($firewall->bruteForceStatus() == 0 ? __(': Disabled', 'wordfence') : ''),
+                                        'subtitle' => __('Stops Password Guessing Attacks', 'wordfence'),
+                                        'link' => network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_options#waf-options-bruteforce'),
+                                        'linkLabel' => __('Manage Brute Force Protection', 'wordfence'),
+                                        'statusTitle' => __('Brute Force Protection Status', 'wordfence'),
+                                        'statusList' => $firewall->bruteForceStatusList(),
+                                        'helpLink' => __('https://www.wordfence.com/help/firewall/#firewall-status', 'wordfence'),
+                                    ))->render();
+                                    ?>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wf-row">
+        <div class="wf-col-xs-12">
+            <div class="wf-block wf-active">
+                <div class="wf-block-content">
+                    <ul class="wf-block-list">
+                        <li>
+                            <ul class="wf-block-list wf-block-list-horizontal wf-waf-navigation">
+                                <li>
+                                    <?php
+                                    echo wfView::create('common/block-navigation-option', array(
+                                        'id' => 'waf-option-rate-limiting',
+                                        'img' => 'ratelimiting.svg',
+                                        'title' => __('Rate Limiting', 'wordfence'),
+                                        'subtitle' => __('Block crawlers that are using too many resources or stealing content', 'wordfence'),
+                                        'link' => network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_options#waf-options-ratelimiting'),
+                                    ))->render();
+                                    ?>
+                                </li>
+                                <li>
+                                    <?php
+                                    echo wfView::create('common/block-navigation-option', array(
+                                        'id' => 'waf-option-blocking',
+                                        'img' => 'blocking.svg',
+                                        'title' => __('Blocking', 'wordfence'),
+                                        'subtitle' => __('Block traffic by country, IP, IP range, user agent, referrer, or hostname', 'wordfence'),
+                                        'link' => '#top#blocking',
+                                    ))->render();
+                                    ?>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <ul class="wf-block-list wf-block-list-horizontal wf-waf-navigation">
+                                <li>
+                                    <?php
+                                    echo wfView::create('common/block-navigation-option', array(
+                                        'id' => 'waf-option-support',
+                                        'img' => 'support.svg',
+                                        'title' => __('Help', 'wordfence'),
+                                        'subtitle' => __('Find the documentation and help you need', 'wordfence'),
+                                        'link' => network_admin_url('admin.php?page=WordfenceSupport'),
+                                    ))->render();
+                                    ?>
+                                </li>
+                                <li>
+                                    <?php
+                                    echo wfView::create('common/block-navigation-option', array(
+                                        'id' => 'waf-option-all-options',
+                                        'img' => 'options.svg',
+                                        'title' => __('All Firewall Options', 'wordfence'),
+                                        'subtitle' => __('Manage global and advanced firewall options', 'wordfence'),
+                                        'link' => network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_options'),
+                                    ))->render();
+                                    ?>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wf-row">
+        <div class="wf-col-xs-12 wf-col-lg-6 wf-col-lg-half-padding-right">
+            <!-- begin top ips blocked -->
+            <?php include(dirname(__FILE__) . '/dashboard/widget_ips.php'); ?>
+            <!-- end top ips blocked -->
+            <!-- begin countries blocked -->
+            <?php include(dirname(__FILE__) . '/dashboard/widget_countries.php'); ?>
+            <!-- end countries blocked -->
+        </div> <!-- end content block -->
+        <div class="wf-col-xs-12 wf-col-lg-6 wf-col-lg-half-padding-left">
+            <!-- begin firewall summary site -->
+            <?php include(dirname(__FILE__) . '/dashboard/widget_localattacks.php'); ?>
+            <!-- end firewall summary site -->
+            <!-- begin total attacks blocked network -->
+            <?php include(dirname(__FILE__) . '/dashboard/widget_networkattacks.php'); ?>
+            <!-- end total attacks blocked network -->
+            <!-- begin recent logins -->
+            <?php include(dirname(__FILE__) . '/dashboard/widget_logins.php'); ?>
+            <!-- end recent logins -->
+        </div> <!-- end content block -->
+    </div> <!-- end row -->
 <?php if (wfOnboardingController::willShowNewTour(wfOnboardingController::TOUR_FIREWALL)): ?>
-	<script type="application/javascript">
-		(function($) {
-			$(function() {
-				WFAD.setUpFirewallTour = function() {
-					WFAD.tour1 = function () {
-						WFAD.tour('wfWAFNewTour1', 'wf-section-firewall', 'top', 'left', null, WFAD.tour2);
-					};
-					WFAD.tour2 = function () {
-						WFAD.tour('wfWAFNewTour2', 'waf-coverage', 'top', 'left', WFAD.tour1, WFAD.tour3);
-					};
-					WFAD.tour3 = function () {
-						WFAD.tour('wfWAFNewTour3', 'waf-brute', 'right', 'right', WFAD.tour2, WFAD.tour4);
-					};
-					WFAD.tour4 = function () {
-						WFAD.tour('wfWAFNewTour4', 'waf-option-all-options', 'right', 'right', WFAD.tour3, WFAD.tourComplete);
-					};
-					WFAD.tourComplete = function () {
-						WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_FIREWALL); ?>');
-					};
-				};
+    <script type="application/javascript">
+        (function ($) {
+            $(function () {
+                WFAD.setUpFirewallTour = function () {
+                    WFAD.tour1 = function () {
+                        WFAD.tour('wfWAFNewTour1', 'wf-section-firewall', 'top', 'left', null, WFAD.tour2);
+                    };
+                    WFAD.tour2 = function () {
+                        WFAD.tour('wfWAFNewTour2', 'waf-coverage', 'top', 'left', WFAD.tour1, WFAD.tour3);
+                    };
+                    WFAD.tour3 = function () {
+                        WFAD.tour('wfWAFNewTour3', 'waf-brute', 'right', 'right', WFAD.tour2, WFAD.tour4);
+                    };
+                    WFAD.tour4 = function () {
+                        WFAD.tour('wfWAFNewTour4', 'waf-option-all-options', 'right', 'right', WFAD.tour3, WFAD.tourComplete);
+                    };
+                    WFAD.tourComplete = function () {
+                        WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_FIREWALL); ?>');
+                    };
+                };
 
-				WFAD.wafTourShown = false;
-				<?php if (wfOnboardingController::shouldShowNewTour(wfOnboardingController::TOUR_FIREWALL)): ?>
-				$(window).on('wfTabChange', function(e, tab) {
-					if (tab == 'waf' && !WFAD.wafTourShown) {
-						WFAD.wafTourShown = true;
-						WFAD.setUpFirewallTour();
-						if (!WFAD.isSmallScreen) { WFAD.tour1(); }
-					}
-				});
-				
-				if ($('#waf').hasClass('wf-active')) {
-					WFAD.wafTourShown = true;
-					WFAD.setUpFirewallTour();
-					if (!WFAD.isSmallScreen) { WFAD.tour1(); }
-				}
-				<?php endif; ?>
-			});
-		})(jQuery);
-	</script>
+                WFAD.wafTourShown = false;
+                <?php if (wfOnboardingController::shouldShowNewTour(wfOnboardingController::TOUR_FIREWALL)): ?>
+                $(window).on('wfTabChange', function (e, tab) {
+                    if (tab == 'waf' && !WFAD.wafTourShown) {
+                        WFAD.wafTourShown = true;
+                        WFAD.setUpFirewallTour();
+                        if (!WFAD.isSmallScreen) {
+                            WFAD.tour1();
+                        }
+                    }
+                });
 
-	<script type="text/x-jquery-template" id="wfWAFNewTour1">
+                if ($('#waf').hasClass('wf-active')) {
+                    WFAD.wafTourShown = true;
+                    WFAD.setUpFirewallTour();
+                    if (!WFAD.isSmallScreen) {
+                        WFAD.tour1();
+                    }
+                }
+                <?php endif; ?>
+            });
+        })(jQuery);
+    </script>
+
+    <script type="text/x-jquery-template" id="wfWAFNewTour1">
         <div>
             <h3><?php esc_html_e('The Wordfence firewall protects your sites from attackers', 'wordfence'); ?></h3>
             <p><?php esc_html_e('This is where you can monitor the work Wordfence is doing to protect your site and also where you can manage the options to optimize the firewall\'s configuration.', 'wordfence'); ?></p>
@@ -327,35 +337,41 @@ $wafRemoveURL = network_admin_url('admin.php?page=WordfenceWAF&subpage=waf_optio
 <?php endif; ?>
 
 <?php if (wfOnboardingController::willShowUpgradeTour(wfOnboardingController::TOUR_FIREWALL)): ?>
-	<script type="application/javascript">
-		(function($) {
-			$(function() {
-				WFAD.setUpFirewallTour = function() {
-					WFAD.tour1 = function() {
-						WFAD.tour('wfWAFUpgradeTour1', 'waf-option-all-options', 'right', 'right', null, WFAD.tourComplete);
-					};
-					WFAD.tourComplete = function() { WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_FIREWALL); ?>'); };
-				};
+    <script type="application/javascript">
+        (function ($) {
+            $(function () {
+                WFAD.setUpFirewallTour = function () {
+                    WFAD.tour1 = function () {
+                        WFAD.tour('wfWAFUpgradeTour1', 'waf-option-all-options', 'right', 'right', null, WFAD.tourComplete);
+                    };
+                    WFAD.tourComplete = function () {
+                        WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_FIREWALL); ?>');
+                    };
+                };
 
-				WFAD.wafTourShown = false;
-				<?php if (wfOnboardingController::shouldShowUpgradeTour(wfOnboardingController::TOUR_FIREWALL)): ?>
-				$(window).on('wfTabChange', function(e, tab) {
-					if (tab == 'waf' && !WFAD.wafTourShown) {
-						WFAD.wafTourShown = true;
-						WFAD.setUpFirewallTour();
-						if (!WFAD.isSmallScreen) { WFAD.tour1(); }
-					}
-				});
+                WFAD.wafTourShown = false;
+                <?php if (wfOnboardingController::shouldShowUpgradeTour(wfOnboardingController::TOUR_FIREWALL)): ?>
+                $(window).on('wfTabChange', function (e, tab) {
+                    if (tab == 'waf' && !WFAD.wafTourShown) {
+                        WFAD.wafTourShown = true;
+                        WFAD.setUpFirewallTour();
+                        if (!WFAD.isSmallScreen) {
+                            WFAD.tour1();
+                        }
+                    }
+                });
 
-				if ($('#waf').hasClass('wf-active')) {
-					WFAD.wafTourShown = true;
-					WFAD.setUpFirewallTour();
-					if (!WFAD.isSmallScreen) { WFAD.tour1(); }
-				}
-				<?php endif; ?>
-			});
-		})(jQuery);
-	</script>
+                if ($('#waf').hasClass('wf-active')) {
+                    WFAD.wafTourShown = true;
+                    WFAD.setUpFirewallTour();
+                    if (!WFAD.isSmallScreen) {
+                        WFAD.tour1();
+                    }
+                }
+                <?php endif; ?>
+            });
+        })(jQuery);
+    </script>
 
     <script type="text/x-jquery-template" id="wfWAFUpgradeTour1">
         <div>

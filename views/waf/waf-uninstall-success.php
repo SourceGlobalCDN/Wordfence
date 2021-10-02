@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 
 /**
  * Presents the success message for WAF auto prepend uninstallation.
@@ -11,10 +13,10 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (!$active && !$subdirectory):
-?>
-	<p><?php esc_html_e('Uninstallation was successful!', 'wordfence'); ?></p>
+    ?>
+    <p><?php esc_html_e('Uninstallation was successful!', 'wordfence'); ?></p>
 <?php elseif (!$active): ?>
-	<p><?php esc_html_e('Uninstallation from this site was successful! The Wordfence Firewall is still active because it is installed in another WordPress installation.', 'wordfence'); ?></p>
+    <p><?php esc_html_e('Uninstallation from this site was successful! The Wordfence Firewall is still active because it is installed in another WordPress installation.', 'wordfence'); ?></p>
 <?php else: ?>
-	<p><?php esc_html_e('The changes have not yet taken effect. If you are using LiteSpeed or IIS as your web server or CGI/FastCGI interface, you may need to wait a few minutes for the changes to take effect since the configuration files are sometimes cached. You also may need to select a different server configuration in order to complete this step, but wait for a few minutes before trying. You can try refreshing this page.', 'wordfence'); ?></p>
+    <p><?php esc_html_e('The changes have not yet taken effect. If you are using LiteSpeed or IIS as your web server or CGI/FastCGI interface, you may need to wait a few minutes for the changes to take effect since the configuration files are sometimes cached. You also may need to select a different server configuration in order to complete this step, but wait for a few minutes before trying. You can try refreshing this page.', 'wordfence'); ?></p>
 <?php endif; ?>

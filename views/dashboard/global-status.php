@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the global status.
  *
@@ -11,9 +13,9 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 ?>
 <ul class="wf-block-list wf-block-list-horizontal">
-	<li id="wfStatusTourMarker">
-		<div class="wf-block-labeled-value wf-global-status wf-global-status-full-enabled">
-			<div class="wf-block-labeled-value-label"><?php esc_html_e('Wordfence Protection Activated', 'wordfence'); ?></div>
-		</div>
-	</li>
+    <li id="wfStatusTourMarker">
+        <div class="wf-block-labeled-value wf-global-status wf-global-status-full-enabled">
+            <div class="wf-block-labeled-value-label"><?php esc_html_e('Wordfence Protection Activated', 'wordfence'); ?></div>
+        </div>
+    </li>
 </ul>

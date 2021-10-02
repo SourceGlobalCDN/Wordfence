@@ -1,6 +1,8 @@
-<?php if (!defined('WORDFENCE_VERSION')) { exit; } ?>
+<?php if (!defined('WORDFENCE_VERSION')) {
+    exit;
+} ?>
 <?php echo wp_kses(sprintf(
-	/* translators: 1. IP address. 2. Site URL. 3. Site name.  */
+/* translators: 1. IP address. 2. Site URL. 3. Site name.  */
     __('Either you or someone at IP address <b>%1$s</b> requested an alert unsubscribe link for the website <a href="%2$s"><b>%3$s</b></a>.', 'wordfence'), esc_html($IP), esc_attr($siteURL), esc_html($siteName)), array('a' => array('href' => array()), 'b' => array())); ?>
     <br><br>
 <?php echo esc_html(sprintf(

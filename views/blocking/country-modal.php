@@ -1,18 +1,21 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the country selection modal.
  */
 
-require(WORDFENCE_PATH . 'lib/wfBulkCountries.php'); /** @var array $wfBulkCountries */
+require(WORDFENCE_PATH . 'lib/wfBulkCountries.php');
+/** @var array $wfBulkCountries */
 asort($wfBulkCountries);
 $letters = '';
 foreach ($wfBulkCountries as $name) {
-	$l = strtoupper(substr($name, 0, 1));
-	$test = strtoupper(substr($letters, -1));
-	if ($l != $test) {
-		$letters .= $l;
-	}
+    $l = strtoupper(substr($name, 0, 1));
+    $test = strtoupper(substr($letters, -1));
+    if ($l != $test) {
+        $letters .= $l;
+    }
 }
 $letters = str_split($letters);
 ?>
@@ -41,23 +44,25 @@ $letters = str_split($letters);
                         foreach ($letters as $l) {
                             echo '<li><a href="#" data-letter="' . esc_attr($l) . '" role="button">' . esc_html($l) . '</a></li>';
                         }
-						?>
-					</ul>
-				</li>
-			</ul>
-			<div class="wf-country-selector-outer-wrapper">
-				<div class="wf-country-selector-inner-wrapper">
-					<div class="wf-country-selector-options">
-					<?php
-					$current = '';
-					foreach ($wfBulkCountries as $code => $name) {
-						$test = strtoupper(substr($name, 0, 1));
-                    if ($test != $current) {
-                    if ($current != '') {
-                        echo '</ul>';
-                    }
-                    $current = $test;
-                    ?>
+                        ?>
+                    </ul>
+                </li>
+            </ul>
+            <div class="wf-country-selector-outer-wrapper">
+                <div class="wf-country-selector-inner-wrapper">
+                    <div class="wf-country-selector-options">
+                        <?php
+                        $current = '';
+                        foreach ($wfBulkCountries
+
+                        as $code => $name) {
+                        $test = strtoupper(substr($name, 0, 1));
+                        if ($test != $current) {
+                        if ($current != '') {
+                            echo '</ul>';
+                        }
+                        $current = $test;
+                        ?>
                         <ul class="wf-blocked-countries" data-letter="<?php echo esc_attr($current); ?>">
                             <?php
                             }
@@ -68,10 +73,10 @@ $letters = str_split($letters);
                             </li>
                             <?php
                             }
-							
-					if ($current != '') {
-                        echo '</ul>';
-                    }
+
+                            if ($current != '') {
+                                echo '</ul>';
+                            }
                             ?>
                     </div>
                 </div>

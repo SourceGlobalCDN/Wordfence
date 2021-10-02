@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the scan option scansEnabled_fileContents with a boolean on/off toggle checkbox and text area (hidden by default) for custom scan signatures.
  *
@@ -48,97 +50,93 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
 </ul>
 <script type="application/javascript">
     (function ($) {
-		$(function() {
-			$('.wf-option.wf-option-scan-signatures .wf-option-checkbox').each(function() {
-				$(this).on('click', function(e) {
-					e.preventDefault();
-					e.stopPropagation();
+        $(function () {
+            $('.wf-option.wf-option-scan-signatures .wf-option-checkbox').each(function () {
+                $(this).on('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-					var optionElement = $(this).closest('.wf-option');
-					var option = optionElement.data('toggleOption');
-					var value = false;
-					var isActive = $(this).hasClass('wf-checked');
-					if (isActive) {
-						$(this).removeClass('wf-checked').attr('aria-checked', 'false');
-						value = optionElement.data('disabledToggleValue');
-					}
-					else {
-						$(this).addClass('wf-checked').attr('aria-checked', 'true');
-						value = optionElement.data('enabledToggleValue');
-					}
+                    var optionElement = $(this).closest('.wf-option');
+                    var option = optionElement.data('toggleOption');
+                    var value = false;
+                    var isActive = $(this).hasClass('wf-checked');
+                    if (isActive) {
+                        $(this).removeClass('wf-checked').attr('aria-checked', 'false');
+                        value = optionElement.data('disabledToggleValue');
+                    } else {
+                        $(this).addClass('wf-checked').attr('aria-checked', 'true');
+                        value = optionElement.data('enabledToggleValue');
+                    }
 
-					var originalValue = optionElement.data('originalToggleValue');
-					if (originalValue == value) {
-						delete WFAD.pendingChanges[option];
-					}
-					else {
-						WFAD.pendingChanges[option] = value;
-					}
+                    var originalValue = optionElement.data('originalToggleValue');
+                    if (originalValue == value) {
+                        delete WFAD.pendingChanges[option];
+                    } else {
+                        WFAD.pendingChanges[option] = value;
+                    }
 
-					WFAD.updatePendingChanges();
-				});
-			});
+                    WFAD.updatePendingChanges();
+                });
+            });
 
-			$('#wf-scan-additional-signatures textarea').on('change paste keyup', function() {
-				var e = this;
-				
-				setTimeout(function() {
-					var optionElement = $(e).closest('ul').find('.wf-option.wf-option-scan-signatures');
-					var option = optionElement.data('textAreaOption');
-					var value = $(e).val();
-	
-					var originalValue = optionElement.data('originalTextAreaValue');
-					if (originalValue == value) {
-						delete WFAD.pendingChanges[option];
-					}
-					else {
-						WFAD.pendingChanges[option] = value;
-					}
-	
-					WFAD.updatePendingChanges();
-				}, 4);
-			});
+            $('#wf-scan-additional-signatures textarea').on('change paste keyup', function () {
+                var e = this;
 
-			$(window).on('wfOptionsReset', function() {
-				$('.wf-option.wf-option-scan-signatures .wf-option-checkbox').each(function() {
-					var optionElement = $(this).closest('.wf-option');
-					$(this).toggleClass('wf-checked', !!parseInt(optionElement.data('originalToggleValue')));
-				});
+                setTimeout(function () {
+                    var optionElement = $(e).closest('ul').find('.wf-option.wf-option-scan-signatures');
+                    var option = optionElement.data('textAreaOption');
+                    var value = $(e).val();
 
-				$('#wf-scan-additional-signatures textarea').each(function() {
-					var optionElement = $(this).closest('ul').find('.wf-option.wf-option-scan-signatures');
-					var originalValue = optionElement.data('originalTextAreaValue');
-					$(this).val(originalValue);
-				});
-			});
-			
-			$('.wf-option.wf-option-scan-signatures .wf-option-disclosure').each(function() {
-				var disclosure = $(this).find('svg');
-				
-				$(this).closest('.wf-option').css('cursor', 'pointer');
-				$(this).closest('.wf-option').on('click', function(e) {
-					e.preventDefault();
-					e.stopPropagation();
-		
-					var isActive = $('#wf-scan-additional-signatures').hasClass('wf-active');
-					if (isActive) {
-						disclosure.css('transform', 'rotate(0deg)');
-						$('#wf-scan-additional-signatures').slideUp({
-							always: function() {
-								$('#wf-scan-additional-signatures').removeClass('wf-active');
-							}
-						});
-					}
-					else {
-						disclosure.css('transform', 'rotate(90deg)');
-						$('#wf-scan-additional-signatures').slideDown({
-							always: function() {
-								$('#wf-scan-additional-signatures').addClass('wf-active');
-							}
-						});
-					}
-				});
-			});
-		});
-	})(jQuery);
+                    var originalValue = optionElement.data('originalTextAreaValue');
+                    if (originalValue == value) {
+                        delete WFAD.pendingChanges[option];
+                    } else {
+                        WFAD.pendingChanges[option] = value;
+                    }
+
+                    WFAD.updatePendingChanges();
+                }, 4);
+            });
+
+            $(window).on('wfOptionsReset', function () {
+                $('.wf-option.wf-option-scan-signatures .wf-option-checkbox').each(function () {
+                    var optionElement = $(this).closest('.wf-option');
+                    $(this).toggleClass('wf-checked', !!parseInt(optionElement.data('originalToggleValue')));
+                });
+
+                $('#wf-scan-additional-signatures textarea').each(function () {
+                    var optionElement = $(this).closest('ul').find('.wf-option.wf-option-scan-signatures');
+                    var originalValue = optionElement.data('originalTextAreaValue');
+                    $(this).val(originalValue);
+                });
+            });
+
+            $('.wf-option.wf-option-scan-signatures .wf-option-disclosure').each(function () {
+                var disclosure = $(this).find('svg');
+
+                $(this).closest('.wf-option').css('cursor', 'pointer');
+                $(this).closest('.wf-option').on('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var isActive = $('#wf-scan-additional-signatures').hasClass('wf-active');
+                    if (isActive) {
+                        disclosure.css('transform', 'rotate(0deg)');
+                        $('#wf-scan-additional-signatures').slideUp({
+                            always: function () {
+                                $('#wf-scan-additional-signatures').removeClass('wf-active');
+                            }
+                        });
+                    } else {
+                        disclosure.css('transform', 'rotate(90deg)');
+                        $('#wf-scan-additional-signatures').slideDown({
+                            always: function () {
+                                $('#wf-scan-additional-signatures').addClass('wf-active');
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    })(jQuery);
 </script> 

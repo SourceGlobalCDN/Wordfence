@@ -13,15 +13,15 @@ class ParagonIE_Sodium_Core32_ChaCha20_IetfCtx extends ParagonIE_Sodium_Core32_C
     /**
      * ParagonIE_Sodium_Core_ChaCha20_IetfCtx constructor.
      *
-     * @internal You should not use this directly from another application
-     *
-     * @param string $key     ChaCha20 key.
-     * @param string $iv      Initialization Vector (a.k.a. nonce).
+     * @param string $key ChaCha20 key.
+     * @param string $iv Initialization Vector (a.k.a. nonce).
      * @param string $counter The initial counter value.
      *                        Defaults to 4 0x00 bytes.
      * @throws InvalidArgumentException
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public function __construct($key = '', $iv = '', $counter = '')
     {

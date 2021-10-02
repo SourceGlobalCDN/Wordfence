@@ -40,64 +40,64 @@ if (!defined('WORDFENCE_VERSION')) {
                             $('#waf-whitelisted-urls-add').toggleClass('wf-disabled', $('#whitelistURL').val().length == 0 || $('#whitelistParamName').val().length == 0);
                         }, 100);
                     });
-					
-					$('#waf-whitelisted-urls-add').on('click', function(e) {
-						e.preventDefault();
-						e.stopPropagation();
 
-						var form = $('#whitelist-form');
-						var inputURL = form.find('[name=whitelistURL]');
-						var inputParam = form.find('[name=whitelistParam]');
-						var inputParamName = form.find('[name=whitelistParamName]');
+                    $('#waf-whitelisted-urls-add').on('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
 
-						var url = inputURL.val();
-						var param = inputParam.val();
-						var paramName = inputParamName.val();
-						if (url && param) {
-							<?php $user = wp_get_current_user(); ?>
-							var paramKey = WFAD.base64_encode(param + '[' + paramName + ']');
-							var pathKey = WFAD.base64_encode(url);
-							var key = pathKey + '|' + paramKey;
-							var matches = $('#waf-whitelisted-urls-wrapper .whitelist-table > tbody > tr[data-key="' + key + '"]');
-							if (matches.length > 0) {
-								WFAD.colorboxModal((WFAD.isSmallScreen ? '300px' : '400px'), '<?php esc_attr_e('Allowlist Entry Exists', 'wordfence'); ?>', '<?php esc_attr_e('An allowlist entry for this URL and parameter already exists.', 'wordfence'); ?>');
-								return;
-							}
-							
-							//Generate entry and add to display data set
-							var entry = {
-								data: {
-									description: "<?php esc_attr_e('Allowlisted via Firewall Options page', 'wordfence'); ?>",
-									source: 'waf-options',
-									disabled: false,
-									ip: "<?php echo esc_attr(wfUtils::getIP()); ?>",
-									timestamp: Math.round(Date.now() / 1000),
-									userID: <?php echo (int) $user->ID; ?>,
-									username: "<?php echo esc_attr($user->user_login); ?>"
-								},
-								paramKey: paramKey,
-								path: pathKey,
-								ruleID: ['all'],
-								adding: true
-							};
-							WFAD.wafData.whitelistedURLParams.push(entry);
+                        var form = $('#whitelist-form');
+                        var inputURL = form.find('[name=whitelistURL]');
+                        var inputParam = form.find('[name=whitelistParam]');
+                        var inputParamName = form.find('[name=whitelistParamName]');
 
-							//Add to change list
-							if (!(WFAD.pendingChanges['whitelistedURLParams'] instanceof Object)) {
-								WFAD.pendingChanges['whitelistedURLParams'] = {};
-							}
+                        var url = inputURL.val();
+                        var param = inputParam.val();
+                        var paramName = inputParamName.val();
+                        if (url && param) {
+                            <?php $user = wp_get_current_user(); ?>
+                            var paramKey = WFAD.base64_encode(param + '[' + paramName + ']');
+                            var pathKey = WFAD.base64_encode(url);
+                            var key = pathKey + '|' + paramKey;
+                            var matches = $('#waf-whitelisted-urls-wrapper .whitelist-table > tbody > tr[data-key="' + key + '"]');
+                            if (matches.length > 0) {
+                                WFAD.colorboxModal((WFAD.isSmallScreen ? '300px' : '400px'), '<?php esc_attr_e('Allowlist Entry Exists', 'wordfence'); ?>', '<?php esc_attr_e('An allowlist entry for this URL and parameter already exists.', 'wordfence'); ?>');
+                                return;
+                            }
 
-							if (!(WFAD.pendingChanges['whitelistedURLParams']['add'] instanceof Object)) {
-								WFAD.pendingChanges['whitelistedURLParams']['add'] = {};
-							}
+                            //Generate entry and add to display data set
+                            var entry = {
+                                data: {
+                                    description: "<?php esc_attr_e('Allowlisted via Firewall Options page', 'wordfence'); ?>",
+                                    source: 'waf-options',
+                                    disabled: false,
+                                    ip: "<?php echo esc_attr(wfUtils::getIP()); ?>",
+                                    timestamp: Math.round(Date.now() / 1000),
+                                    userID: <?php echo (int)$user->ID; ?>,
+                                    username: "<?php echo esc_attr($user->user_login); ?>"
+                                },
+                                paramKey: paramKey,
+                                path: pathKey,
+                                ruleID: ['all'],
+                                adding: true
+                            };
+                            WFAD.wafData.whitelistedURLParams.push(entry);
 
-							WFAD.pendingChanges['whitelistedURLParams']['add'][key] = entry;
-							WFAD.updatePendingChanges();
-							
-							//Reload and reset add form
-							var whitelistedIPsEl = $('#waf-whitelisted-urls-tmpl').tmpl(WFAD.wafData);
-							$('#waf-whitelisted-urls-wrapper').html(whitelistedIPsEl);
-							$(window).trigger('wordfenceWAFInstallWhitelistEventHandlers');
+                            //Add to change list
+                            if (!(WFAD.pendingChanges['whitelistedURLParams'] instanceof Object)) {
+                                WFAD.pendingChanges['whitelistedURLParams'] = {};
+                            }
+
+                            if (!(WFAD.pendingChanges['whitelistedURLParams']['add'] instanceof Object)) {
+                                WFAD.pendingChanges['whitelistedURLParams']['add'] = {};
+                            }
+
+                            WFAD.pendingChanges['whitelistedURLParams']['add'][key] = entry;
+                            WFAD.updatePendingChanges();
+
+                            //Reload and reset add form
+                            var whitelistedIPsEl = $('#waf-whitelisted-urls-tmpl').tmpl(WFAD.wafData);
+                            $('#waf-whitelisted-urls-wrapper').html(whitelistedIPsEl);
+                            $(window).trigger('wordfenceWAFInstallWhitelistEventHandlers');
 
                             inputURL.val('');
                             inputParamName.val('');
@@ -143,60 +143,60 @@ if (!defined('WORDFENCE_VERSION')) {
 
                             $(window).trigger('wordfenceWAFApplyWhitelistFilter');
                         });
-					});
-				})(jQuery);
-			</script>
-		</div>
-	</li>
-	<li>
-		<div id="waf-whitelisted-urls-wrapper"></div>
-	</li>
+                    });
+                })(jQuery);
+            </script>
+        </div>
+    </li>
+    <li>
+        <div id="waf-whitelisted-urls-wrapper"></div>
+    </li>
 </ul>
 <script type="application/javascript">
-	(function($) {
-		$(function() {
-			$('#whitelistParam').wfselect2({
-				minimumResultsForSearch: -1,
-				templateSelection: function(item) {
-					return 'Param Type: ' + item.text;
-				}
-			});
-			
-			$('#whitelist-table-controls select').wfselect2({
-				minimumResultsForSearch: -1,
-				placeholder: "Filter By",
-				width: '200px',
-				templateSelection: function(item) {
-					return 'Filter By: ' + item.text;
-				}
-			});
-			
-			$('#whitelist-bulk-delete').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+    (function ($) {
+        $(function () {
+            $('#whitelistParam').wfselect2({
+                minimumResultsForSearch: -1,
+                templateSelection: function (item) {
+                    return 'Param Type: ' + item.text;
+                }
+            });
 
-				WFAD.wafWhitelistedBulkDelete();
-				WFAD.updatePendingChanges();
-				var whitelistedIPsEl = $('#waf-whitelisted-urls-tmpl').tmpl(WFAD.wafData);
-				$('#waf-whitelisted-urls-wrapper').html(whitelistedIPsEl);
-				$(window).trigger('wordfenceWAFInstallWhitelistEventHandlers');
-			});
+            $('#whitelist-table-controls select').wfselect2({
+                minimumResultsForSearch: -1,
+                placeholder: "Filter By",
+                width: '200px',
+                templateSelection: function (item) {
+                    return 'Filter By: ' + item.text;
+                }
+            });
 
-			$('#whitelist-bulk-enable').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+            $('#whitelist-bulk-delete').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-				WFAD.wafWhitelistedBulkChangeEnabled(true);
-				WFAD.updatePendingChanges();
-			});
+                WFAD.wafWhitelistedBulkDelete();
+                WFAD.updatePendingChanges();
+                var whitelistedIPsEl = $('#waf-whitelisted-urls-tmpl').tmpl(WFAD.wafData);
+                $('#waf-whitelisted-urls-wrapper').html(whitelistedIPsEl);
+                $(window).trigger('wordfenceWAFInstallWhitelistEventHandlers');
+            });
 
-			$('#whitelist-bulk-disable').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+            $('#whitelist-bulk-enable').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-				WFAD.wafWhitelistedBulkChangeEnabled(false);
-				WFAD.updatePendingChanges();
-			});
-		});
-	})(jQuery);
+                WFAD.wafWhitelistedBulkChangeEnabled(true);
+                WFAD.updatePendingChanges();
+            });
+
+            $('#whitelist-bulk-disable').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                WFAD.wafWhitelistedBulkChangeEnabled(false);
+                WFAD.updatePendingChanges();
+            });
+        });
+    })(jQuery);
 </script> 

@@ -1,25 +1,26 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
-if (wfOnboardingController::shouldShowAttempt3()) {
-	echo wfView::create('onboarding/banner')->render();
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
 }
-else if (wfConfig::get('touppPromptNeeded')) {
-	echo wfView::create('gdpr/banner')->render();
+if (wfOnboardingController::shouldShowAttempt3()) {
+    echo wfView::create('onboarding/banner')->render();
+} else if (wfConfig::get('touppPromptNeeded')) {
+    echo wfView::create('gdpr/banner')->render();
 }
 
 $support = @json_decode(wfConfig::get('supportContent'), true);
 ?>
-	<div class="wrap wordfence">
-		<div class="wf-container-fluid">
-			<div class="wf-row">
-				<div class="wf-col-xs-12">
-					<div class="wp-header-end"></div>
-					<?php
-					echo wfView::create('common/section-title', array(
-						'title' => __('Help', 'wordfence'),
-						'showIcon' => true,
-					))->render();
-					?>
+    <div class="wrap wordfence">
+        <div class="wf-container-fluid">
+            <div class="wf-row">
+                <div class="wf-col-xs-12">
+                    <div class="wp-header-end"></div>
+                    <?php
+                    echo wfView::create('common/section-title', array(
+                        'title' => __('Help', 'wordfence'),
+                        'showIcon' => true,
+                    ))->render();
+                    ?>
                 </div>
                 <div class="wf-col-xs-12">
                     <div class="wf-block wf-active">
@@ -57,21 +58,21 @@ $support = @json_decode(wfConfig::get('supportContent'), true);
                                                         <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
                                                 </p>
                                             <?php endif; ?>
-										</li>
-									</ul>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="wf-row">
-				<div class="wf-col-xs-12">
-					<div class="wf-block<?php echo (wfPersistenceController::shared()->isActive('support-gdpr') ? ' wf-active' : ''); ?>" data-persistence-key="support-gdpr">
-						<div class="wf-block-header">
-							<div class="wf-block-header-content">
-								<div class="wf-block-title">
-									<strong><?php esc_html_e('GDPR Information', 'wordfence'); ?></strong>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="wf-row">
+                <div class="wf-col-xs-12">
+                    <div class="wf-block<?php echo(wfPersistenceController::shared()->isActive('support-gdpr') ? ' wf-active' : ''); ?>" data-persistence-key="support-gdpr">
+                        <div class="wf-block-header">
+                            <div class="wf-block-header-content">
+                                <div class="wf-block-title">
+                                    <strong><?php esc_html_e('GDPR Information', 'wordfence'); ?></strong>
                                 </div>
                                 <div class="wf-block-header-action">
                                     <div class="wf-block-header-action-disclosure" role="checkbox"
@@ -121,79 +122,82 @@ $support = @json_decode(wfConfig::get('supportContent'), true);
                                             <ul class="wf-flex-vertical wf-flex-align-left">
                                                 <li><?php esc_html_e('Agreement to New Terms and Privacy Policies', 'wordfence'); ?></li>
                                                 <li class="wf-option-subtitle"><?php esc_html_e('To continue using Defiant products and services including the Wordfence plugin, all customers must review and agree to the updated terms and privacy policies. These changes reflect our commitment to follow data protection best practices and regulations. The Wordfence interface will remain disabled until these terms are agreed to.', 'wordfence'); ?></li>
-											</ul>
-										</li>
-									</ul>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div> <!-- end GDPR -->
-			<?php if (isset($support['all'])): ?>
-			<div class="wf-row">
-				<div class="wf-col-xs-12 wf-col-sm-9 wf-col-sm-half-padding-right wf-add-top">
-					<h3 class="wf-no-top"><?php esc_html_e('All Documentation', 'wordfence'); ?></h3>
-				</div>
-			</div>
-			<div class="wf-row">
-				<div class="wf-col-xs-12 wf-col-sm-3 wf-col-sm-push-9 wf-col-sm-half-padding-left"> 
-					<div class="wf-block wf-active">
-						<div class="wf-block-content">
-							<div class="wf-support-top-block">
-								<h4><?php esc_html_e('Top Topics and Questions', 'wordfence'); ?></h4> 
-								<ol>
-								<?php
-								if (isset($support['top'])):
-									foreach ($support['top'] as $entry):
-                                        ?>
-                                        <li><a href="<?php echo esc_url($entry['permalink']); ?>" target="_blank"
-                                               rel="noopener noreferrer"><?php echo esc_html($entry['title']); ?><span
-                                                        class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                                            </ul>
                                         </li>
-                                    <?php
-									endforeach;
-								endif;
-								?>
-								</ol>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="wf-col-xs-12 wf-col-sm-9 wf-col-sm-pull-3 wf-col-sm-half-padding-right">
-				<?php
-				if (isset($support['all'])):
-					foreach ($support['all'] as $entry):
-                        ?>
-                        <div class="wf-block wf-active wf-add-bottom">
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end GDPR -->
+            <?php if (isset($support['all'])): ?>
+                <div class="wf-row">
+                    <div class="wf-col-xs-12 wf-col-sm-9 wf-col-sm-half-padding-right wf-add-top">
+                        <h3 class="wf-no-top"><?php esc_html_e('All Documentation', 'wordfence'); ?></h3>
+                    </div>
+                </div>
+                <div class="wf-row">
+                    <div class="wf-col-xs-12 wf-col-sm-3 wf-col-sm-push-9 wf-col-sm-half-padding-left">
+                        <div class="wf-block wf-active">
                             <div class="wf-block-content">
-                                <div class="wf-support-block">
-                                    <h4><a href="<?php echo esc_url($entry['permalink']); ?>" target="_blank"
-                                           rel="noopener noreferrer"><?php echo esc_html($entry['title']); ?><span
-                                                    class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
-                                    </h4>
-                                    <p><?php echo esc_html($entry['excerpt']); ?></p>
-                                    <?php if (isset($entry['children'])): ?>
-                                        <ul>
-                                            <?php foreach ($entry['children'] as $child): ?>
-                                                <li><a href="<?php echo esc_url($child['permalink']); ?>"
-                                                       target="_blank"
-                                                       rel="noopener noreferrer"><?php echo esc_html($child['title']); ?>
-                                                        <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                                <div class="wf-support-top-block">
+                                    <h4><?php esc_html_e('Top Topics and Questions', 'wordfence'); ?></h4>
+                                    <ol>
+                                        <?php
+                                        if (isset($support['top'])):
+                                            foreach ($support['top'] as $entry):
+                                                ?>
+                                                <li>
+                                                    <a href="<?php echo esc_url($entry['permalink']); ?>" target="_blank"
+                                                       rel="noopener noreferrer"><?php echo esc_html($entry['title']); ?>
+                                                        <span
+                                                                class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
                                                 </li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    <?php endif; ?>
+                                            <?php
+                                            endforeach;
+                                        endif;
+                                        ?>
+                                    </ol>
                                 </div>
                             </div>
-					</div>
-				<?php
-					endforeach;
-				endif;
-				?>
-				</div>
-			</div>
-			<?php else: ?>
+                        </div>
+                    </div>
+                    <div class="wf-col-xs-12 wf-col-sm-9 wf-col-sm-pull-3 wf-col-sm-half-padding-right">
+                        <?php
+                        if (isset($support['all'])):
+                            foreach ($support['all'] as $entry):
+                                ?>
+                                <div class="wf-block wf-active wf-add-bottom">
+                                    <div class="wf-block-content">
+                                        <div class="wf-support-block">
+                                            <h4><a href="<?php echo esc_url($entry['permalink']); ?>" target="_blank"
+                                                   rel="noopener noreferrer"><?php echo esc_html($entry['title']); ?>
+                                                    <span
+                                                            class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                                            </h4>
+                                            <p><?php echo esc_html($entry['excerpt']); ?></p>
+                                            <?php if (isset($entry['children'])): ?>
+                                                <ul>
+                                                    <?php foreach ($entry['children'] as $child): ?>
+                                                        <li><a href="<?php echo esc_url($child['permalink']); ?>"
+                                                               target="_blank"
+                                                               rel="noopener noreferrer"><?php echo esc_html($child['title']); ?>
+                                                                <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                                                        </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php
+                            endforeach;
+                        endif;
+                        ?>
+                    </div>
+                </div>
+            <?php else: ?>
                 <div class="wf-row">
                     <div class="wf-col-xs-12">
                         <div class="wf-block wf-active">
@@ -213,141 +217,150 @@ $support = @json_decode(wfConfig::get('supportContent'), true);
                     </div>
                 </div>
             <?php endif; ?>
-		</div> <!-- end container -->
-	</div>
+        </div> <!-- end container -->
+    </div>
 <?php if (wfOnboardingController::shouldShowAttempt3() && (isset($_GET['onboarding']) || wfOnboardingController::shouldShowAttempt3Automatically())): ?>
-	<?php wfConfig::set('onboardingAttempt3Initial', true); ?>
-	<script type="text/x-jquery-template" id="wfTmpl_onboardingFinal">
-		<?php echo wfView::create('onboarding/modal-final-attempt')->render(); ?>
-	</script>
-	<script type="application/javascript">
-		(function($) {
-			$(function() {
-				var prompt = $('#wfTmpl_onboardingFinal').tmpl();
-				var promptHTML = $("<div />").append(prompt).html();
-				WFAD.colorboxHTML('800px', promptHTML, {overlayClose: false, closeButton: false, className: 'wf-modal', onComplete: function() {
-					setTimeout(function() {
-						$('#wf-onboarding-subscribe-controls > p').show();
-						$.wfcolorbox.resize();
-					}, 30000);
+    <?php wfConfig::set('onboardingAttempt3Initial', true); ?>
+    <script type="text/x-jquery-template" id="wfTmpl_onboardingFinal">
+        <?php echo wfView::create('onboarding/modal-final-attempt')->render(); ?>
+    </script>
+    <script type="application/javascript">
+        (function ($) {
+            $(function () {
+                var prompt = $('#wfTmpl_onboardingFinal').tmpl();
+                var promptHTML = $("<div />").append(prompt).html();
+                WFAD.colorboxHTML('800px', promptHTML, {
+                    overlayClose: false, closeButton: false, className: 'wf-modal', onComplete: function () {
+                        setTimeout(function () {
+                            $('#wf-onboarding-subscribe-controls > p').show();
+                            $.wfcolorbox.resize();
+                        }, 30000);
 
-					$('#wf-onboarding-subscribe .wf-switch > li').each(function(index, element) {
-						$(element).on('click', function(e) {
-							e.preventDefault();
-							e.stopPropagation();
+                        $('#wf-onboarding-subscribe .wf-switch > li').each(function (index, element) {
+                            $(element).on('click', function (e) {
+                                e.preventDefault();
+                                e.stopPropagation();
 
-							var control = $(this).closest('.wf-switch');
-							control.find('li').removeClass('wf-active');
-							$(this).addClass('wf-active');
+                                var control = $(this).closest('.wf-switch');
+                                control.find('li').removeClass('wf-active');
+                                $(this).addClass('wf-active');
 
-							$('#wf-onboarding-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding-alerts').val()).length == 0 || !($('#wf-onboarding-agree').is(':checked')) || $('#wf-onboarding-subscribe .wf-switch > li.wf-active').length == 0);
-						});
-					});
-					
-					$('#wf-onboarding-agree').on('change', function() {
-						$('#wf-onboarding-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding-alerts').val()).length == 0 || !($('#wf-onboarding-agree').is(':checked')) || $('#wf-onboarding-subscribe .wf-switch > li.wf-active').length == 0);
-					});
+                                $('#wf-onboarding-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding-alerts').val()).length == 0 || !($('#wf-onboarding-agree').is(':checked')) || $('#wf-onboarding-subscribe .wf-switch > li.wf-active').length == 0);
+                            });
+                        });
 
-					$('#wf-onboarding-alerts').on('change paste keyup', function() {
-						setTimeout(function() {
-							$('#wf-onboarding-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding-alerts').val()).length == 0 || !($('#wf-onboarding-agree').is(':checked')) || $('#wf-onboarding-subscribe .wf-switch > li.wf-active').length == 0);
-						}, 100);
-					}).trigger('change');
+                        $('#wf-onboarding-agree').on('change', function () {
+                            $('#wf-onboarding-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding-alerts').val()).length == 0 || !($('#wf-onboarding-agree').is(':checked')) || $('#wf-onboarding-subscribe .wf-switch > li.wf-active').length == 0);
+                        });
 
-					$('#wf-onboarding-continue').on('click', function(e) {
-						e.preventDefault();
-						e.stopPropagation();
+                        $('#wf-onboarding-alerts').on('change paste keyup', function () {
+                            setTimeout(function () {
+                                $('#wf-onboarding-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding-alerts').val()).length == 0 || !($('#wf-onboarding-agree').is(':checked')) || $('#wf-onboarding-subscribe .wf-switch > li.wf-active').length == 0);
+                            }, 100);
+                        }).trigger('change');
 
-						var touppAgreed = !!$('#wf-onboarding-agree').is(':checked');
-						if (!touppAgreed) {
-							return;
-						}
+                        $('#wf-onboarding-continue').on('click', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
 
-						var emails = wordfenceExt.parseEmails($('#wf-onboarding-alerts').val());
-						if (emails.length > 0) {
-							var subscribe = !!parseInt($('#wf-onboarding-subscribe .wf-switch > li.wf-active').data('optionValue'));
-							wordfenceExt.onboardingProcessEmails(emails, subscribe, touppAgreed);
-							
-							<?php if (wfConfig::get('isPaid')): ?>
-							wordfenceExt.setOption('onboardingAttempt3', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_THIRD_LICENSE); ?>');
-							$('#wf-onboarding-banner').slideUp();
-							WFAD.colorboxClose();
-							if (WFAD.tour1) { setTimeout(function() { WFAD.tour1(); }, 500); }
-							<?php else: ?>
-							wordfenceExt.setOption('onboardingAttempt3', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_THIRD_EMAILS); ?>');
+                            var touppAgreed = !!$('#wf-onboarding-agree').is(':checked');
+                            if (!touppAgreed) {
+                                return;
+                            }
 
-							$('#wf-onboarding-final-attempt-1, .wf-modal-footer').fadeOut(400, function() {
-								$('#wf-onboarding-final-attempt-2').fadeIn();
-								$.wfcolorbox.resize();
-							});
-							<?php endif; ?>
-						}
-					});
+                            var emails = wordfenceExt.parseEmails($('#wf-onboarding-alerts').val());
+                            if (emails.length > 0) {
+                                var subscribe = !!parseInt($('#wf-onboarding-subscribe .wf-switch > li.wf-active').data('optionValue'));
+                                wordfenceExt.onboardingProcessEmails(emails, subscribe, touppAgreed);
 
-					$('#wf-onboarding-license input').on('change paste keyup', function() {
-						setTimeout(function() {
-							$('#wf-onboarding-license-install').toggleClass('wf-disabled', $('#wf-onboarding-license input').val().length == 0);
-						}, 100);
-					}).trigger('change');
+                                <?php if (wfConfig::get('isPaid')): ?>
+                                wordfenceExt.setOption('onboardingAttempt3', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_THIRD_LICENSE); ?>');
+                                $('#wf-onboarding-banner').slideUp();
+                                WFAD.colorboxClose();
+                                if (WFAD.tour1) {
+                                    setTimeout(function () {
+                                        WFAD.tour1();
+                                    }, 500);
+                                }
+                                <?php else: ?>
+                                wordfenceExt.setOption('onboardingAttempt3', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_THIRD_EMAILS); ?>');
 
-					$('#wf-onboarding-license-install').on('click', function(e) {
-						e.preventDefault();
-						e.stopPropagation();
+                                $('#wf-onboarding-final-attempt-1, .wf-modal-footer').fadeOut(400, function () {
+                                    $('#wf-onboarding-final-attempt-2').fadeIn();
+                                    $.wfcolorbox.resize();
+                                });
+                                <?php endif; ?>
+                            }
+                        });
 
-						$('#wf-onboarding-license-status').fadeOut();
+                        $('#wf-onboarding-license input').on('change paste keyup', function () {
+                            setTimeout(function () {
+                                $('#wf-onboarding-license-install').toggleClass('wf-disabled', $('#wf-onboarding-license input').val().length == 0);
+                            }, 100);
+                        }).trigger('change');
 
-						var license = $('#wf-onboarding-license input').val();
-						wordfenceExt.onboardingInstallLicense(license,
-							function(res) { //Success
-								if (res.isPaid) {
-									wordfenceExt.setOption('onboardingAttempt3', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_THIRD_LICENSE); ?>');
-									//$('#wf-onboarding-license-status').addClass('wf-green-dark').removeClass('wf-yellow-dark wf-red-dark').text('You have successfully installed a premium license.').fadeIn();
-									//$('#wf-onboarding-license-install').text('Installed').addClass('wf-disabled');
-									//$('#wf-onboarding-license input').attr('disabled', true);
-									$('#wf-onboarding-banner').slideUp();
-									$('#wf-onboarding-final-attempt .wf-modal-header-action-close').off('click');
-									/*$('#wf-onboarding-premium-cta, #wf-onboarding-license-footer, #wf-onboarding-or').fadeOut(400, function() {
-									 $('#wf-onboarding-license-finished').fadeIn();
-									 $.wfcolorbox.resize();
-									 });*/
+                        $('#wf-onboarding-license-install').on('click', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
 
-									var html = '<div class="wf-modal wf-modal-success"><div class="wf-model-success-wrapper"><div class="wf-modal-header"><div class="wf-modal-header-content"><div class="wf-modal-title"><?php esc_html_e('Premium License Installed', 'wordfence'); ?></div></div></div><div class="wf-modal-content"><?php esc_html_e('Congratulations! Wordfence Premium is now active on your website. Please note that some Premium features are not enabled by default.', 'wordfence'); ?></div></div><div class="wf-modal-footer"><ul class="wf-onboarding-flex-horizontal wf-onboarding-flex-align-right wf-onboarding-full-width"><li><a href="<?php echo esc_url(network_admin_url('admin.php?page=Wordfence')); ?>" class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Continue', 'wordfence'); ?></a></li></ul></div></div>';
-									$.wfcolorbox({
-										width: (wordfenceExt.isSmallScreen ? '300px' : '500px'),
-										html: html,
-										overlayClose: true,
-										closeButton: false,
-										className: 'wf-modal'
-									});
-									<?php
-                                    //Congratulations! Wordfence Premium is now active on your website. Please note that some Premium features are not enabled by default. Read this brief article to learn more about <a href="#todo" target="_blank" rel="noopener noreferrer">getting the most out of Wordfence Premium</a>.
-									?>
-								}
-								else { //Unlikely to happen but possible
-									$('#wf-onboarding-license-status').addClass('wf-yellow-dark').removeClass('wf-green-dark wf-red-dark').text('You have successfully installed a free license.').fadeIn();
-									$.wfcolorbox.resize();
-								}
-							},
-							function(res) { //Error
-								$('#wf-onboarding-license-status').addClass('wf-red-dark').removeClass('wf-green-dark wf-yellow-dark').text(res.error).fadeIn();
-								$.wfcolorbox.resize();
-							});
-					});
+                            $('#wf-onboarding-license-status').fadeOut();
 
-					$('#wf-onboarding-no-thanks, #wf-onboarding-final-attempt .wf-modal-header-action-close').on('click', function(e) {
-						e.preventDefault();
-						e.stopPropagation();
+                            var license = $('#wf-onboarding-license input').val();
+                            wordfenceExt.onboardingInstallLicense(license,
+                                function (res) { //Success
+                                    if (res.isPaid) {
+                                        wordfenceExt.setOption('onboardingAttempt3', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_THIRD_LICENSE); ?>');
+                                        //$('#wf-onboarding-license-status').addClass('wf-green-dark').removeClass('wf-yellow-dark wf-red-dark').text('You have successfully installed a premium license.').fadeIn();
+                                        //$('#wf-onboarding-license-install').text('Installed').addClass('wf-disabled');
+                                        //$('#wf-onboarding-license input').attr('disabled', true);
+                                        $('#wf-onboarding-banner').slideUp();
+                                        $('#wf-onboarding-final-attempt .wf-modal-header-action-close').off('click');
+                                        /*$('#wf-onboarding-premium-cta, #wf-onboarding-license-footer, #wf-onboarding-or').fadeOut(400, function() {
+                                         $('#wf-onboarding-license-finished').fadeIn();
+                                         $.wfcolorbox.resize();
+                                         });*/
 
-						if ($('#wf-onboarding-final-attempt-2').is(':visible')) {
-							wordfenceExt.setOption('onboardingAttempt3', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_THIRD_LICENSE); ?>');
-							$('#wf-onboarding-banner').slideUp();
-						}
+                                        var html = '<div class="wf-modal wf-modal-success"><div class="wf-model-success-wrapper"><div class="wf-modal-header"><div class="wf-modal-header-content"><div class="wf-modal-title"><?php esc_html_e('Premium License Installed', 'wordfence'); ?></div></div></div><div class="wf-modal-content"><?php esc_html_e('Congratulations! Wordfence Premium is now active on your website. Please note that some Premium features are not enabled by default.', 'wordfence'); ?></div></div><div class="wf-modal-footer"><ul class="wf-onboarding-flex-horizontal wf-onboarding-flex-align-right wf-onboarding-full-width"><li><a href="<?php echo esc_url(network_admin_url('admin.php?page=Wordfence')); ?>" class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Continue', 'wordfence'); ?></a></li></ul></div></div>';
+                                        $.wfcolorbox({
+                                            width: (wordfenceExt.isSmallScreen ? '300px' : '500px'),
+                                            html: html,
+                                            overlayClose: true,
+                                            closeButton: false,
+                                            className: 'wf-modal'
+                                        });
+                                        <?php
+                                        //Congratulations! Wordfence Premium is now active on your website. Please note that some Premium features are not enabled by default. Read this brief article to learn more about <a href="#todo" target="_blank" rel="noopener noreferrer">getting the most out of Wordfence Premium</a>.
+                                        ?>
+                                    } else { //Unlikely to happen but possible
+                                        $('#wf-onboarding-license-status').addClass('wf-yellow-dark').removeClass('wf-green-dark wf-red-dark').text('You have successfully installed a free license.').fadeIn();
+                                        $.wfcolorbox.resize();
+                                    }
+                                },
+                                function (res) { //Error
+                                    $('#wf-onboarding-license-status').addClass('wf-red-dark').removeClass('wf-green-dark wf-yellow-dark').text(res.error).fadeIn();
+                                    $.wfcolorbox.resize();
+                                });
+                        });
 
-						WFAD.colorboxClose();
-						if (WFAD.tour1) { setTimeout(function() { WFAD.tour1(); }, 500); }
-					});
-				}});
-			});
-		})(jQuery);
-	</script>
+                        $('#wf-onboarding-no-thanks, #wf-onboarding-final-attempt .wf-modal-header-action-close').on('click', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            if ($('#wf-onboarding-final-attempt-2').is(':visible')) {
+                                wordfenceExt.setOption('onboardingAttempt3', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_THIRD_LICENSE); ?>');
+                                $('#wf-onboarding-banner').slideUp();
+                            }
+
+                            WFAD.colorboxClose();
+                            if (WFAD.tour1) {
+                                setTimeout(function () {
+                                    WFAD.tour1();
+                                }, 500);
+                            }
+                        });
+                    }
+                });
+            });
+        })(jQuery);
+    </script>
 <?php endif; ?>

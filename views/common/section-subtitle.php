@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Expects $title (or $titleHTML) to be defined. If $helpLink and $helpLabel (or $helpLabelHTML) are defined, the help link will be shown.
  *
@@ -11,19 +13,19 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (isset($title) && !isset($titleHTML)) {
-	$titleHTML = esc_html($title);
+    $titleHTML = esc_html($title);
 }
 
 if (isset($helpLabel) && !isset($helpLabelHTML)) {
-	$helpLabelHTML = esc_html($helpLabel);
+    $helpLabelHTML = esc_html($helpLabel);
 }
 ?>
 <div class="wf-section-title wf-add-top">
-	<?php if (isset($showIcon) && $showIcon): ?>
-		<div class="wordfence-lock-icon wordfence-icon32 wf-hidden-xs"></div>
-	<?php endif; ?>
-	<h3 class="wf-center-xs"<?php echo (isset($headerID) ? ' id="' . $headerID . '"' : ''); ?>><?php echo $titleHTML; ?></h3>
-	<?php if (isset($helpLink) && isset($helpLabelHTML)): ?>
+    <?php if (isset($showIcon) && $showIcon): ?>
+        <div class="wordfence-lock-icon wordfence-icon32 wf-hidden-xs"></div>
+    <?php endif; ?>
+    <h3 class="wf-center-xs"<?php echo(isset($headerID) ? ' id="' . $headerID . '"' : ''); ?>><?php echo $titleHTML; ?></h3>
+    <?php if (isset($helpLink) && isset($helpLabelHTML)): ?>
         <span class="wf-hidden-xs"><a href="<?php echo esc_attr($helpLink); ?>" target="_blank"
                                       rel="noopener noreferrer" class="wf-help-link"><?php echo $helpLabelHTML; ?><span
                         class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a> <i

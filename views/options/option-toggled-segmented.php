@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents a boolean option with a checkbox toggle control.
  *
@@ -41,5 +43,5 @@ $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $optionName);
         <input id="<?php echo esc_attr($offId) ?>" type="radio" name="<?php echo esc_attr($optionName) ?>"
                value="<?php echo esc_attr($disabledValue) ?>"<?php echo($value == $disabledValue ? ' checked' : ''); ?><?php echo(!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' disabled'); ?>>
         <label class="wf-segment-last" for="<?php echo esc_attr($offId) ?>">Off</label>
-	</li>
+    </li>
 </ul>

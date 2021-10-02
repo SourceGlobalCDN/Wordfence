@@ -4,337 +4,344 @@ use WordfenceLS\Controller_Settings;
 
 require_once(dirname(__FILE__) . '/wfRESTBaseController.php');
 
-class wfRESTConfigController extends wfRESTBaseController {
+class wfRESTConfigController extends wfRESTBaseController
+{
 
-	public static function disconnectConfig($adminEmail = null) {
-		global $wpdb;
-		delete_transient('wordfenceCentralJWT' . wfConfig::get('wordfenceCentralSiteID'));
+    public function registerRoutes()
+    {
+        register_rest_route('wordfence/v1', '/config', array(
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => array($this, 'getConfig'),
+            'permission_callback' => array($this, 'verifyToken'),
+            'fields' => array(
+                'description' => __('Specific config options to return.', 'wordfence'),
+                'type' => 'array',
+                'required' => false,
+            ),
+        ));
+        register_rest_route('wordfence/v1', '/config', array(
+            'methods' => WP_REST_Server::EDITABLE,
+            'callback' => array($this, 'setConfig'),
+            'permission_callback' => array($this, 'verifyToken'),
+            'fields' => array(
+                'description' => __('Specific config options to set.', 'wordfence'),
+                'type' => 'array',
+                'required' => true,
+            ),
+        ));
+        register_rest_route('wordfence/v1', '/disconnect', array(
+            'methods' => WP_REST_Server::EDITABLE,
+            'callback' => array($this, 'disconnect'),
+            'permission_callback' => array($this, 'verifyToken'),
+        ));
+        register_rest_route('wordfence/v1', '/premium-connect', array(
+            'methods' => WP_REST_Server::EDITABLE,
+            'callback' => array($this, 'premiumConnect'),
+            'permission_callback' => array($this, 'verifyTokenPremium'),
+        ));
+    }
 
-		if (is_null($adminEmail)) {
-			$adminEmail = wfConfig::get('wordfenceCentralConnectEmail');
-		}
+    /**
+     * @param WP_REST_Request $request
+     * @return mixed|WP_REST_Response
+     */
+    public function getConfig($request)
+    {
+        $fields = (array)$request['fields'];
 
-		$result = $wpdb->query('DELETE FROM ' . wfDB::networkTable('wfConfig') . " WHERE name LIKE 'wordfenceCentral%'");
+        $config = array();
 
-		wfConfig::set('wordfenceCentralDisconnected', true);
-		wfConfig::set('wordfenceCentralDisconnectTime', time());
-		wfConfig::set('wordfenceCentralDisconnectEmail', $adminEmail);
+        $firewall = new wfFirewall();
+        $wafFields = array(
+            'autoPrepend' => $firewall->protectionMode() === wfFirewall::PROTECTION_MODE_EXTENDED,
+            'avoid_php_input' => wfWAF::getInstance()->getStorageEngine()->getConfig('avoid_php_input', false) ? 1 : 0,
+            'disabledRules' => array_keys((array)wfWAF::getInstance()->getStorageEngine()->getConfig('disabledRules')),
+            'ruleCount' => count((array)wfWAF::getInstance()->getRules()),
+            'disableWAFBlacklistBlocking' => wfWAF::getInstance()->getStorageEngine()->getConfig('disableWAFBlacklistBlocking'),
+            'enabled' => $firewall->wafStatus() !== wfFirewall::FIREWALL_MODE_DISABLED,
+            'firewallMode' => $firewall->firewallMode(),
+            'learningModeGracePeriod' => wfWAF::getInstance()->getStorageEngine()->getConfig('learningModeGracePeriod'),
+            'learningModeGracePeriodEnabled' => wfWAF::getInstance()->getStorageEngine()->getConfig('learningModeGracePeriodEnabled'),
+            'subdirectoryInstall' => $firewall->isSubDirectoryInstallation(),
+            'wafStatus' => $firewall->wafStatus(),
+        );
+        $lsFields = array(
+            Controller_Settings::OPTION_XMLRPC_ENABLED => Controller_Settings::shared()->get(Controller_Settings::OPTION_XMLRPC_ENABLED),
+            Controller_Settings::OPTION_2FA_WHITELISTED => Controller_Settings::shared()->get(Controller_Settings::OPTION_2FA_WHITELISTED),
+            Controller_Settings::OPTION_IP_SOURCE => Controller_Settings::shared()->get(Controller_Settings::OPTION_IP_SOURCE),
+            Controller_Settings::OPTION_IP_TRUSTED_PROXIES => Controller_Settings::shared()->get(Controller_Settings::OPTION_IP_TRUSTED_PROXIES),
+            Controller_Settings::OPTION_REQUIRE_2FA_ADMIN => Controller_Settings::shared()->get(Controller_Settings::OPTION_REQUIRE_2FA_ADMIN),
+            Controller_Settings::OPTION_REQUIRE_2FA_GRACE_PERIOD_ENABLED => Controller_Settings::shared()->get(Controller_Settings::OPTION_REQUIRE_2FA_GRACE_PERIOD_ENABLED),
+            Controller_Settings::OPTION_GLOBAL_NOTICES => Controller_Settings::shared()->get(Controller_Settings::OPTION_GLOBAL_NOTICES),
+            Controller_Settings::OPTION_REMEMBER_DEVICE_ENABLED => Controller_Settings::shared()->get(Controller_Settings::OPTION_REMEMBER_DEVICE_ENABLED),
+            Controller_Settings::OPTION_REMEMBER_DEVICE_DURATION => Controller_Settings::shared()->get(Controller_Settings::OPTION_REMEMBER_DEVICE_DURATION),
+            Controller_Settings::OPTION_ALLOW_XML_RPC => Controller_Settings::shared()->get(Controller_Settings::OPTION_ALLOW_XML_RPC),
+            Controller_Settings::OPTION_ENABLE_AUTH_CAPTCHA => Controller_Settings::shared()->get(Controller_Settings::OPTION_ENABLE_AUTH_CAPTCHA),
+            Controller_Settings::OPTION_RECAPTCHA_THRESHOLD => Controller_Settings::shared()->get(Controller_Settings::OPTION_RECAPTCHA_THRESHOLD),
+            Controller_Settings::OPTION_LAST_SECRET_REFRESH => Controller_Settings::shared()->get(Controller_Settings::OPTION_LAST_SECRET_REFRESH),
+        );
+        // Convert the database strings to typed values.
+        foreach ($lsFields as $lsField => $value) {
+            $lsFields[$lsField] = Controller_Settings::shared()->clean($lsField, $value);
+        }
 
-		return !!$result;
-	}
+        if (!$fields) {
+            foreach (wfConfig::$defaultConfig as $group => $groupOptions) {
+                foreach ($groupOptions as $field => $values) {
+                    $fields[] = $field;
+                }
+            }
+            foreach ($wafFields as $wafField => $value) {
+                $fields[] = 'waf.' . $wafField;
+            }
+            foreach ($lsFields as $lsField => $value) {
+                $fields[] = 'wfls_settings_' . $lsField;
+            }
+        }
 
-	public function registerRoutes() {
-		register_rest_route('wordfence/v1', '/config', array(
-			'methods'             => WP_REST_Server::READABLE,
-			'callback'            => array($this, 'getConfig'),
-			'permission_callback' => array($this, 'verifyToken'),
-			'fields'              => array(
-				'description' => __('Specific config options to return.', 'wordfence'),
-				'type'        => 'array',
-				'required'    => false,
-			),
-		));
-		register_rest_route('wordfence/v1', '/config', array(
-			'methods'             => WP_REST_Server::EDITABLE,
-			'callback'            => array($this, 'setConfig'),
-			'permission_callback' => array($this, 'verifyToken'),
-			'fields'              => array(
-				'description' => __('Specific config options to set.', 'wordfence'),
-				'type'        => 'array',
-				'required'    => true,
-			),
-		));
-		register_rest_route('wordfence/v1', '/disconnect', array(
-			'methods'             => WP_REST_Server::EDITABLE,
-			'callback'            => array($this, 'disconnect'),
-			'permission_callback' => array($this, 'verifyToken'),
-		));
-		register_rest_route('wordfence/v1', '/premium-connect', array(
-			'methods'             => WP_REST_Server::EDITABLE,
-			'callback'            => array($this, 'premiumConnect'),
-			'permission_callback' => array($this, 'verifyTokenPremium'),
-		));
-	}
+        foreach ($fields as $field) {
+            if (strpos($field, 'waf.') === 0) {
+                $wafField = substr($field, 4);
+                if (array_key_exists($wafField, $wafFields)) {
+                    $config['waf'][$wafField] = $wafFields[$wafField];
+                }
+                continue;
+            }
 
-	/**
-	 * @param WP_REST_Request $request
-	 * @return mixed|WP_REST_Response
-	 */
-	public function getConfig($request) {
-		$fields = (array) $request['fields'];
+            if (strpos($field, 'wfls_settings_') === 0) {
+                $lsField = substr($field, 14);
+                if (array_key_exists($lsField, $lsFields)) {
+                    $config['wfls_settings_' . $lsField] = $lsFields[$lsField];
+                }
+                continue;
+            }
 
-		$config = array();
+            if (array_key_exists($field, wfConfig::$defaultConfig['checkboxes'])) {
+                $config[$field] = (bool)wfConfig::get($field);
 
-		$firewall = new wfFirewall();
-		$wafFields = array(
-			'autoPrepend'                    => $firewall->protectionMode() === wfFirewall::PROTECTION_MODE_EXTENDED,
-			'avoid_php_input'                => wfWAF::getInstance()->getStorageEngine()->getConfig('avoid_php_input', false) ? 1 : 0,
-			'disabledRules'                  => array_keys((array) wfWAF::getInstance()->getStorageEngine()->getConfig('disabledRules')),
-			'ruleCount'                      => count((array) wfWAF::getInstance()->getRules()),
-			'disableWAFBlacklistBlocking'    => wfWAF::getInstance()->getStorageEngine()->getConfig('disableWAFBlacklistBlocking'),
-			'enabled'                        => $firewall->wafStatus() !== wfFirewall::FIREWALL_MODE_DISABLED,
-            'firewallMode'                   => $firewall->firewallMode(),
-			'learningModeGracePeriod'        => wfWAF::getInstance()->getStorageEngine()->getConfig('learningModeGracePeriod'),
-			'learningModeGracePeriodEnabled' => wfWAF::getInstance()->getStorageEngine()->getConfig('learningModeGracePeriodEnabled'),
-			'subdirectoryInstall'            => $firewall->isSubDirectoryInstallation(),
-			'wafStatus'                      => $firewall->wafStatus(),
-		);
-		$lsFields = array(
-			Controller_Settings::OPTION_XMLRPC_ENABLED                   => Controller_Settings::shared()->get(Controller_Settings::OPTION_XMLRPC_ENABLED),
-			Controller_Settings::OPTION_2FA_WHITELISTED                  => Controller_Settings::shared()->get(Controller_Settings::OPTION_2FA_WHITELISTED),
-			Controller_Settings::OPTION_IP_SOURCE                        => Controller_Settings::shared()->get(Controller_Settings::OPTION_IP_SOURCE),
-			Controller_Settings::OPTION_IP_TRUSTED_PROXIES               => Controller_Settings::shared()->get(Controller_Settings::OPTION_IP_TRUSTED_PROXIES),
-			Controller_Settings::OPTION_REQUIRE_2FA_ADMIN                => Controller_Settings::shared()->get(Controller_Settings::OPTION_REQUIRE_2FA_ADMIN),
-			Controller_Settings::OPTION_REQUIRE_2FA_GRACE_PERIOD_ENABLED => Controller_Settings::shared()->get(Controller_Settings::OPTION_REQUIRE_2FA_GRACE_PERIOD_ENABLED),
-			Controller_Settings::OPTION_GLOBAL_NOTICES                   => Controller_Settings::shared()->get(Controller_Settings::OPTION_GLOBAL_NOTICES),
-			Controller_Settings::OPTION_REMEMBER_DEVICE_ENABLED          => Controller_Settings::shared()->get(Controller_Settings::OPTION_REMEMBER_DEVICE_ENABLED),
-			Controller_Settings::OPTION_REMEMBER_DEVICE_DURATION         => Controller_Settings::shared()->get(Controller_Settings::OPTION_REMEMBER_DEVICE_DURATION),
-			Controller_Settings::OPTION_ALLOW_XML_RPC                    => Controller_Settings::shared()->get(Controller_Settings::OPTION_ALLOW_XML_RPC),
-			Controller_Settings::OPTION_ENABLE_AUTH_CAPTCHA              => Controller_Settings::shared()->get(Controller_Settings::OPTION_ENABLE_AUTH_CAPTCHA),
-			Controller_Settings::OPTION_RECAPTCHA_THRESHOLD              => Controller_Settings::shared()->get(Controller_Settings::OPTION_RECAPTCHA_THRESHOLD),
-			Controller_Settings::OPTION_LAST_SECRET_REFRESH              => Controller_Settings::shared()->get(Controller_Settings::OPTION_LAST_SECRET_REFRESH),
-		);
-		// Convert the database strings to typed values.
-		foreach ($lsFields as $lsField => $value) {
-			$lsFields[$lsField] = Controller_Settings::shared()->clean($lsField, $value);
-		}
+            } else if (array_key_exists($field, wfConfig::$defaultConfig['otherParams']) ||
+                array_key_exists($field, wfConfig::$defaultConfig['defaultsOnly'])) {
 
-		if (!$fields) {
-			foreach (wfConfig::$defaultConfig as $group => $groupOptions) {
-				foreach ($groupOptions as $field => $values) {
-					$fields[] = $field;
-				}
-			}
-			foreach ($wafFields as $wafField => $value) {
-				$fields[] = 'waf.' . $wafField;
-			}
-			foreach ($lsFields as $lsField => $value) {
-				$fields[] = 'wfls_settings_' . $lsField;
-			}
-		}
+                $configConfig = !empty(wfConfig::$defaultConfig['otherParams'][$field]) ?
+                    wfConfig::$defaultConfig['otherParams'][$field] : wfConfig::$defaultConfig['defaultsOnly'][$field];
 
-		foreach ($fields as $field) {
-			if (strpos($field, 'waf.') === 0) {
-				$wafField = substr($field, 4);
-				if (array_key_exists($wafField, $wafFields)) {
-					$config['waf'][$wafField] = $wafFields[$wafField];
-				}
-				continue;
-			}
+                if (!empty($configConfig['validation']['type'])) {
+                    switch ($configConfig['validation']['type']) {
+                        case wfConfig::TYPE_INT:
+                            $config[$field] = wfConfig::getInt($field);
+                            break;
 
-			if (strpos($field, 'wfls_settings_') === 0) {
-				$lsField = substr($field, 14);
-				if (array_key_exists($lsField, $lsFields)) {
-					$config['wfls_settings_' . $lsField] = $lsFields[$lsField];
-				}
-				continue;
-			}
+                        case wfConfig::TYPE_DOUBLE:
+                        case wfConfig::TYPE_FLOAT:
+                            $config[$field] = floatval(wfConfig::get($field));
+                            break;
 
-			if (array_key_exists($field, wfConfig::$defaultConfig['checkboxes'])) {
-				$config[$field] = (bool) wfConfig::get($field);
+                        case wfConfig::TYPE_BOOL:
+                            $config[$field] = (bool)wfConfig::get($field);
+                            break;
 
-			} else if (array_key_exists($field, wfConfig::$defaultConfig['otherParams']) ||
-				array_key_exists($field, wfConfig::$defaultConfig['defaultsOnly'])) {
+                        case wfConfig::TYPE_ARRAY:
+                            $config[$field] = wfConfig::get_ser($field);
+                            break;
 
-				$configConfig = !empty(wfConfig::$defaultConfig['otherParams'][$field]) ?
-					wfConfig::$defaultConfig['otherParams'][$field] : wfConfig::$defaultConfig['defaultsOnly'][$field];
+                        case wfConfig::TYPE_STRING:
+                        default:
+                            $config[$field] = wfConfig::get($field);
+                            break;
+                    }
+                } else {
+                    $config[$field] = wfConfig::get($field);
+                }
 
-				if (!empty($configConfig['validation']['type'])) {
-					switch ($configConfig['validation']['type']) {
-						case wfConfig::TYPE_INT:
-							$config[$field] = wfConfig::getInt($field);
-							break;
+            } else if (in_array($field, wfConfig::$serializedOptions)) {
+                $config[$field] = wfConfig::get_ser($field);
+            }
+        }
 
-						case wfConfig::TYPE_DOUBLE:
-						case wfConfig::TYPE_FLOAT:
-							$config[$field] = floatval(wfConfig::get($field));
-							break;
+        $api = new wfAPI(wfConfig::get('apiKey'), wfUtils::getWPVersion());
+        parse_str($api->makeAPIQueryString(), $qs);
+        $systemInfo = json_decode(wfUtils::base64url_decode($qs['s']), true);
+        $systemInfo['output_buffering'] = ini_get('output_buffering');
+        $systemInfo['ip'] = wfUtils::getIPAndServerVariable();
+        $systemInfo['detected_ips'] = wfUtils::getAllServerVariableIPs();
+        $systemInfo['admin_url'] = network_admin_url();
 
-						case wfConfig::TYPE_BOOL:
-							$config[$field] = (bool) wfConfig::get($field);
-							break;
+        $response = rest_ensure_response(array(
+            'config' => $config,
+            'info' => $systemInfo,
+        ));
+        return $response;
+    }
 
-						case wfConfig::TYPE_ARRAY:
-							$config[$field] = wfConfig::get_ser($field);
-							break;
+    /**
+     * @param WP_REST_Request $request
+     * @return mixed|WP_REST_Response
+     */
+    public function setConfig($request)
+    {
+        wfCentral::preventConfigurationSync();
 
-						case wfConfig::TYPE_STRING:
-						default:
-							$config[$field] = wfConfig::get($field);
-							break;
-					}
-				} else {
-					$config[$field] = wfConfig::get($field);
-				}
+        $fields = $request['fields'];
+        if (is_array($fields) && $fields) {
+            $loginSecurityConfig = array();
+            foreach ($fields as $key => $value) {
+                if (strpos($key, 'wfls_settings_') === 0) {
+                    $lsField = substr($key, 14);
+                    $loginSecurityConfig[$lsField] = $value;
+                }
+            }
 
-			} else if (in_array($field, wfConfig::$serializedOptions)) {
-				$config[$field] = wfConfig::get_ser($field);
-			}
-		}
+            if ($loginSecurityConfig) {
+                $errors = Controller_Settings::shared()->validate_multiple($loginSecurityConfig);
 
-		$api = new wfAPI(wfConfig::get('apiKey'), wfUtils::getWPVersion());
-		parse_str($api->makeAPIQueryString(), $qs);
-		$systemInfo = json_decode(wfUtils::base64url_decode($qs['s']), true);
-		$systemInfo['output_buffering'] = ini_get('output_buffering');
-		$systemInfo['ip'] = wfUtils::getIPAndServerVariable();
-		$systemInfo['detected_ips'] = wfUtils::getAllServerVariableIPs();
-		$systemInfo['admin_url'] = network_admin_url();
+                if ($errors !== true) {
+                    if (count($errors) == 1) {
+                        return new WP_Error('rest_set_config_error',
+                            sprintf(
+                            /* translators: Error message. */
+                                __('An error occurred while saving the configuration: %s', 'wordfence'), $errors[0]['error']),
+                            array('status' => 422));
 
-		$response = rest_ensure_response(array(
-			'config' => $config,
-			'info'   => $systemInfo,
-		));
-		return $response;
-	}
+                    } else if (count($errors) > 1) {
+                        $compoundMessage = array();
+                        foreach ($errors as $e) {
+                            $compoundMessage[] = $e['error'];
+                        }
+                        return new WP_Error('rest_set_config_error',
+                            sprintf(
+                            /* translators: Error message. */
+                                __('Errors occurred while saving the configuration: %s', 'wordfence'), implode(', ', $compoundMessage)),
+                            array('status' => 422));
+                    }
 
-	/**
-	 * @param WP_REST_Request $request
-	 * @return mixed|WP_REST_Response
-	 */
-	public function setConfig($request) {
-		wfCentral::preventConfigurationSync();
+                    return new WP_Error('rest_set_config_error',
+                        __('Errors occurred while saving the configuration.', 'wordfence'),
+                        array('status' => 422));
+                }
 
-		$fields = $request['fields'];
-		if (is_array($fields) && $fields) {
-			$loginSecurityConfig = array();
-			foreach ($fields as $key => $value) {
-				if (strpos($key, 'wfls_settings_') === 0) {
-					$lsField = substr($key, 14);
-					$loginSecurityConfig[$lsField] = $value;
-				}
-			}
+                try {
+                    Controller_Settings::shared()->set_multiple($loginSecurityConfig);
+                    foreach ($fields as $key => $value) {
+                        if (strpos($key, 'wfls_settings_') === 0) {
+                            unset($fields[$key]);
+                        }
+                    }
 
-			if ($loginSecurityConfig) {
-				$errors = Controller_Settings::shared()->validate_multiple($loginSecurityConfig);
+                } catch (Exception $e) {
+                    return new WP_Error('rest_save_config_error',
+                        sprintf(
+                        /* translators: Error message. */
+                            __('A server error occurred while saving the configuration: %s', 'wordfence'), $e->getMessage()),
+                        array('status' => 500));
+                }
+            }
 
-				if ($errors !== true) {
-					if (count($errors) == 1) {
-						return new WP_Error('rest_set_config_error',
-							sprintf(
-								/* translators: Error message. */
-								__('An error occurred while saving the configuration: %s', 'wordfence'), $errors[0]['error']),
-							array('status' => 422));
+            $errors = wfConfig::validate($fields);
+            if ($errors !== true) {
+                if (count($errors) == 1) {
+                    return new WP_Error('rest_set_config_error',
+                        sprintf(
+                        /* translators: Error message. */
+                            __('An error occurred while saving the configuration: %s', 'wordfence'), $errors[0]['error']),
+                        array('status' => 422));
 
-					} else if (count($errors) > 1) {
-						$compoundMessage = array();
-						foreach ($errors as $e) {
-							$compoundMessage[] = $e['error'];
-						}
-						return new WP_Error('rest_set_config_error',
-							sprintf(
-								/* translators: Error message. */
-								__('Errors occurred while saving the configuration: %s', 'wordfence'), implode(', ', $compoundMessage)),
-							array('status' => 422));
-					}
+                } else if (count($errors) > 1) {
+                    $compoundMessage = array();
+                    foreach ($errors as $e) {
+                        $compoundMessage[] = $e['error'];
+                    }
+                    return new WP_Error('rest_set_config_error',
+                        sprintf(
+                        /* translators: Error message. */
+                            __('Errors occurred while saving the configuration: %s', 'wordfence'), implode(', ', $compoundMessage)),
+                        array('status' => 422));
+                }
 
-					return new WP_Error('rest_set_config_error',
-						__('Errors occurred while saving the configuration.', 'wordfence'),
-						array('status' => 422));
-				}
+                return new WP_Error('rest_set_config_error',
+                    __('Errors occurred while saving the configuration.', 'wordfence'),
+                    array('status' => 422));
+            }
 
-				try {
-					Controller_Settings::shared()->set_multiple($loginSecurityConfig);
-					foreach ($fields as $key => $value) {
-						if (strpos($key, 'wfls_settings_') === 0) {
-							unset($fields[$key]);
-						}
-					}
+            try {
+                wfConfig::save($fields);
+                return rest_ensure_response(array(
+                    'success' => true,
+                ));
 
-				} catch (Exception $e) {
-					return new WP_Error('rest_save_config_error',
-						sprintf(
-						/* translators: Error message. */
-							__('A server error occurred while saving the configuration: %s', 'wordfence'), $e->getMessage()),
-						array('status' => 500));
-				}
-			}
+            } catch (Exception $e) {
+                return new WP_Error('rest_save_config_error',
+                    sprintf(
+                    /* translators: Error message. */
+                        __('A server error occurred while saving the configuration: %s', 'wordfence'), $e->getMessage()),
+                    array('status' => 500));
+            }
+        }
+        return new WP_Error('rest_save_config_error',
+            __("Validation error: 'fields' parameter is empty or not an array.", 'wordfence'),
+            array('status' => 422));
 
-			$errors = wfConfig::validate($fields);
-			if ($errors !== true) {
-				if (count($errors) == 1) {
-					return new WP_Error('rest_set_config_error',
-						sprintf(
-						/* translators: Error message. */
-							__('An error occurred while saving the configuration: %s', 'wordfence'), $errors[0]['error']),
-						array('status' => 422));
+    }
 
-				} else if (count($errors) > 1) {
-					$compoundMessage = array();
-					foreach ($errors as $e) {
-						$compoundMessage[] = $e['error'];
-					}
-					return new WP_Error('rest_set_config_error',
-						sprintf(
-						/* translators: Error message. */
-							__('Errors occurred while saving the configuration: %s', 'wordfence'), implode(', ', $compoundMessage)),
-						array('status' => 422));
-				}
+    /**
+     * @param WP_REST_Request $request
+     * @return mixed|WP_REST_Response
+     */
+    public function disconnect($request)
+    {
+        self::disconnectConfig();
+        return rest_ensure_response(array(
+            'success' => true,
+        ));
+    }
 
-				return new WP_Error('rest_set_config_error',
-					__('Errors occurred while saving the configuration.', 'wordfence'),
-					array('status' => 422));
-			}
+    public static function disconnectConfig($adminEmail = null)
+    {
+        global $wpdb;
+        delete_transient('wordfenceCentralJWT' . wfConfig::get('wordfenceCentralSiteID'));
 
-			try {
-				wfConfig::save($fields);
-				return rest_ensure_response(array(
-					'success' => true,
-				));
+        if (is_null($adminEmail)) {
+            $adminEmail = wfConfig::get('wordfenceCentralConnectEmail');
+        }
 
-			} catch (Exception $e) {
-				return new WP_Error('rest_save_config_error',
-					sprintf(
-					/* translators: Error message. */
-						__('A server error occurred while saving the configuration: %s', 'wordfence'), $e->getMessage()),
-					array('status' => 500));
-			}
-		}
-		return new WP_Error('rest_save_config_error',
-			__("Validation error: 'fields' parameter is empty or not an array.", 'wordfence'),
-			array('status' => 422));
+        $result = $wpdb->query('DELETE FROM ' . wfDB::networkTable('wfConfig') . " WHERE name LIKE 'wordfenceCentral%'");
 
-	}
+        wfConfig::set('wordfenceCentralDisconnected', true);
+        wfConfig::set('wordfenceCentralDisconnectTime', time());
+        wfConfig::set('wordfenceCentralDisconnectEmail', $adminEmail);
 
-	/**
-	 * @param WP_REST_Request $request
-	 * @return mixed|WP_REST_Response
-	 */
-	public function disconnect($request) {
-		self::disconnectConfig();
-		return rest_ensure_response(array(
-			'success' => true,
-		));
-	}
+        return !!$result;
+    }
 
-	/**
-	 * @param WP_REST_Request $request
-	 * @return mixed|WP_REST_Response
-	 */
-	public function premiumConnect($request) {
-		require_once(WORDFENCE_PATH . '/crypto/vendor/paragonie/sodium_compat/autoload-fast.php');
+    /**
+     * @param WP_REST_Request $request
+     * @return mixed|WP_REST_Response
+     */
+    public function premiumConnect($request)
+    {
+        require_once(WORDFENCE_PATH . '/crypto/vendor/paragonie/sodium_compat/autoload-fast.php');
 
-		// Store values sent by Central.
-		$wordfenceCentralPK = $request['public-key'];
-		$wordfenceCentralSiteData = $request['site-data'];
-		$wordfenceCentralSiteID = $request['site-id'];
+        // Store values sent by Central.
+        $wordfenceCentralPK = $request['public-key'];
+        $wordfenceCentralSiteData = $request['site-data'];
+        $wordfenceCentralSiteID = $request['site-id'];
 
-		$keypair = ParagonIE_Sodium_Compat::crypto_sign_keypair();
-		$publicKey = ParagonIE_Sodium_Compat::crypto_sign_publickey($keypair);
-		$secretKey = ParagonIE_Sodium_Compat::crypto_sign_secretkey($keypair);
-		wfConfig::set('wordfenceCentralSecretKey', $secretKey);
+        $keypair = ParagonIE_Sodium_Compat::crypto_sign_keypair();
+        $publicKey = ParagonIE_Sodium_Compat::crypto_sign_publickey($keypair);
+        $secretKey = ParagonIE_Sodium_Compat::crypto_sign_secretkey($keypair);
+        wfConfig::set('wordfenceCentralSecretKey', $secretKey);
 
-		wfConfig::set('wordfenceCentralConnected', 1);
-		wfConfig::set('wordfenceCentralCurrentStep', 6);
-		wfConfig::set('wordfenceCentralPK', pack("H*", $wordfenceCentralPK));
-		wfConfig::set('wordfenceCentralSiteData', json_encode($wordfenceCentralSiteData));
-		wfConfig::set('wordfenceCentralSiteID', $wordfenceCentralSiteID);
-		wfConfig::set('wordfenceCentralConnectTime', time());
-		wfConfig::set('wordfenceCentralConnectEmail', !empty($this->tokenData['adminEmail']) ? $this->tokenData['adminEmail'] : null);
+        wfConfig::set('wordfenceCentralConnected', 1);
+        wfConfig::set('wordfenceCentralCurrentStep', 6);
+        wfConfig::set('wordfenceCentralPK', pack("H*", $wordfenceCentralPK));
+        wfConfig::set('wordfenceCentralSiteData', json_encode($wordfenceCentralSiteData));
+        wfConfig::set('wordfenceCentralSiteID', $wordfenceCentralSiteID);
+        wfConfig::set('wordfenceCentralConnectTime', time());
+        wfConfig::set('wordfenceCentralConnectEmail', !empty($this->tokenData['adminEmail']) ? $this->tokenData['adminEmail'] : null);
 
-		// Return values created by Wordfence.
-		return rest_ensure_response(array(
-			'success'    => true,
-			'public-key' => ParagonIE_Sodium_Compat::bin2hex($publicKey),
-		));
-	}
+        // Return values created by Wordfence.
+        return rest_ensure_response(array(
+            'success' => true,
+            'public-key' => ParagonIE_Sodium_Compat::bin2hex($publicKey),
+        ));
+    }
 }

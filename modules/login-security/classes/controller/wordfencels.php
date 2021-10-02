@@ -8,32 +8,21 @@ use WordfenceLS\Text\Model_HTML;
 use WordfenceLS\View\Model_Tab;
 use WordfenceLS\View\Model_Title;
 
-class Controller_WordfenceLS {
-	const VERSION_KEY = 'wordfence_ls_version';
+class Controller_WordfenceLS
+{
+    const VERSION_KEY = 'wordfence_ls_version';
     const USERS_PER_PAGE = 25;
-	
-	/**
-	 * Returns the singleton Controller_Wordfence2FA.
-	 *
-	 * @return Controller_WordfenceLS
-	 */
-	public static function shared() {
-		static $_shared = null;
-		if ($_shared === null) {
-			$_shared = new Controller_WordfenceLS();
-		}
-		return $_shared;
-	}
-	
-	public function init() {
-		$this->_init_actions();
-		Controller_AJAX::shared()->init();
-		Controller_Users::shared()->init();
-		Controller_Time::shared()->init();
-		Controller_Permissions::shared()->init();
-	}
-	
-	protected function _init_actions()
+
+    public function init()
+    {
+        $this->_init_actions();
+        Controller_AJAX::shared()->init();
+        Controller_Users::shared()->init();
+        Controller_Time::shared()->init();
+        Controller_Permissions::shared()->init();
+    }
+
+    protected function _init_actions()
     {
         register_activation_hook(WORDFENCE_LS_FCPATH, array($this, '_install_plugin'));
         register_deactivation_hook(WORDFENCE_LS_FCPATH, array($this, '_uninstall_plugin'));
@@ -76,21 +65,61 @@ class Controller_WordfenceLS {
         add_action('show_user_profile', array($this, '_edit_user_profile'), 0); //We can't add it to the password section directly -- priority 0 is as close as we can get
         add_action('edit_user_profile', array($this, '_edit_user_profile'), 0);
     }
-	
-	public function _admin_init() {
-		if (WORDFENCE_LS_FROM_CORE) {
-			\wfModuleController::shared()->addOptionIndex('wfls-option-enable-2fa-roles', __('Login Security: Enable 2FA for these roles', 'wordfence-2fa'));
-			\wfModuleController::shared()->addOptionIndex('wfls-option-allow-remember', __('Login Security: Allow remembering device for 30 days', 'wordfence-2fa'));
-			\wfModuleController::shared()->addOptionIndex('wfls-option-require-2fa-xml-rpc', __('Login Security: Require 2FA for XML-RPC call authentication', 'wordfence-2fa'));
-			\wfModuleController::shared()->addOptionIndex('wfls-option-disable-xml-rpc', __('Login Security: Disable XML-RPC authentication', 'wordfence-2fa'));
-			\wfModuleController::shared()->addOptionIndex('wfls-option-whitelist-2fa', __('Login Security: Allowlisted IP addresses that bypass 2FA', 'wordfence-2fa'));
-			\wfModuleController::shared()->addOptionIndex('wfls-option-enable-captcha', __('Login Security: Enable reCAPTCHA on the login and user registration pages', 'wordfence-2fa'));
-			
-			$title = __('Login Security Options', 'wordfence-ls');
-			$description = __('Login Security options are available on the Login Security options page', 'wordfence-ls');
-			$url = esc_url(network_admin_url('admin.php?page=WFLS#top#settings'));
-			$link = __('Login Security Options', 'wordfence');;
-			\wfModuleController::shared()->addOptionBlock(<<<END
+
+    protected function _install()
+    {
+        static $_runInstallCalled = false;
+        if ($_runInstallCalled) {
+            return;
+        }
+        $_runInstallCalled = true;
+
+        if (function_exists('ignore_user_abort')) {
+            @ignore_user_abort(true);
+        }
+
+        if (!defined('DONOTCACHEDB')) {
+            define('DONOTCACHEDB', true);
+        }
+
+        $previousVersion = ((is_multisite() && function_exists('get_network_option')) ? get_network_option(null, self::VERSION_KEY, '0.0.0') : get_option(self::VERSION_KEY, '0.0.0'));
+        if (is_multisite() && function_exists('update_network_option')) {
+            update_network_option(null, self::VERSION_KEY, WORDFENCE_LS_VERSION); //In case we have a fatal error we don't want to keep running install.
+        } else {
+            update_option(self::VERSION_KEY, WORDFENCE_LS_VERSION); //In case we have a fatal error we don't want to keep running install.
+        }
+
+        Controller_DB::shared()->install();
+        Controller_Settings::shared()->set_defaults();
+
+        if (\WordfenceLS\Controller_Time::time() > Controller_Settings::shared()->get_int(Controller_Settings::OPTION_LAST_SECRET_REFRESH) + 180 * 86400) {
+            Model_Crypto::refresh_secrets();
+        }
+
+        Controller_Time::shared()->install();
+        Controller_Permissions::shared()->install();
+    }
+
+    private function has_woocommerce()
+    {
+        return class_exists('woocommerce');
+    }
+
+    public function _admin_init()
+    {
+        if (WORDFENCE_LS_FROM_CORE) {
+            \wfModuleController::shared()->addOptionIndex('wfls-option-enable-2fa-roles', __('Login Security: Enable 2FA for these roles', 'wordfence-2fa'));
+            \wfModuleController::shared()->addOptionIndex('wfls-option-allow-remember', __('Login Security: Allow remembering device for 30 days', 'wordfence-2fa'));
+            \wfModuleController::shared()->addOptionIndex('wfls-option-require-2fa-xml-rpc', __('Login Security: Require 2FA for XML-RPC call authentication', 'wordfence-2fa'));
+            \wfModuleController::shared()->addOptionIndex('wfls-option-disable-xml-rpc', __('Login Security: Disable XML-RPC authentication', 'wordfence-2fa'));
+            \wfModuleController::shared()->addOptionIndex('wfls-option-whitelist-2fa', __('Login Security: Allowlisted IP addresses that bypass 2FA', 'wordfence-2fa'));
+            \wfModuleController::shared()->addOptionIndex('wfls-option-enable-captcha', __('Login Security: Enable reCAPTCHA on the login and user registration pages', 'wordfence-2fa'));
+
+            $title = __('Login Security Options', 'wordfence-ls');
+            $description = __('Login Security options are available on the Login Security options page', 'wordfence-ls');
+            $url = esc_url(network_admin_url('admin.php?page=WFLS#top#settings'));
+            $link = __('Login Security Options', 'wordfence');;
+            \wfModuleController::shared()->addOptionBlock(<<<END
 <div class="wf-row">
 	<div class="wf-col-xs-12">
 		<div class="wf-block wf-always-active" data-persistence-key="">
@@ -200,38 +229,8 @@ END
         }
 
         if (Controller_Settings::shared()->get_bool(Controller_Settings::OPTION_DELETE_ON_DEACTIVATION)) {
-			Controller_DB::shared()->uninstall();
-		}
-	}
-	
-	protected function _install() {
-		static $_runInstallCalled = false;
-		if ($_runInstallCalled) { return; }
-		$_runInstallCalled = true;
-		
-		if (function_exists('ignore_user_abort')) {
-			@ignore_user_abort(true);
-		}
-		
-		if (!defined('DONOTCACHEDB')) { define('DONOTCACHEDB', true); }
-		
-		$previousVersion = ((is_multisite() && function_exists('get_network_option')) ? get_network_option(null, self::VERSION_KEY, '0.0.0') : get_option(self::VERSION_KEY, '0.0.0'));
-		if (is_multisite() && function_exists('update_network_option')) {
-			update_network_option(null, self::VERSION_KEY, WORDFENCE_LS_VERSION); //In case we have a fatal error we don't want to keep running install.	
-		}
-		else {
-			update_option(self::VERSION_KEY, WORDFENCE_LS_VERSION); //In case we have a fatal error we don't want to keep running install.
-		}
-
-        Controller_DB::shared()->install();
-        Controller_Settings::shared()->set_defaults();
-
-        if (\WordfenceLS\Controller_Time::time() > Controller_Settings::shared()->get_int(Controller_Settings::OPTION_LAST_SECRET_REFRESH) + 180 * 86400) {
-            Model_Crypto::refresh_secrets();
+            Controller_DB::shared()->uninstall();
         }
-
-        Controller_Time::shared()->install();
-        Controller_Permissions::shared()->install();
     }
 
     public function _block_xml_rpc()
@@ -245,17 +244,6 @@ END
         return false;
     }
 
-    private function has_woocommerce()
-    {
-        return class_exists('woocommerce');
-    }
-
-    public function _woocommerce_login_enqueue_scripts()
-    {
-        wp_enqueue_style('dashicons');
-        $this->_login_enqueue_scripts();
-    }
-
     public function _woocommerce_checkout_login_enqueue_scripts()
     {
         /**
@@ -266,6 +254,12 @@ END
             return;
         }
         $this->_woocommerce_login_enqueue_scripts();
+    }
+
+    public function _woocommerce_login_enqueue_scripts()
+    {
+        wp_enqueue_style('dashicons');
+        $this->_login_enqueue_scripts();
     }
 
     /**
@@ -434,25 +428,6 @@ END
         endif;
     }
 
-    /**
-     * Authentication
-     */
-
-    private function _is_woocommerce_login()
-    {
-        if (!$this->has_woocommerce())
-            return false;
-        $nonceValue = '';
-        foreach (array('woocommerce-login-nonce', '_wpnonce') as $key) {
-            if (array_key_exists($key, $_REQUEST)) {
-                $nonceValue = $_REQUEST[$key];
-                break;
-            }
-        }
-
-        return (isset($_POST['login'], $_POST['username'], $_POST['password']) && is_string($nonceValue) && wp_verify_nonce($nonceValue, 'woocommerce-login'));
-    }
-
     public function _authenticate($user, $username, $password)
     {
         if (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST && !Controller_Settings::shared()->get_bool(Controller_Settings::OPTION_XMLRPC_ENABLED)) { //XML-RPC call and we're not enforcing 2FA on it
@@ -500,60 +475,63 @@ END
                                 $score = (float)$cached['score'];
                             }
                             delete_user_meta($user->ID, 'wfls-captcha-nonce');
-						}
-						//else - unable to decrypt, probably a host error, so let it fall through to a re-check
-					}
-					//else - invalid JWT or host error, so let it fall through to a re-check
-				}
-				
-				if (!isset($score)) {
-					$score = Controller_CAPTCHA::shared()->score($token);
-					if ($score === false && !Controller_CAPTCHA::shared()->test_mode()) { //An invalid token will require additional verification (if neither 2FA nor test mode are active)
-						$performVerification = true;
-					}
-				}
-			}
-			
-			if (!isset($score)) { $score = false; }
-			
-			if (is_object($user) && $user instanceof \WP_User) {
-				if (Controller_Users::shared()->has_2fa_active($user)) { //CAPTCHA enforcement skipped for users with 2FA active
-					$requireCAPTCHA = false;
-					$performVerification = false;
-				}
-				else { //Cache the score/token combo for this specific user
-					$nonce = Model_Crypto::random_bytes(32);
-					$encryptedNonce = Model_Symmetric::encrypt($nonce);
-					if ($encryptedNonce) {
-						update_user_meta($user->ID, 'wfls-captcha-nonce', json_encode(array('nonce' => bin2hex($nonce), 'score' => $score, 'token' => $token, 'expiration' => Controller_Time::time() + 30)));
-						$jwt = new Model_JWT(array('nonce' => $encryptedNonce), Controller_Time::time() + 30);
-						if (!defined('WORDFENCE_LS_CAPTCHA_CACHE')) { define('WORDFENCE_LS_CAPTCHA_CACHE', (string) $jwt); }
-					}
-					// else Can't generate payload, so we'll end up re-querying the reCAPTCHA token next hit
-				}
-				
-				Controller_Users::shared()->record_captcha_score($user, $score);
-				
-				if (isset($_REQUEST['wfls-email-verification']) && !empty($_REQUEST['wfls-email-verification']) && is_string($_REQUEST['wfls-email-verification'])) {
-					$jwt = Model_JWT::decode_jwt($_REQUEST['wfls-email-verification']);
-					if ($jwt && isset($jwt->payload['user'])) {
-						$decryptedUser = Model_Symmetric::decrypt($jwt->payload['user']);
-						if (!$decryptedUser || $decryptedUser == $user->ID) { //Skip the CAPTCHA check if the user in the JWT matches or decryption failed due to a server error
-							$requireCAPTCHA = false;
-							$performVerification = false;
-						}
-					}
-				}
-				
-				if ($requireCAPTCHA && !$performVerification) {
-					if (!Controller_CAPTCHA::shared()->is_human($score)) { //Score is below the human threshold, require email verification
-						$performVerification = true;
-					}
-				}
-				
-				if ($requireCAPTCHA && $performVerification) {
-					$encrypted = Model_Symmetric::encrypt((string) $user->ID);
-					if ($encrypted) {
+                        }
+                        //else - unable to decrypt, probably a host error, so let it fall through to a re-check
+                    }
+                    //else - invalid JWT or host error, so let it fall through to a re-check
+                }
+
+                if (!isset($score)) {
+                    $score = Controller_CAPTCHA::shared()->score($token);
+                    if ($score === false && !Controller_CAPTCHA::shared()->test_mode()) { //An invalid token will require additional verification (if neither 2FA nor test mode are active)
+                        $performVerification = true;
+                    }
+                }
+            }
+
+            if (!isset($score)) {
+                $score = false;
+            }
+
+            if (is_object($user) && $user instanceof \WP_User) {
+                if (Controller_Users::shared()->has_2fa_active($user)) { //CAPTCHA enforcement skipped for users with 2FA active
+                    $requireCAPTCHA = false;
+                    $performVerification = false;
+                } else { //Cache the score/token combo for this specific user
+                    $nonce = Model_Crypto::random_bytes(32);
+                    $encryptedNonce = Model_Symmetric::encrypt($nonce);
+                    if ($encryptedNonce) {
+                        update_user_meta($user->ID, 'wfls-captcha-nonce', json_encode(array('nonce' => bin2hex($nonce), 'score' => $score, 'token' => $token, 'expiration' => Controller_Time::time() + 30)));
+                        $jwt = new Model_JWT(array('nonce' => $encryptedNonce), Controller_Time::time() + 30);
+                        if (!defined('WORDFENCE_LS_CAPTCHA_CACHE')) {
+                            define('WORDFENCE_LS_CAPTCHA_CACHE', (string)$jwt);
+                        }
+                    }
+                    // else Can't generate payload, so we'll end up re-querying the reCAPTCHA token next hit
+                }
+
+                Controller_Users::shared()->record_captcha_score($user, $score);
+
+                if (isset($_REQUEST['wfls-email-verification']) && !empty($_REQUEST['wfls-email-verification']) && is_string($_REQUEST['wfls-email-verification'])) {
+                    $jwt = Model_JWT::decode_jwt($_REQUEST['wfls-email-verification']);
+                    if ($jwt && isset($jwt->payload['user'])) {
+                        $decryptedUser = Model_Symmetric::decrypt($jwt->payload['user']);
+                        if (!$decryptedUser || $decryptedUser == $user->ID) { //Skip the CAPTCHA check if the user in the JWT matches or decryption failed due to a server error
+                            $requireCAPTCHA = false;
+                            $performVerification = false;
+                        }
+                    }
+                }
+
+                if ($requireCAPTCHA && !$performVerification) {
+                    if (!Controller_CAPTCHA::shared()->is_human($score)) { //Score is below the human threshold, require email verification
+                        $performVerification = true;
+                    }
+                }
+
+                if ($requireCAPTCHA && $performVerification) {
+                    $encrypted = Model_Symmetric::encrypt((string)$user->ID);
+                    if ($encrypted) {
                         if ($this->has_woocommerce() && array_key_exists('woocommerce-login-nonce', $_POST)) {
                             $loginUrl = get_permalink(get_option('woocommerce_myaccount_page_id'));
                         } else {
@@ -571,119 +549,120 @@ END
 
                         return new \WP_Error('wfls_captcha_verify', wp_kses(__('<strong>VERIFICATION REQUIRED</strong>: Additional verification is required for login. Please check the email address associated with the account for a verification link.', 'wordfence-ls'), array('strong' => array())));
                     }
-					//else -- Can't generate payload due to host failure, allow it to proceed
-				}
-			}
-		}
-		
-		/*
-		 * Check 1
-		 * 
-		 * If we have a valid JWT that authenticates the account _and_ code, fetch and return that user.
-		 */
-		if (isset($_POST['wfls-token-jwt']) && is_string($_POST['wfls-token-jwt'])) {
-			$jwt = Model_JWT::decode_jwt($_POST['wfls-token-jwt']);
-			if (!$jwt) { //Possibly user-corrupted or expired JWT
-				return new \WP_Error('wfls_twofactor_invalid', wp_kses(__('<strong>VALIDATION FAILED</strong>: The 2FA code could not be validated. Please try logging in again.', 'wordfence-2fa'), array('strong'=>array())));
-			}
-			
-			if (!isset($jwt->payload['user'])) { //Possibly user-corrupted JWT
-				return new \WP_Error('wfls_twofactor_invalid', wp_kses(__('<strong>VALIDATION FAILED</strong>: The 2FA code could not be validated. Please try logging in again.', 'wordfence-2fa'), array('strong'=>array())));
-			}
-			
-			$decryptedUser = Model_Symmetric::decrypt($jwt->payload['user']);
-			if (!$decryptedUser) {
-				return $user; //Likely a server failure, allow authentication without our authenticate filter
-			}
-			
-			if (isset($jwt->payload['nonce'])) { //JWT includes previous token validation
-				$decryptedNonce = Model_Symmetric::decrypt($jwt->payload['nonce']);
-				if (!$decryptedNonce) {
-					return $user; //Likely a server failure, allow authentication without our authenticate filter
-				}
-				
-				$expectedNonceJSON = get_user_meta((int) $decryptedUser, 'wfls-nonce', true);
-				$expectedNonce = @json_decode($expectedNonceJSON, true);
-				if ($expectedNonce && $expectedNonce['expiration'] > Controller_Time::time() && hash_equals($decryptedNonce, Model_Compat::hex2bin($expectedNonce['nonce']))) {
-					delete_user_meta((int) $decryptedUser, 'wfls-nonce');
-					$user = new \WP_User((int) $decryptedUser);
-					return $user;
-				}
-				
-				//Invalid nonce or expired nonce
-				return new \WP_Error('wfls_twofactor_invalid', wp_kses(__('<strong>VALIDATION FAILED</strong>: The 2FA code could not be validated. Please try logging in again.', 'wordfence-2fa'), array('strong'=>array())));
-			}
-		}
-		
-		/*
-		 * Check 2
-		 * 
-		 * If we don't have a valid $user at this point, it means the $username/$password combo is invalid. We'll check 
-		 * to see if the user has provided a combined password in the format `<password><code>`, populating $user from
-		 * that if so.
-		 */
-		if (!defined('WORDFENCE_LS_CHECKING_COMBINED') && (!isset($_POST['wfls-token']) || !is_string($_POST['wfls-token'])) && (!is_object($user) || !($user instanceof \WP_User))) {
-			//Compatibility with WF legacy 2FA
-			$combinedTOTPRegex = '/((?:[0-9]{3}\s*){2})$/i';
-			$combinedRecoveryRegex = '/((?:[a-f0-9]{4}\s*){4})$/i';
-			if ($this->legacy_2fa_active()) {
-				$combinedTOTPRegex = '/(?<! wf)((?:[0-9]{3}\s*){2})$/i';
-				$combinedRecoveryRegex = '/(?<! wf)((?:[a-f0-9]{4}\s*){4})$/i';
-			}
-			
-			if (preg_match($combinedTOTPRegex, $password, $matches)) { //Possible TOTP code
-				if (strlen($password) > strlen($matches[1])) {
-					$revisedPassword = substr($password, 0, strlen($password) - strlen($matches[1]));
-					$code = $matches[1];
-				}
-			}
-			else if (preg_match($combinedRecoveryRegex, $password, $matches)) { //Possible recovery code
-				if (strlen($password) > strlen($matches[1])) {
-					$revisedPassword = substr($password, 0, strlen($password) - strlen($matches[1]));
-					$code = $matches[1];
-				}
-			}
-			
-			if (isset($revisedPassword)) {
-				define('WORDFENCE_LS_CHECKING_COMBINED', true); //Avoid recursing into this block
-				if (!defined('WORDFENCE_LS_AUTHENTICATION_CHECK')) { define('WORDFENCE_LS_AUTHENTICATION_CHECK', true); }
-				$revisedUser = wp_authenticate($username, $revisedPassword);
-				if (is_object($revisedUser) && ($revisedUser instanceof \WP_User) && Controller_TOTP::shared()->validate_2fa($revisedUser, $code)) {
-					define('WORDFENCE_LS_COMBINED_IS_VALID', true); //AJAX call will use this to generate a different JWT that authenticates for the account _and_ code
-					return $revisedUser;
-				}
-			}
-		}
-		
-		/*
-		 * Check 3
-		 * 
-		 * If we have a valid JWT user and the user has provided a code, check to see if the code is valid. If it is,
-		 * the JWT user is returned.
-		 */
-		if (isset($decryptedUser) && isset($_POST['wfls-token']) && is_string($_POST['wfls-token'])) {
-			$jwtUser = new \WP_User((int) $decryptedUser);
-			if (Controller_Users::shared()->has_2fa_active($jwtUser)) {
-				if (Controller_TOTP::shared()->validate_2fa($jwtUser, $_POST['wfls-token'])) {
-					define('WORDFENCE_LS_COMBINED_IS_VALID', true); //AJAX call will use this to generate a different JWT that authenticates for the account _and_ code
-					return $jwtUser;
-				}
-				
-				return new \WP_Error('wfls_twofactor_failed', wp_kses(__('<strong>CODE INVALID</strong>: The 2FA code provided is either expired or invalid. Please try again.', 'wordfence-2fa'), array('strong'=>array())));
-			}
-		}
-		
-		if (defined('WORDFENCE_LS_AUTHENTICATION_CHECK') && WORDFENCE_LS_AUTHENTICATION_CHECK) { //Checking for the purpose of prompting for 2FA, don't enforce it here -- AJAX calls will halt here, POST will continue
-			return $user;
-		}
-		
-		/*
-		 * Check 4
-		 * 
-		 * If we have a user from a previous filter, check to see if it has 2FA enabled or a remembered 2FA. If it does, it has not
-		 * provided a code, so block its login.
-		 */
-		if (is_object($user) && ($user instanceof \WP_User)) {
+                    //else -- Can't generate payload due to host failure, allow it to proceed
+                }
+            }
+        }
+
+        /*
+         * Check 1
+         *
+         * If we have a valid JWT that authenticates the account _and_ code, fetch and return that user.
+         */
+        if (isset($_POST['wfls-token-jwt']) && is_string($_POST['wfls-token-jwt'])) {
+            $jwt = Model_JWT::decode_jwt($_POST['wfls-token-jwt']);
+            if (!$jwt) { //Possibly user-corrupted or expired JWT
+                return new \WP_Error('wfls_twofactor_invalid', wp_kses(__('<strong>VALIDATION FAILED</strong>: The 2FA code could not be validated. Please try logging in again.', 'wordfence-2fa'), array('strong' => array())));
+            }
+
+            if (!isset($jwt->payload['user'])) { //Possibly user-corrupted JWT
+                return new \WP_Error('wfls_twofactor_invalid', wp_kses(__('<strong>VALIDATION FAILED</strong>: The 2FA code could not be validated. Please try logging in again.', 'wordfence-2fa'), array('strong' => array())));
+            }
+
+            $decryptedUser = Model_Symmetric::decrypt($jwt->payload['user']);
+            if (!$decryptedUser) {
+                return $user; //Likely a server failure, allow authentication without our authenticate filter
+            }
+
+            if (isset($jwt->payload['nonce'])) { //JWT includes previous token validation
+                $decryptedNonce = Model_Symmetric::decrypt($jwt->payload['nonce']);
+                if (!$decryptedNonce) {
+                    return $user; //Likely a server failure, allow authentication without our authenticate filter
+                }
+
+                $expectedNonceJSON = get_user_meta((int)$decryptedUser, 'wfls-nonce', true);
+                $expectedNonce = @json_decode($expectedNonceJSON, true);
+                if ($expectedNonce && $expectedNonce['expiration'] > Controller_Time::time() && hash_equals($decryptedNonce, Model_Compat::hex2bin($expectedNonce['nonce']))) {
+                    delete_user_meta((int)$decryptedUser, 'wfls-nonce');
+                    $user = new \WP_User((int)$decryptedUser);
+                    return $user;
+                }
+
+                //Invalid nonce or expired nonce
+                return new \WP_Error('wfls_twofactor_invalid', wp_kses(__('<strong>VALIDATION FAILED</strong>: The 2FA code could not be validated. Please try logging in again.', 'wordfence-2fa'), array('strong' => array())));
+            }
+        }
+
+        /*
+         * Check 2
+         *
+         * If we don't have a valid $user at this point, it means the $username/$password combo is invalid. We'll check
+         * to see if the user has provided a combined password in the format `<password><code>`, populating $user from
+         * that if so.
+         */
+        if (!defined('WORDFENCE_LS_CHECKING_COMBINED') && (!isset($_POST['wfls-token']) || !is_string($_POST['wfls-token'])) && (!is_object($user) || !($user instanceof \WP_User))) {
+            //Compatibility with WF legacy 2FA
+            $combinedTOTPRegex = '/((?:[0-9]{3}\s*){2})$/i';
+            $combinedRecoveryRegex = '/((?:[a-f0-9]{4}\s*){4})$/i';
+            if ($this->legacy_2fa_active()) {
+                $combinedTOTPRegex = '/(?<! wf)((?:[0-9]{3}\s*){2})$/i';
+                $combinedRecoveryRegex = '/(?<! wf)((?:[a-f0-9]{4}\s*){4})$/i';
+            }
+
+            if (preg_match($combinedTOTPRegex, $password, $matches)) { //Possible TOTP code
+                if (strlen($password) > strlen($matches[1])) {
+                    $revisedPassword = substr($password, 0, strlen($password) - strlen($matches[1]));
+                    $code = $matches[1];
+                }
+            } else if (preg_match($combinedRecoveryRegex, $password, $matches)) { //Possible recovery code
+                if (strlen($password) > strlen($matches[1])) {
+                    $revisedPassword = substr($password, 0, strlen($password) - strlen($matches[1]));
+                    $code = $matches[1];
+                }
+            }
+
+            if (isset($revisedPassword)) {
+                define('WORDFENCE_LS_CHECKING_COMBINED', true); //Avoid recursing into this block
+                if (!defined('WORDFENCE_LS_AUTHENTICATION_CHECK')) {
+                    define('WORDFENCE_LS_AUTHENTICATION_CHECK', true);
+                }
+                $revisedUser = wp_authenticate($username, $revisedPassword);
+                if (is_object($revisedUser) && ($revisedUser instanceof \WP_User) && Controller_TOTP::shared()->validate_2fa($revisedUser, $code)) {
+                    define('WORDFENCE_LS_COMBINED_IS_VALID', true); //AJAX call will use this to generate a different JWT that authenticates for the account _and_ code
+                    return $revisedUser;
+                }
+            }
+        }
+
+        /*
+         * Check 3
+         *
+         * If we have a valid JWT user and the user has provided a code, check to see if the code is valid. If it is,
+         * the JWT user is returned.
+         */
+        if (isset($decryptedUser) && isset($_POST['wfls-token']) && is_string($_POST['wfls-token'])) {
+            $jwtUser = new \WP_User((int)$decryptedUser);
+            if (Controller_Users::shared()->has_2fa_active($jwtUser)) {
+                if (Controller_TOTP::shared()->validate_2fa($jwtUser, $_POST['wfls-token'])) {
+                    define('WORDFENCE_LS_COMBINED_IS_VALID', true); //AJAX call will use this to generate a different JWT that authenticates for the account _and_ code
+                    return $jwtUser;
+                }
+
+                return new \WP_Error('wfls_twofactor_failed', wp_kses(__('<strong>CODE INVALID</strong>: The 2FA code provided is either expired or invalid. Please try again.', 'wordfence-2fa'), array('strong' => array())));
+            }
+        }
+
+        if (defined('WORDFENCE_LS_AUTHENTICATION_CHECK') && WORDFENCE_LS_AUTHENTICATION_CHECK) { //Checking for the purpose of prompting for 2FA, don't enforce it here -- AJAX calls will halt here, POST will continue
+            return $user;
+        }
+
+        /*
+         * Check 4
+         *
+         * If we have a user from a previous filter, check to see if it has 2FA enabled or a remembered 2FA. If it does, it has not
+         * provided a code, so block its login.
+         */
+        if (is_object($user) && ($user instanceof \WP_User)) {
             if (Controller_Users::shared()->has_remembered_2fa($user)) {
                 return $user;
             }
@@ -702,15 +681,73 @@ END
                 Controller_Notices::shared()->add_notice(Model_Notice::SEVERITY_CRITICAL, new Model_HTML(wp_kses(sprintf(__('You do not currently have two-factor authentication active on your account, which will be required beginning %s. <a href="%s">Configure 2FA</a>', 'wordfence-2fa'), Controller_Time::format_local_time('F j, Y g:i A', $time2faRequired), esc_url((is_multisite() && is_super_admin($user->ID)) ? network_admin_url('admin.php?page=WFLS') : admin_url('admin.php?page=WFLS'))), array('a' => array('href' => array())))), 'wfls-will-be-required', $user);
             }
         }
-		
-		return $user;
-	}
-	
-	public function _set_logged_in_cookie($logged_in_cookie, $expire, $expiration, $user_id) {
-		$user = new \WP_User($user_id);
-		if (Controller_Users::shared()->has_2fa_active($user) && isset($_POST['wfls-remember-device']) && $_POST['wfls-remember-device']) {
-			Controller_Users::shared()->remember_2fa($user);
-		}
+
+        return $user;
+    }
+
+    /**
+     * Authentication
+     */
+
+    private function _is_woocommerce_login()
+    {
+        if (!$this->has_woocommerce())
+            return false;
+        $nonceValue = '';
+        foreach (array('woocommerce-login-nonce', '_wpnonce') as $key) {
+            if (array_key_exists($key, $_REQUEST)) {
+                $nonceValue = $_REQUEST[$key];
+                break;
+            }
+        }
+
+        return (isset($_POST['login'], $_POST['username'], $_POST['password']) && is_string($nonceValue) && wp_verify_nonce($nonceValue, 'woocommerce-login'));
+    }
+
+    public function legacy_2fa_active()
+    {
+        $wfLegacy2FAActive = false;
+        if (class_exists('wfConfig') && \wfConfig::get('isPaid')) {
+            $twoFactorUsers = \wfConfig::get_ser('twoFactorUsers', array());
+            if (is_array($twoFactorUsers) && count($twoFactorUsers) > 0) {
+                foreach ($twoFactorUsers as $t) {
+                    if ($t[3] == 'activated') {
+                        $testUser = get_user_by('ID', $t[0]);
+                        if (is_object($testUser) && $testUser instanceof \WP_User && \wfUtils::isAdmin($testUser)) {
+                            $wfLegacy2FAActive = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if ($wfLegacy2FAActive && class_exists('wfCredentialsController') && method_exists('wfCredentialsController', 'useLegacy2FA') && !\wfCredentialsController::useLegacy2FA()) {
+                $wfLegacy2FAActive = false;
+            }
+        }
+        return $wfLegacy2FAActive;
+    }
+
+    /**
+     * Returns the singleton Controller_Wordfence2FA.
+     *
+     * @return Controller_WordfenceLS
+     */
+    public static function shared()
+    {
+        static $_shared = null;
+        if ($_shared === null) {
+            $_shared = new Controller_WordfenceLS();
+        }
+        return $_shared;
+    }
+
+    public function _set_logged_in_cookie($logged_in_cookie, $expire, $expiration, $user_id)
+    {
+        $user = new \WP_User($user_id);
+        if (Controller_Users::shared()->has_2fa_active($user) && isset($_POST['wfls-remember-device']) && $_POST['wfls-remember-device']) {
+            Controller_Users::shared()->remember_2fa($user);
+        }
         delete_user_meta($user_id, 'wfls-captcha-nonce');
     }
 
@@ -752,6 +789,49 @@ END
         }
     }
 
+    private function process_registration_captcha()
+    {
+        if (Controller_Whitelist::shared()->is_whitelisted(Model_Request::current()->ip())) { //Whitelisted, so we're not enforcing 2FA
+            return true;
+        }
+
+        $captchaController = Controller_CAPTCHA::shared();
+        $requireCaptcha = $captchaController->is_captcha_required();
+        $token = $captchaController->get_token();
+
+        if ($requireCaptcha) {
+            if ($token === null && !$captchaController->test_mode()) {
+                return array(
+                    'message' => wp_kses(__('<strong>REGISTRATION ATTEMPT BLOCKED</strong>: This site requires a security token created when the page loads for all registration attempts. Please ensure JavaScript is enabled and try again.', 'wordfence-ls'), array('strong' => array())),
+                    'category' => 'wfls_captcha_required'
+                );
+            }
+            $score = $captchaController->score($token);
+            if ($score === false && !$captchaController->test_mode()) {
+                return array(
+                    'message' => wp_kses(__('<strong>REGISTRATION ATTEMPT BLOCKED</strong>: The security token for the login attempt was invalid or expired. Please reload the page and try again.', 'wordfence-ls'), array('strong' => array())),
+                    'category' => 'wfls_captcha_required'
+                );
+            }
+            Controller_Users::shared()->record_captcha_score(null, $token);
+            if (!$captchaController->is_human($score)) {
+                $encryptedIP = Model_Symmetric::encrypt(Model_Request::current()->ip());
+                $encryptedScore = Model_Symmetric::encrypt($score);
+                $result = array(
+                    'category' => 'wfls_registration_blocked'
+                );
+                if ($encryptedIP && $encryptedScore && filter_var(get_site_option('admin_email'), FILTER_VALIDATE_EMAIL)) {
+                    $jwt = new Model_JWT(array('ip' => $encryptedIP, 'score' => $encryptedScore), Controller_Time::time() + 600);
+                    $result['message'] = wp_kses(sprintf(__('<strong>REGISTRATION BLOCKED</strong>: The registration request was blocked because it was flagged as spam. Please try again or <a href="#" class="wfls-registration-captcha-contact" data-token="%s">contact the site owner</a> for help.', 'wordfence-ls'), esc_attr((string)$jwt)), array('strong' => array(), 'a' => array('href' => array(), 'class' => array(), 'data-token' => array())));
+                } else {
+                    $result['message'] = wp_kses(__('<strong>REGISTRATION BLOCKED</strong>: The registration request was blocked because it was flagged as spam. Please try again or contact the site owner for help.', 'wordfence-ls'), array('strong' => array()));
+                }
+                return $result;
+            }
+        }
+        return true;
+    }
+
     /**
      * @param \WP_Error $errors
      * @param string $redirect_to
@@ -764,42 +844,18 @@ END
             $jwt = Model_JWT::decode_jwt($_REQUEST['wfls-email-verification']);
             if ($jwt && isset($jwt->payload['user'])) {
                 $errors->add('wfls_email_verified', esc_html__('Email verification succeeded. Please continue logging in.', 'wordfence-2fa'), 'message');
-			}
-			else {
-				$errors->add('wfls_email_not_verified', esc_html__('Email verification invalid or expired. Please try again.', 'wordfence-2fa'), 'message');
-			}
-		}
-		return $errors;
-	}
-	
-	public function legacy_2fa_active() {
-		$wfLegacy2FAActive = false;
-		if (class_exists('wfConfig') && \wfConfig::get('isPaid')) {
-			$twoFactorUsers = \wfConfig::get_ser('twoFactorUsers', array());
-			if (is_array($twoFactorUsers) && count($twoFactorUsers) > 0) {
-				foreach ($twoFactorUsers as $t) {
-					if ($t[3] == 'activated') {
-						$testUser = get_user_by('ID', $t[0]);
-						if (is_object($testUser) && $testUser instanceof \WP_User && \wfUtils::isAdmin($testUser)) {
-							$wfLegacy2FAActive = true;
-							break;
-						}
-					}
-				}
-			}
-			
-			if ($wfLegacy2FAActive && class_exists('wfCredentialsController') && method_exists('wfCredentialsController', 'useLegacy2FA') && !\wfCredentialsController::useLegacy2FA()) {
-				$wfLegacy2FAActive = false;
-			}
-		}
-		return $wfLegacy2FAActive;
-	}
-	
-	/**
-	 * Menu
-	 */
-	
-	public function _admin_menu()
+            } else {
+                $errors->add('wfls_email_not_verified', esc_html__('Email verification invalid or expired. Please try again.', 'wordfence-2fa'), 'message');
+            }
+        }
+        return $errors;
+    }
+
+    /**
+     * Menu
+     */
+
+    public function _admin_menu()
     {
         $user = wp_get_current_user();
         if (Controller_Notices::shared()->has_notice($user)) {
@@ -819,12 +875,11 @@ END
                 return;
             }
         }
-		
-		if ($useSubmenu) {
-			add_submenu_page('Wordfence', __('Login Security', 'wordfence-2fa'), __('Login Security', 'wordfence-2fa'), Controller_Permissions::CAP_ACTIVATE_2FA_SELF, 'WFLS', array($this, '_menu'));
-		}
-		else {
-			add_menu_page(__('Login Security', 'wordfence-2fa'), __('Login Security', 'wordfence-2fa'), Controller_Permissions::CAP_ACTIVATE_2FA_SELF, 'WFLS', array($this, '_menu'), Model_Asset::img('menu.svg'));
+
+        if ($useSubmenu) {
+            add_submenu_page('Wordfence', __('Login Security', 'wordfence-2fa'), __('Login Security', 'wordfence-2fa'), Controller_Permissions::CAP_ACTIVATE_2FA_SELF, 'WFLS', array($this, '_menu'));
+        } else {
+            add_menu_page(__('Login Security', 'wordfence-2fa'), __('Login Security', 'wordfence-2fa'), Controller_Permissions::CAP_ACTIVATE_2FA_SELF, 'WFLS', array($this, '_menu'), Model_Asset::img('menu.svg'));
         }
     }
 
@@ -918,57 +973,6 @@ END
         echo $view->render();
     }
 
-    private function process_registration_captcha()
-    {
-        if (Controller_Whitelist::shared()->is_whitelisted(Model_Request::current()->ip())) { //Whitelisted, so we're not enforcing 2FA
-            return true;
-        }
-
-        $captchaController = Controller_CAPTCHA::shared();
-        $requireCaptcha = $captchaController->is_captcha_required();
-        $token = $captchaController->get_token();
-
-        if ($requireCaptcha) {
-            if ($token === null && !$captchaController->test_mode()) {
-                return array(
-                    'message' => wp_kses(__('<strong>REGISTRATION ATTEMPT BLOCKED</strong>: This site requires a security token created when the page loads for all registration attempts. Please ensure JavaScript is enabled and try again.', 'wordfence-ls'), array('strong' => array())),
-                    'category' => 'wfls_captcha_required'
-                );
-            }
-            $score = $captchaController->score($token);
-            if ($score === false && !$captchaController->test_mode()) {
-                return array(
-                    'message' => wp_kses(__('<strong>REGISTRATION ATTEMPT BLOCKED</strong>: The security token for the login attempt was invalid or expired. Please reload the page and try again.', 'wordfence-ls'), array('strong' => array())),
-                    'category' => 'wfls_captcha_required'
-                );
-            }
-            Controller_Users::shared()->record_captcha_score(null, $token);
-            if (!$captchaController->is_human($score)) {
-                $encryptedIP = Model_Symmetric::encrypt(Model_Request::current()->ip());
-                $encryptedScore = Model_Symmetric::encrypt($score);
-                $result = array(
-                    'category' => 'wfls_registration_blocked'
-                );
-                if ($encryptedIP && $encryptedScore && filter_var(get_site_option('admin_email'), FILTER_VALIDATE_EMAIL)) {
-                    $jwt = new Model_JWT(array('ip' => $encryptedIP, 'score' => $encryptedScore), Controller_Time::time() + 600);
-                    $result['message'] = wp_kses(sprintf(__('<strong>REGISTRATION BLOCKED</strong>: The registration request was blocked because it was flagged as spam. Please try again or <a href="#" class="wfls-registration-captcha-contact" data-token="%s">contact the site owner</a> for help.', 'wordfence-ls'), esc_attr((string)$jwt)), array('strong' => array(), 'a' => array('href' => array(), 'class' => array(), 'data-token' => array())));
-                } else {
-                    $result['message'] = wp_kses(__('<strong>REGISTRATION BLOCKED</strong>: The registration request was blocked because it was flagged as spam. Please try again or contact the site owner for help.', 'wordfence-ls'), array('strong' => array()));
-                }
-                return $result;
-            }
-        }
-        return true;
-    }
-
-    private function disable_woocommerce_registration($message)
-    {
-        if ($this->has_woocommerce()) {
-            remove_action('wp_loaded', array('WC_Form_Handler', 'process_registration'), 20);
-            wc_add_notice($message, 'error');
-        }
-    }
-
     public function _handle_woocommerce_registration()
     {
         if ($this->has_woocommerce() && isset($_POST['register'], $_POST['email']) && (isset($_POST['_wpnonce']) || isset($_POST['woocommerce-register-nonce']))) {
@@ -976,6 +980,14 @@ END
             if ($captchaResult !== true) {
                 $this->disable_woocommerce_registration($captchaResult['message']);
             }
+        }
+    }
+
+    private function disable_woocommerce_registration($message)
+    {
+        if ($this->has_woocommerce()) {
+            remove_action('wp_loaded', array('WC_Form_Handler', 'process_registration'), 20);
+            wc_add_notice($message, 'error');
         }
     }
 

@@ -1,12 +1,14 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the fresh install plugin header.
  */
 ?>
 <div id="wf-onboarding-plugin-header">
-	<div id="wf-onboarding-plugin-header-header">
-		<div id="wf-onboarding-plugin-header-title"><?php esc_html_e('Please Complete Wordfence Installation', 'wordfence'); ?></div>
+    <div id="wf-onboarding-plugin-header-header">
+        <div id="wf-onboarding-plugin-header-title"><?php esc_html_e('Please Complete Wordfence Installation', 'wordfence'); ?></div>
         <div id="wf-onboarding-plugin-header-accessory"><a href="#" id="wf-onboarding-plugin-header-dismiss"
                                                            role="button">&times;</a></div>
     </div>
@@ -14,29 +16,37 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
         <ul>
             <li id="wf-onboarding-plugin-header-stage">
                 <ul>
-                    <li id="wf-onboarding-plugin-header-stage-label-1" class="wf-onboarding-plugin-header-stage-label<?php if (wfConfig::get('onboardingAttempt2') != wfOnboardingController::ONBOARDING_SECOND_EMAILS) { echo ' wf-active'; } else { echo ' wf-complete'; } ?>">
-						<ul>
-							<li><?php esc_html_e('Admin Contact Info', 'wordfence'); ?></li>
-							<li>&#10003;</li>
-						</ul>
-					</li>
-					<li id="wf-onboarding-plugin-header-stage-label-2" class="wf-onboarding-plugin-header-stage-label<?php if (wfConfig::get('onboardingAttempt2') == wfOnboardingController::ONBOARDING_SECOND_EMAILS) { echo ' wf-active'; } ?>">
-						<ul>
-							<li><?php esc_html_e('Activate Premium', 'wordfence'); ?></li>
-							<li>&#10003;</li>
-						</ul>
-					</li>
-				</ul>
-			</li>
-			<li id="wf-onboarding-plugin-header-stage-content">
-				<div id="wf-onboarding-plugin-header-stage-content-1"<?php if (wfConfig::get('onboardingAttempt2') == wfOnboardingController::ONBOARDING_FIRST_EMAILS) { echo ' style="display: none;"'; } ?>>
-					<h4><?php esc_html_e('Please tell us where Wordfence should send you security alerts for your website:', 'wordfence'); ?></h4>
-					<input type="text" id="wf-onboarding2-alerts" placeholder="you@example.com" value="<?php echo esc_attr(implode(',', wfConfig::getAlertEmails())); ?>">
-					<p id="wf-onboarding-alerts-disclaimer"><?php esc_html_e('We do not use this email address for any other purpose unless you opt-in to receive other mailings. You can turn off alerts in the options.', 'wordfence'); ?></p>
-					<div id="wf-onboarding2-subscribe">
-						<label for="wf-onboarding2-email-list"><?php esc_html_e('Would you also like to join our WordPress security mailing list to receive WordPress security alerts and Wordfence news?', 'wordfence'); ?></label>
-						<div id="wf-onboarding2-subscribe-controls">
-							<ul id="wf-onboarding2-email-list" class="wf-switch">
+                    <li id="wf-onboarding-plugin-header-stage-label-1" class="wf-onboarding-plugin-header-stage-label<?php if (wfConfig::get('onboardingAttempt2') != wfOnboardingController::ONBOARDING_SECOND_EMAILS) {
+                        echo ' wf-active';
+                    } else {
+                        echo ' wf-complete';
+                    } ?>">
+                        <ul>
+                            <li><?php esc_html_e('Admin Contact Info', 'wordfence'); ?></li>
+                            <li>&#10003;</li>
+                        </ul>
+                    </li>
+                    <li id="wf-onboarding-plugin-header-stage-label-2" class="wf-onboarding-plugin-header-stage-label<?php if (wfConfig::get('onboardingAttempt2') == wfOnboardingController::ONBOARDING_SECOND_EMAILS) {
+                        echo ' wf-active';
+                    } ?>">
+                        <ul>
+                            <li><?php esc_html_e('Activate Premium', 'wordfence'); ?></li>
+                            <li>&#10003;</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li id="wf-onboarding-plugin-header-stage-content">
+                <div id="wf-onboarding-plugin-header-stage-content-1"<?php if (wfConfig::get('onboardingAttempt2') == wfOnboardingController::ONBOARDING_FIRST_EMAILS) {
+                    echo ' style="display: none;"';
+                } ?>>
+                    <h4><?php esc_html_e('Please tell us where Wordfence should send you security alerts for your website:', 'wordfence'); ?></h4>
+                    <input type="text" id="wf-onboarding2-alerts" placeholder="you@example.com" value="<?php echo esc_attr(implode(',', wfConfig::getAlertEmails())); ?>">
+                    <p id="wf-onboarding-alerts-disclaimer"><?php esc_html_e('We do not use this email address for any other purpose unless you opt-in to receive other mailings. You can turn off alerts in the options.', 'wordfence'); ?></p>
+                    <div id="wf-onboarding2-subscribe">
+                        <label for="wf-onboarding2-email-list"><?php esc_html_e('Would you also like to join our WordPress security mailing list to receive WordPress security alerts and Wordfence news?', 'wordfence'); ?></label>
+                        <div id="wf-onboarding2-subscribe-controls">
+                            <ul id="wf-onboarding2-email-list" class="wf-switch">
                                 <li data-option-value="1"><?php esc_html_e('Yes', 'wordfence'); ?></li>
                                 <li data-option-value="0"><?php esc_html_e('No', 'wordfence'); ?></li>
                             </ul>
@@ -97,61 +107,60 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                 e.preventDefault();
                 e.stopPropagation();
 
-				$(window).trigger('wfOnboardingDismiss2');
-				$('#wf-onboarding-plugin-header').slideUp(400, function() {
-					$('#wf-onboarding-plugin-overlay').remove();
-				});
+                $(window).trigger('wfOnboardingDismiss2');
+                $('#wf-onboarding-plugin-header').slideUp(400, function () {
+                    $('#wf-onboarding-plugin-overlay').remove();
+                });
 
-				if ($('#wf-onboarding-plugin-header-stage-content-1').is(':visible')) {
-					wordfenceExt.setOption('onboardingAttempt2', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_SECOND_SKIPPED); ?>');
-				}
-				else {
-					wordfenceExt.setOption('onboardingAttempt2', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_SECOND_LICENSE); ?>');
-				}
-			});
+                if ($('#wf-onboarding-plugin-header-stage-content-1').is(':visible')) {
+                    wordfenceExt.setOption('onboardingAttempt2', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_SECOND_SKIPPED); ?>');
+                } else {
+                    wordfenceExt.setOption('onboardingAttempt2', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_SECOND_LICENSE); ?>');
+                }
+            });
 
-			setTimeout(function() {
-				$('#wf-onboarding2-subscribe-controls > p').show();
-			}, 30000);
+            setTimeout(function () {
+                $('#wf-onboarding2-subscribe-controls > p').show();
+            }, 30000);
 
-			$('#wf-onboarding2-subscribe .wf-switch > li').each(function(index, element) {
-				$(element).on('click', function(e) {
-					e.preventDefault();
-					e.stopPropagation();
+            $('#wf-onboarding2-subscribe .wf-switch > li').each(function (index, element) {
+                $(element).on('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-					var control = $(this).closest('.wf-switch');
-					control.find('li').removeClass('wf-active');
-					$(this).addClass('wf-active');
+                    var control = $(this).closest('.wf-switch');
+                    control.find('li').removeClass('wf-active');
+                    $(this).addClass('wf-active');
 
-					$('#wf-onboarding2-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding2-alerts').val()).length == 0 || !($('#wf-onboarding2-agree').is(':checked')) || $('#wf-onboarding2-subscribe .wf-switch > li.wf-active').length == 0);
-				});
-			});
+                    $('#wf-onboarding2-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding2-alerts').val()).length == 0 || !($('#wf-onboarding2-agree').is(':checked')) || $('#wf-onboarding2-subscribe .wf-switch > li.wf-active').length == 0);
+                });
+            });
 
-			$('#wf-onboarding2-agree').on('change', function() {
-				$('#wf-onboarding2-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding2-alerts').val()).length == 0 || !($('#wf-onboarding2-agree').is(':checked')) || $('#wf-onboarding2-subscribe .wf-switch > li.wf-active').length == 0);
-			});
+            $('#wf-onboarding2-agree').on('change', function () {
+                $('#wf-onboarding2-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding2-alerts').val()).length == 0 || !($('#wf-onboarding2-agree').is(':checked')) || $('#wf-onboarding2-subscribe .wf-switch > li.wf-active').length == 0);
+            });
 
-			$('#wf-onboarding2-alerts').on('change paste keyup', function() {
-				setTimeout(function() {
-					$('#wf-onboarding2-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding2-alerts').val()).length == 0 || !($('#wf-onboarding2-agree').is(':checked')) || $('#wf-onboarding2-subscribe .wf-switch > li.wf-active').length == 0);
-				}, 100);
-			}).trigger('change');
+            $('#wf-onboarding2-alerts').on('change paste keyup', function () {
+                setTimeout(function () {
+                    $('#wf-onboarding2-continue').toggleClass('wf-disabled', wordfenceExt.parseEmails($('#wf-onboarding2-alerts').val()).length == 0 || !($('#wf-onboarding2-agree').is(':checked')) || $('#wf-onboarding2-subscribe .wf-switch > li.wf-active').length == 0);
+                }, 100);
+            }).trigger('change');
 
-			$('#wf-onboarding2-continue').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+            $('#wf-onboarding2-continue').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-				var touppAgreed = !!$('#wf-onboarding2-agree').is(':checked');
-				if (!touppAgreed) {
-					return;
-				}
+                var touppAgreed = !!$('#wf-onboarding2-agree').is(':checked');
+                if (!touppAgreed) {
+                    return;
+                }
 
-				var emails = wordfenceExt.parseEmails($('#wf-onboarding2-alerts').val());
-				if (emails.length > 0) {
-					var subscribe = !!parseInt($('#wf-onboarding2-subscribe .wf-switch > li.wf-active').data('optionValue'));
-					wordfenceExt.onboardingProcessEmails(emails, subscribe, touppAgreed);
-					
-					<?php if (wfConfig::get('isPaid')): ?>
+                var emails = wordfenceExt.parseEmails($('#wf-onboarding2-alerts').val());
+                if (emails.length > 0) {
+                    var subscribe = !!parseInt($('#wf-onboarding2-subscribe .wf-switch > li.wf-active').data('optionValue'));
+                    wordfenceExt.onboardingProcessEmails(emails, subscribe, touppAgreed);
+
+                    <?php if (wfConfig::get('isPaid')): ?>
                     $('#wf-onboarding-plugin-header').slideUp();
                     wordfenceExt.setOption('onboardingAttempt2', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_SECOND_LICENSE); ?>');
                     var html = '<div class="wf-modal wf-modal-success"><div class="wf-model-success-wrapper"><div class="wf-modal-header"><div class="wf-modal-header-content"><div class="wf-modal-title"><?php esc_html_e('Configuration Complete', 'wordfence'); ?></div></div></div><div class="wf-modal-content"><?php esc_html_e('Congratulations! Configuration is complete and Wordfence Premium is active on your website.', 'wordfence'); ?></div></div><div class="wf-modal-footer"><ul class="wf-onboarding-flex-horizontal wf-onboarding-flex-align-right wf-onboarding-full-width"><li><a href="<?php echo esc_url(network_admin_url('admin.php?page=Wordfence')); ?>" class="wf-onboarding-btn wf-onboarding-btn-primary"><?php esc_html_e('Go To Dashboard', 'wordfence'); ?></a></li><li class="wf-padding-add-left-small"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-default" onclick="jQuery.wfcolorbox.close(); return false;" role="button"><?php esc_html_e('Close', 'wordfence'); ?></a></li></ul></div></div>';
@@ -163,19 +172,19 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                         className: 'wf-modal'
                     });
                     <?php else: ?>
-					wordfenceExt.setOption('onboardingAttempt2', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_SECOND_EMAILS); ?>');
-					$('#wf-onboarding-plugin-header-stage-label-1').removeClass('wf-active');
-					$('#wf-onboarding-plugin-header-stage-label-1').addClass('wf-complete');
-					$('#wf-onboarding-plugin-header-stage-label-2').addClass('wf-active');
-					$('#wf-onboarding-plugin-header-stage-content-1').fadeOut(400, function() {
-						$('#wf-onboarding-plugin-header-stage-content-2, #wf-onboarding-plugin-header-footer-2').fadeIn();
-					});
-					$('#wf-onboarding-plugin-header-footer-1').fadeOut(400);
-					<?php endif; ?>
-				}
-			});
+                    wordfenceExt.setOption('onboardingAttempt2', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_SECOND_EMAILS); ?>');
+                    $('#wf-onboarding-plugin-header-stage-label-1').removeClass('wf-active');
+                    $('#wf-onboarding-plugin-header-stage-label-1').addClass('wf-complete');
+                    $('#wf-onboarding-plugin-header-stage-label-2').addClass('wf-active');
+                    $('#wf-onboarding-plugin-header-stage-content-1').fadeOut(400, function () {
+                        $('#wf-onboarding-plugin-header-stage-content-2, #wf-onboarding-plugin-header-footer-2').fadeIn();
+                    });
+                    $('#wf-onboarding-plugin-header-footer-1').fadeOut(400);
+                    <?php endif; ?>
+                }
+            });
 
-			$('#wf-onboarding2-license-install').on('click', function(e) {
+            $('#wf-onboarding2-license-install').on('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -220,13 +229,13 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                     });
             });
 
-			$('#wf-onboarding2-no-thanks').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+            $('#wf-onboarding2-no-thanks').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-				wordfenceExt.setOption('onboardingAttempt2', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_SECOND_LICENSE); ?>');
-				$('#wf-onboarding-plugin-header').slideUp();
-			});
-		});
-	})(jQuery);
+                wordfenceExt.setOption('onboardingAttempt2', '<?php echo esc_attr(wfOnboardingController::ONBOARDING_SECOND_LICENSE); ?>');
+                $('#wf-onboarding-plugin-header').slideUp();
+            });
+        });
+    })(jQuery);
 </script>

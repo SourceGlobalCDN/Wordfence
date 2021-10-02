@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents an option with a token field for value entry.
  *
@@ -42,7 +44,7 @@ $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $tokenOptionName);
             <?php foreach ($tokenValue as $o): ?>
                 <option value="<?php echo esc_attr($o); ?>" selected><?php echo esc_html($o); ?></option>
             <?php endforeach; ?>
-		</select>
-		<div class="wf-option-token-tags"></div>
-	</li>
+        </select>
+        <div class="wf-option-token-tags"></div>
+    </li>
 </ul>

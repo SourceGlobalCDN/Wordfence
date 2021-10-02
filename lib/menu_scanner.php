@@ -1,215 +1,218 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 $scanner = wfScanner::shared();
 $issues = wfIssues::shared();
 $dashboard = new wfDashboard();
 ?>
 <?php if (wfConfig::get('liveActivityPauseEnabled')): ?>
-	<div id="wfLiveTrafficOverlayAnchor"></div>
-	<div id="wfLiveTrafficDisabledMessage">
-		<h2><?php echo wp_kses(__('Status Updates Paused<br /><small>Click inside window to resume</small>', 'wordfence'), array('small'=>array(), 'br'=>array())); ?></h2>
-	</div>
+    <div id="wfLiveTrafficOverlayAnchor"></div>
+    <div id="wfLiveTrafficDisabledMessage">
+        <h2><?php echo wp_kses(__('Status Updates Paused<br /><small>Click inside window to resume</small>', 'wordfence'), array('small' => array(), 'br' => array())); ?></h2>
+    </div>
 <?php endif; ?>
 <?php
 if (wfOnboardingController::shouldShowAttempt3()) {
-	echo wfView::create('onboarding/disabled-overlay')->render();
-	echo wfView::create('onboarding/banner')->render();
-}
-else if (wfConfig::get('touppPromptNeeded')) {
-	echo wfView::create('gdpr/disabled-overlay')->render();
-	echo wfView::create('gdpr/banner')->render();
+    echo wfView::create('onboarding/disabled-overlay')->render();
+    echo wfView::create('onboarding/banner')->render();
+} else if (wfConfig::get('touppPromptNeeded')) {
+    echo wfView::create('gdpr/disabled-overlay')->render();
+    echo wfView::create('gdpr/banner')->render();
 }
 ?>
 <div id="wordfenceMode_scan"></div>
 <div class="wrap wordfence">
-	<div class="wf-container-fluid">
-		<div class="wf-row">
-			<div class="wf-col-xs-12">
-				<div class="wp-header-end"></div> 
-				<?php
-				echo wfView::create('common/section-title', array(
-					'title' => __('Scan', 'wordfence'),
-					'headerID' => 'wf-section-scan',
-					'helpLink' => wfSupportController::supportURL(wfSupportController::ITEM_SCAN),
-					'helpLabelHTML' => wp_kses(__('Learn more<span class="wf-hidden-xs"> about the Scanner</span>', 'wordfence'), array('span'=>array('class'=>array()))),
-					'showIcon' => true,
-				))->render();
-				?>
-			</div>
-			<div class="wf-col-xs-12">
-				<div class="wf-block wf-active">
-					<div class="wf-block-content">
-						<ul class="wf-block-list">
-							<li>
-								<?php
-								echo wfView::create('scanner/scanner-status', array(
-									'scanner' => $scanner,
-									'dashboard' => $dashboard,
-								))->render();
-								?>
-							</li>
-							<li>
-								<ul class="wf-block-list wf-block-list-horizontal wf-block-list-nowrap wf-scanner-coverage">
-									<li>
-										<?php
-										if (function_exists('network_admin_url') && is_multisite()) { $optionsURL = network_admin_url('admin.php?page=WordfenceScan&subpage=scan_options'); }
-										else { $optionsURL = admin_url('admin.php?page=WordfenceScan&subpage=scan_options'); }
-										echo wfView::create('common/status-detail', array(
-											'id' => 'wf-scanner-type',
-											'percentage' => $scanner->scanTypeStatus(),
-											'activeColor' => (!$scanner->isEnabled() ? '#ececec' : null /* automatic */),
-											'title' => __('Scan Type: ', 'wordfence') . wfScanner::displayScanType($scanner->scanType()),
-											'subtitle' => wfScanner::displayScanTypeDetail($scanner->scanType()),
-											'link' => $optionsURL,
-											'linkLabel' => __('Manage Scan', 'wordfence'),
-											'statusTitle' => __('Scan Status', 'wordfence'),
-											'statusList' => $scanner->scanTypeStatusList(),
-											'helpLink' => __('https://www.wordfence.com/help/scan/#scan-status', 'wordfence'),
-										))->render();
-										?>
-									</li>
-									<li>
-										<?php
-										echo wfView::create('common/status-detail', array(
-											'id' => 'wf-scanner-malware-type',
-											'percentage' => $scanner->signatureMode() == wfScanner::SIGNATURE_MODE_PREMIUM ? 1.0 : 0.7,
-											'activeColor' => (!$scanner->isEnabled() ? '#ececec' : null /* automatic */),
-											'title' => __('Malware Signatures: ', 'wordfence') . ($scanner->signatureMode() == wfScanner::SIGNATURE_MODE_PREMIUM ? __('Premium', 'wordfence') : __('Community', 'wordfence')),
-											'subtitle' => ($scanner->signatureMode() == wfScanner::SIGNATURE_MODE_PREMIUM ? __('Signatures updated in real-time', 'wordfence') : __('Signature updates delayed by 30 days', 'wordfence')),
-											'link' => 'https://www.wordfence.com/gnl1scanUpgrade/wordfence-signup/',
-											'linkLabel' => ($scanner->signatureMode() == wfScanner::SIGNATURE_MODE_PREMIUM ? __('Protect More Sites', 'wordfence') : __('Upgrade to Premium', 'wordfence')),
-											'linkNewWindow' => true,
-											'statusTitle' => __('Malware Signatures Status', 'wordfence'),
-											'statusList' => $scanner->signatureMode() == wfScanner::SIGNATURE_MODE_PREMIUM ? array() : array(array(
-												'percentage' => 0.30,
-												'title'      => __('Enable Premium Scan Signatures.', 'wordfence'),
-											)),
-											'helpLink' => __('https://www.wordfence.com/help/scan/#scan-status', 'wordfence'),
-										))->render();
-										?>
-									</li>
-									<li>
-										<?php
-										echo wfView::create('common/status-detail', array(
-											'id' => 'wf-scanner-reputation',
-											'percentage' => $scanner->reputationStatus(),
-											'activeColor' => (!$scanner->isEnabled() ? '#ececec' : null /* automatic */),
-											'title' => __('Reputation Checks', 'wordfence'),
-											'subtitle' => __('Check spam &amp; spamvertising blocklists', 'wordfence'),
-											'link' => $optionsURL . '#wf-scanner-options-general',
-											'linkLabel' => __('Manage Options', 'wordfence'),
-											'statusTitle' => __('Reputation Check Status', 'wordfence'),
-											'statusList' => $scanner->reputationStatusList(),
-											'helpLink' => __('https://www.wordfence.com/help/scan/#scan-status', 'wordfence'),
-										))->render();
-										?>
-									</li>
-								</ul>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="wf-row">
-			<div class="wf-col-xs-12">
-				<div class="wf-block wf-active">
-					<?php if (wfConfig::get('betaThreatDefenseFeed')): ?>
+    <div class="wf-container-fluid">
+        <div class="wf-row">
+            <div class="wf-col-xs-12">
+                <div class="wp-header-end"></div>
+                <?php
+                echo wfView::create('common/section-title', array(
+                    'title' => __('Scan', 'wordfence'),
+                    'headerID' => 'wf-section-scan',
+                    'helpLink' => wfSupportController::supportURL(wfSupportController::ITEM_SCAN),
+                    'helpLabelHTML' => wp_kses(__('Learn more<span class="wf-hidden-xs"> about the Scanner</span>', 'wordfence'), array('span' => array('class' => array()))),
+                    'showIcon' => true,
+                ))->render();
+                ?>
+            </div>
+            <div class="wf-col-xs-12">
+                <div class="wf-block wf-active">
+                    <div class="wf-block-content">
+                        <ul class="wf-block-list">
+                            <li>
+                                <?php
+                                echo wfView::create('scanner/scanner-status', array(
+                                    'scanner' => $scanner,
+                                    'dashboard' => $dashboard,
+                                ))->render();
+                                ?>
+                            </li>
+                            <li>
+                                <ul class="wf-block-list wf-block-list-horizontal wf-block-list-nowrap wf-scanner-coverage">
+                                    <li>
+                                        <?php
+                                        if (function_exists('network_admin_url') && is_multisite()) {
+                                            $optionsURL = network_admin_url('admin.php?page=WordfenceScan&subpage=scan_options');
+                                        } else {
+                                            $optionsURL = admin_url('admin.php?page=WordfenceScan&subpage=scan_options');
+                                        }
+                                        echo wfView::create('common/status-detail', array(
+                                            'id' => 'wf-scanner-type',
+                                            'percentage' => $scanner->scanTypeStatus(),
+                                            'activeColor' => (!$scanner->isEnabled() ? '#ececec' : null /* automatic */),
+                                            'title' => __('Scan Type: ', 'wordfence') . wfScanner::displayScanType($scanner->scanType()),
+                                            'subtitle' => wfScanner::displayScanTypeDetail($scanner->scanType()),
+                                            'link' => $optionsURL,
+                                            'linkLabel' => __('Manage Scan', 'wordfence'),
+                                            'statusTitle' => __('Scan Status', 'wordfence'),
+                                            'statusList' => $scanner->scanTypeStatusList(),
+                                            'helpLink' => __('https://www.wordfence.com/help/scan/#scan-status', 'wordfence'),
+                                        ))->render();
+                                        ?>
+                                    </li>
+                                    <li>
+                                        <?php
+                                        echo wfView::create('common/status-detail', array(
+                                            'id' => 'wf-scanner-malware-type',
+                                            'percentage' => $scanner->signatureMode() == wfScanner::SIGNATURE_MODE_PREMIUM ? 1.0 : 0.7,
+                                            'activeColor' => (!$scanner->isEnabled() ? '#ececec' : null /* automatic */),
+                                            'title' => __('Malware Signatures: ', 'wordfence') . ($scanner->signatureMode() == wfScanner::SIGNATURE_MODE_PREMIUM ? __('Premium', 'wordfence') : __('Community', 'wordfence')),
+                                            'subtitle' => ($scanner->signatureMode() == wfScanner::SIGNATURE_MODE_PREMIUM ? __('Signatures updated in real-time', 'wordfence') : __('Signature updates delayed by 30 days', 'wordfence')),
+                                            'link' => 'https://www.wordfence.com/gnl1scanUpgrade/wordfence-signup/',
+                                            'linkLabel' => ($scanner->signatureMode() == wfScanner::SIGNATURE_MODE_PREMIUM ? __('Protect More Sites', 'wordfence') : __('Upgrade to Premium', 'wordfence')),
+                                            'linkNewWindow' => true,
+                                            'statusTitle' => __('Malware Signatures Status', 'wordfence'),
+                                            'statusList' => $scanner->signatureMode() == wfScanner::SIGNATURE_MODE_PREMIUM ? array() : array(array(
+                                                'percentage' => 0.30,
+                                                'title' => __('Enable Premium Scan Signatures.', 'wordfence'),
+                                            )),
+                                            'helpLink' => __('https://www.wordfence.com/help/scan/#scan-status', 'wordfence'),
+                                        ))->render();
+                                        ?>
+                                    </li>
+                                    <li>
+                                        <?php
+                                        echo wfView::create('common/status-detail', array(
+                                            'id' => 'wf-scanner-reputation',
+                                            'percentage' => $scanner->reputationStatus(),
+                                            'activeColor' => (!$scanner->isEnabled() ? '#ececec' : null /* automatic */),
+                                            'title' => __('Reputation Checks', 'wordfence'),
+                                            'subtitle' => __('Check spam &amp; spamvertising blocklists', 'wordfence'),
+                                            'link' => $optionsURL . '#wf-scanner-options-general',
+                                            'linkLabel' => __('Manage Options', 'wordfence'),
+                                            'statusTitle' => __('Reputation Check Status', 'wordfence'),
+                                            'statusList' => $scanner->reputationStatusList(),
+                                            'helpLink' => __('https://www.wordfence.com/help/scan/#scan-status', 'wordfence'),
+                                        ))->render();
+                                        ?>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="wf-row">
+            <div class="wf-col-xs-12">
+                <div class="wf-block wf-active">
+                    <?php if (wfConfig::get('betaThreatDefenseFeed')): ?>
                         <ul class="wf-block-banner">
                             <li><?php esc_html_e('Beta scan signatures are currently enabled. These signatures have not been fully tested yet and may cause false positives or scan stability issues on some sites.', 'wordfence'); ?></li>
                             <li><a href="#" class="wf-btn wf-btn-default" id="wf-beta-disable"
                                    role="button"><?php esc_html_e('Turn Off Beta Signatures', 'wordfence'); ?></a></li>
                         </ul>
                     <?php endif; ?>
-					<div class="wf-block-content">
-						<ul class="wf-block-list">
-							<li>
-								<ul class="wf-block-list wf-block-list-horizontal wf-scan-navigation">
-									<li>
-										<?php
-										echo wfView::create('scanner/scan-starter', array(
-											'running' => wfScanner::shared()->isRunning(),
-										))->render();
-										?>
-									</li>
-									<li>
-										<?php
-										echo wfView::create('common/block-navigation-option', array(
-											'id' => 'wf-scan-option-support',
-											'img' => 'support.svg',
-											'title' => __('Help', 'wordfence'),
-											'subtitle' => __('Find the documentation and help you need', 'wordfence'),
-											'link' => network_admin_url('admin.php?page=WordfenceSupport'),
-										))->render();
-										?>
-									</li>
-									<li>
-										<?php
-										echo wfView::create('common/block-navigation-option', array(
-											'id' => 'wf-scan-option-all-options',
-											'img' => 'options.svg',
-											'title' => __('Scan Options and Scheduling', 'wordfence'),
-											'subtitle' => __('Manage scan options including scheduling', 'wordfence'),
-											'link' => network_admin_url('admin.php?page=WordfenceScan&subpage=scan_options'),
-										))->render();
-										?>
-									</li>
-								</ul>
-							</li>
-							<li id="wf-scan-progress-bar">
-								<?php
-								echo wfView::create('scanner/scan-progress', array(
-									'scanner' => $scanner,
-									'running' => wfScanner::shared()->isRunning(),
-								))->render();
-								?>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="wf-row">
-			<div class="wf-col-xs-12">
-				<?php
-				echo wfView::create('scanner/scan-progress-detailed', array(
-					'scanner' => $scanner,
-				))->render();
-				?>
-			</div>
-		</div>
-		<div class="wf-row">
-            <div class="wf-col-xs-12">
-			  <?php
-			  echo wfView::create('scanner/scan-results', array(
-				'scanner' => $scanner, 
-				 'issues' => $issues,
-			  ))->render();
-			  ?>
+                    <div class="wf-block-content">
+                        <ul class="wf-block-list">
+                            <li>
+                                <ul class="wf-block-list wf-block-list-horizontal wf-scan-navigation">
+                                    <li>
+                                        <?php
+                                        echo wfView::create('scanner/scan-starter', array(
+                                            'running' => wfScanner::shared()->isRunning(),
+                                        ))->render();
+                                        ?>
+                                    </li>
+                                    <li>
+                                        <?php
+                                        echo wfView::create('common/block-navigation-option', array(
+                                            'id' => 'wf-scan-option-support',
+                                            'img' => 'support.svg',
+                                            'title' => __('Help', 'wordfence'),
+                                            'subtitle' => __('Find the documentation and help you need', 'wordfence'),
+                                            'link' => network_admin_url('admin.php?page=WordfenceSupport'),
+                                        ))->render();
+                                        ?>
+                                    </li>
+                                    <li>
+                                        <?php
+                                        echo wfView::create('common/block-navigation-option', array(
+                                            'id' => 'wf-scan-option-all-options',
+                                            'img' => 'options.svg',
+                                            'title' => __('Scan Options and Scheduling', 'wordfence'),
+                                            'subtitle' => __('Manage scan options including scheduling', 'wordfence'),
+                                            'link' => network_admin_url('admin.php?page=WordfenceScan&subpage=scan_options'),
+                                        ))->render();
+                                        ?>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li id="wf-scan-progress-bar">
+                                <?php
+                                echo wfView::create('scanner/scan-progress', array(
+                                    'scanner' => $scanner,
+                                    'running' => wfScanner::shared()->isRunning(),
+                                ))->render();
+                                ?>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
-		<div class="wf-row">
-			<div class="wf-col-xs-12">
-				<?php
-				echo wfView::create('scanner/site-cleaning-bottom', array(
-				))->render();
-				?>
-			</div>
-		</div>
-	</div> <!-- end container -->
+        <div class="wf-row">
+            <div class="wf-col-xs-12">
+                <?php
+                echo wfView::create('scanner/scan-progress-detailed', array(
+                    'scanner' => $scanner,
+                ))->render();
+                ?>
+            </div>
+        </div>
+        <div class="wf-row">
+            <div class="wf-col-xs-12">
+                <?php
+                echo wfView::create('scanner/scan-results', array(
+                    'scanner' => $scanner,
+                    'issues' => $issues,
+                ))->render();
+                ?>
+            </div>
+        </div>
+        <div class="wf-row">
+            <div class="wf-col-xs-12">
+                <?php
+                echo wfView::create('scanner/site-cleaning-bottom', array())->render();
+                ?>
+            </div>
+        </div>
+    </div> <!-- end container -->
 </div>
 <script type="application/javascript">
-	(function($) {
-		$(function() {
-			WFAD.updateActivityLog();
-			WFAD.startActivityLogUpdates();
-		});
-	})(jQuery);
+    (function ($) {
+        $(function () {
+            WFAD.updateActivityLog();
+            WFAD.startActivityLogUpdates();
+        });
+    })(jQuery);
 </script>
 
 <script type="text/x-jquery-template" id="wfTmpl_scannerDelete">
-	<?php
-	echo wfView::create('common/modal-prompt', array(
+    <?php
+    echo wfView::create('common/modal-prompt', array(
         'title' => __('Are you sure you want to delete?', 'wordfence'),
         'messageHTML' => '<p class="wf-callout-warning"><i class="wf-fa wf-fa-exclamation-triangle" aria-hidden="true"></i> ' . wp_kses(__('<strong>WARNING:</strong> If you delete the wrong file, it could cause your WordPress website to stop functioning, and you will probably have to restore from a backup.', 'wordfence'), array('strong' => array())) . '</p>' .
             '<p>' . wp_kses(sprintf(
@@ -218,28 +221,28 @@ else if (wfConfig::get('touppPromptNeeded')) {
         'primaryButton' => array('id' => 'wf-scanner-prompt-cancel', 'label' => __('Cancel', 'wordfence'), 'link' => '#', 'type' => 'wf-btn-default'),
         'secondaryButtons' => array(array('id' => 'wf-scanner-prompt-confirm', 'label' => __('Delete Files', 'wordfence'), 'link' => '#', 'type' => 'wf-btn-danger')),
     ))->render();
-	?>
+    ?>
 </script>
 
 <script type="text/x-jquery-template" id="wfTmpl_scannerRepair">
-	<?php
-	echo wfView::create('common/modal-prompt', array(
-		'title' => __('Are you sure you want to repair?', 'wordfence'),
-		'message' => __('Do not repair files on your system unless you\'re ABSOLUTELY sure you know what you\'re doing. If you repair the wrong file it could cause your WordPress website to stop functioning and you will probably have to restore from backups. If you\'re unsure, Cancel and work with your hosting provider to clean your system of infected files.', 'wordfence'),
-		'primaryButton' => array('id' => 'wf-scanner-prompt-cancel', 'label' => __('Cancel', 'wordfence'), 'link' => '#'),
-		'secondaryButtons' => array(array('id' => 'wf-scanner-prompt-confirm', 'label' => __('Repair Files', 'wordfence'), 'link' => '#')),
-	))->render();
-	?>
+    <?php
+    echo wfView::create('common/modal-prompt', array(
+        'title' => __('Are you sure you want to repair?', 'wordfence'),
+        'message' => __('Do not repair files on your system unless you\'re ABSOLUTELY sure you know what you\'re doing. If you repair the wrong file it could cause your WordPress website to stop functioning and you will probably have to restore from backups. If you\'re unsure, Cancel and work with your hosting provider to clean your system of infected files.', 'wordfence'),
+        'primaryButton' => array('id' => 'wf-scanner-prompt-cancel', 'label' => __('Cancel', 'wordfence'), 'link' => '#'),
+        'secondaryButtons' => array(array('id' => 'wf-scanner-prompt-confirm', 'label' => __('Repair Files', 'wordfence'), 'link' => '#')),
+    ))->render();
+    ?>
 </script>
 
 <script type="text/x-jquery-template" id="wfTmpl_scannerStop">
-	<?php
-	echo wfView::create('common/modal-prompt', array(
-		'title' => '${title}',
-		'message' => '${message}',
-		'primaryButton' => array('id' => 'wf-generic-modal-close', 'label' => __('Close', 'wordfence'), 'link' => '#'),
-	))->render();
-	?>
+    <?php
+    echo wfView::create('common/modal-prompt', array(
+        'title' => '${title}',
+        'message' => '${message}',
+        'primaryButton' => array('id' => 'wf-generic-modal-close', 'label' => __('Close', 'wordfence'), 'link' => '#'),
+    ))->render();
+    ?>
 </script>
 
 <?php
@@ -280,26 +283,30 @@ echo wfView::create('scanner/issue-wpscan_fullPathDiscl')->render();
 echo wfView::create('scanner/issue-wpscan_directoryList')->render();
 
 if (wfOnboardingController::willShowNewTour(wfOnboardingController::TOUR_SCAN)): ?>
-	<script type="application/javascript">
-		(function($) {
-			$(function() {
-				WFAD.tour1 = function() {
-					WFAD.tour('wfNewTour1', 'wf-section-scan', 'top', 'left', null, WFAD.tour2);
-				};
-				WFAD.tour2 = function() {
-					WFAD.tour('wfNewTour2', 'wf-scan-option-all-options', 'right', 'right', WFAD.tour1, WFAD.tour3);
-				};
-				WFAD.tour3 = function() {
-					WFAD.tour('wfNewTour3', 'wf-scan-starter', 'left', 'left', WFAD.tour2, WFAD.tourComplete); 
-				};
-				WFAD.tourComplete = function() { WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_SCAN); ?>'); };
+    <script type="application/javascript">
+        (function ($) {
+            $(function () {
+                WFAD.tour1 = function () {
+                    WFAD.tour('wfNewTour1', 'wf-section-scan', 'top', 'left', null, WFAD.tour2);
+                };
+                WFAD.tour2 = function () {
+                    WFAD.tour('wfNewTour2', 'wf-scan-option-all-options', 'right', 'right', WFAD.tour1, WFAD.tour3);
+                };
+                WFAD.tour3 = function () {
+                    WFAD.tour('wfNewTour3', 'wf-scan-starter', 'left', 'left', WFAD.tour2, WFAD.tourComplete);
+                };
+                WFAD.tourComplete = function () {
+                    WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_SCAN); ?>');
+                };
 
-				<?php if (wfOnboardingController::shouldShowNewTour(wfOnboardingController::TOUR_SCAN)): ?>
-				if (!WFAD.isSmallScreen) { WFAD.tour1(); }
-				<?php endif; ?>
-			});
-		})(jQuery);
-	</script>
+                <?php if (wfOnboardingController::shouldShowNewTour(wfOnboardingController::TOUR_SCAN)): ?>
+                if (!WFAD.isSmallScreen) {
+                    WFAD.tour1();
+                }
+                <?php endif; ?>
+            });
+        })(jQuery);
+    </script>
 
     <script type="text/x-jquery-template" id="wfNewTour1">
         <div>
@@ -364,23 +371,27 @@ if (wfOnboardingController::willShowNewTour(wfOnboardingController::TOUR_SCAN)):
 <?php endif; ?>
 
 <?php if (wfOnboardingController::willShowUpgradeTour(wfOnboardingController::TOUR_SCAN)): ?>
-	<script type="application/javascript">
-		(function($) {
-			$(function() {
-				WFAD.tour1 = function() {
-					WFAD.tour('wfUpgradeTour1', 'wf-scan-option-all-options', 'right', 'right', null, WFAD.tour2);
-				};
-				WFAD.tour2 = function() {
-					WFAD.tour('wfUpgradeTour2', 'wf-scan-starter', 'left', 'left', WFAD.tour1, WFAD.tourComplete);
-				};
-				WFAD.tourComplete = function() { WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_SCAN); ?>'); };
+    <script type="application/javascript">
+        (function ($) {
+            $(function () {
+                WFAD.tour1 = function () {
+                    WFAD.tour('wfUpgradeTour1', 'wf-scan-option-all-options', 'right', 'right', null, WFAD.tour2);
+                };
+                WFAD.tour2 = function () {
+                    WFAD.tour('wfUpgradeTour2', 'wf-scan-starter', 'left', 'left', WFAD.tour1, WFAD.tourComplete);
+                };
+                WFAD.tourComplete = function () {
+                    WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_SCAN); ?>');
+                };
 
-				<?php if (wfOnboardingController::shouldShowUpgradeTour(wfOnboardingController::TOUR_SCAN)): ?>
-				if (!WFAD.isSmallScreen) { WFAD.tour1(); }
-				<?php endif; ?>
-			});
-		})(jQuery);
-	</script>
+                <?php if (wfOnboardingController::shouldShowUpgradeTour(wfOnboardingController::TOUR_SCAN)): ?>
+                if (!WFAD.isSmallScreen) {
+                    WFAD.tour1();
+                }
+                <?php endif; ?>
+            });
+        })(jQuery);
+    </script>
 
     <script type="text/x-jquery-template" id="wfUpgradeTour1">
         <div>
@@ -424,16 +435,16 @@ if (wfOnboardingController::willShowNewTour(wfOnboardingController::TOUR_SCAN)):
 <?php endif; ?>
 
 <script type="application/javascript">
-	(function($) {
-		$(function() {
-			$('#wf-beta-disable').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+    (function ($) {
+        $(function () {
+            $('#wf-beta-disable').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-				WFAD.setOption('betaThreatDefenseFeed', 0, function() {
-					window.location.reload(true);
-				});
-			});
-		});
-	})(jQuery);
+                WFAD.setOption('betaThreatDefenseFeed', 0, function () {
+                    window.location.reload(true);
+                });
+            });
+        });
+    })(jQuery);
 </script>

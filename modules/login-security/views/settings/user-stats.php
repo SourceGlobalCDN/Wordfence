@@ -1,17 +1,19 @@
 <?php
-if (!defined('WORDFENCE_LS_VERSION')) { exit; }
+if (!defined('WORDFENCE_LS_VERSION')) {
+    exit;
+}
 /**
  * @var array $counts The counts to display. Required.
  */
 ?>
 <div class="wfls-block wfls-always-active wfls-flex-item-full-width">
-	<div class="wfls-block-header wfls-block-header-border-bottom">
-		<div class="wfls-block-header-content">
-			<div class="wfls-block-title">
-				<strong><?php esc_html_e('User Summary', 'wordfence-2fa'); ?></strong>
-			</div>
-		</div>
-		<div class="wfls-block-header-action wfls-block-header-action-text wfls-nowrap wfls-padding-add-right-responsive">
+    <div class="wfls-block-header wfls-block-header-border-bottom">
+        <div class="wfls-block-header-content">
+            <div class="wfls-block-title">
+                <strong><?php esc_html_e('User Summary', 'wordfence-2fa'); ?></strong>
+            </div>
+        </div>
+        <div class="wfls-block-header-action wfls-block-header-action-text wfls-nowrap wfls-padding-add-right-responsive">
             <a href="users.php"><?php esc_html_e('Manage Users', 'wordfence'); ?></a>
         </div>
     </div>

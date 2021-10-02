@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_LS_VERSION')) { exit; }
+if (!defined('WORDFENCE_LS_VERSION')) {
+    exit;
+}
 /**
  * Presents an option with a popup menu for detailed value selection.
  *
@@ -15,18 +17,27 @@ if (!defined('WORDFENCE_LS_VERSION')) { exit; }
 
 $id = 'wfls-option-' . preg_replace('/[^a-z0-9]/i', '-', $selectOptionName);
 ?>
-<ul id="<?php echo esc_attr($id); ?>" class="wfls-option wfls-option-select<?php if (!wfConfig::p() && isset($premium) && $premium) { echo ' wfls-option-premium'; } ?>" data-select-option="<?php echo esc_attr($selectOptionName); ?>" data-original-select-value="<?php echo esc_attr($selectValue); ?>">
-	<li class="wfls-option-spacer"></li>
-	<li class="wfls-option-content">
-		<ul>
-			<li class="wfls-option-title"><span id="<?php echo esc_attr($id); ?>-label"><?php echo esc_html($title); ?></span><?php if (!wfConfig::p() && isset($premium) && $premium) { echo ' <a href="https://www.wordfence.com/gnl1optionUpgrade/wordfence-signup/" target="_blank" rel="noopener noreferrer" class="wfls-premium-link">' . esc_html__('Premium Feature', 'wordfence') . '</a>'; } ?><?php if (isset($helpLink)) { echo ' <a href="' . esc_attr($helpLink) . '"  target="_blank" rel="noopener noreferrer" class="wfls-inline-help"><i class="' . (WORDFENCE_LS_FROM_CORE ? 'wf-fa wf-fa-question-circle-o' : 'wfls-fa wfls-fa-question-circle-o') . '" aria-hidden="true"></i></a>'; } ?></li>
-			<li class="wfls-option-select wfls-padding-add-top-xs-small">
-				<select<?php echo (!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' disabled'); ?> aria-labelledby="<?php echo esc_attr($id); ?>-label">
-					<?php foreach ($selectOptions as $o): ?>
-						<option class="wfls-option-select-option" value="<?php echo esc_attr($o['value']); ?>"<?php if ($o['value'] == $selectValue) { echo ' selected'; } ?>><?php echo esc_html($o['label']); ?></option>
-					<?php endforeach; ?>
-				</select>
-			</li>
-		</ul>
-	</li>
+<ul id="<?php echo esc_attr($id); ?>" class="wfls-option wfls-option-select<?php if (!wfConfig::p() && isset($premium) && $premium) {
+    echo ' wfls-option-premium';
+} ?>" data-select-option="<?php echo esc_attr($selectOptionName); ?>" data-original-select-value="<?php echo esc_attr($selectValue); ?>">
+    <li class="wfls-option-spacer"></li>
+    <li class="wfls-option-content">
+        <ul>
+            <li class="wfls-option-title">
+                <span id="<?php echo esc_attr($id); ?>-label"><?php echo esc_html($title); ?></span><?php if (!wfConfig::p() && isset($premium) && $premium) {
+                    echo ' <a href="https://www.wordfence.com/gnl1optionUpgrade/wordfence-signup/" target="_blank" rel="noopener noreferrer" class="wfls-premium-link">' . esc_html__('Premium Feature', 'wordfence') . '</a>';
+                } ?><?php if (isset($helpLink)) {
+                    echo ' <a href="' . esc_attr($helpLink) . '"  target="_blank" rel="noopener noreferrer" class="wfls-inline-help"><i class="' . (WORDFENCE_LS_FROM_CORE ? 'wf-fa wf-fa-question-circle-o' : 'wfls-fa wfls-fa-question-circle-o') . '" aria-hidden="true"></i></a>';
+                } ?></li>
+            <li class="wfls-option-select wfls-padding-add-top-xs-small">
+                <select<?php echo(!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' disabled'); ?> aria-labelledby="<?php echo esc_attr($id); ?>-label">
+                    <?php foreach ($selectOptions as $o): ?>
+                        <option class="wfls-option-select-option" value="<?php echo esc_attr($o['value']); ?>"<?php if ($o['value'] == $selectValue) {
+                            echo ' selected';
+                        } ?>><?php echo esc_html($o['label']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </li>
+        </ul>
+    </li>
 </ul>

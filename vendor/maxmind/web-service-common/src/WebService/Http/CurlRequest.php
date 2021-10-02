@@ -39,15 +39,6 @@ class CurlRequest implements Request
         return $this->execute($curl);
     }
 
-    public function get()
-    {
-        $curl = $this->createCurl();
-
-        curl_setopt($curl, CURLOPT_HTTPGET, true);
-
-        return $this->execute($curl);
-    }
-
     /**
      * @return resource
      */
@@ -106,5 +97,14 @@ class CurlRequest implements Request
         curl_close($curl);
 
         return [$statusCode, $contentType, $body];
+    }
+
+    public function get()
+    {
+        $curl = $this->createCurl();
+
+        curl_setopt($curl, CURLOPT_HTTPGET, true);
+
+        return $this->execute($curl);
     }
 }

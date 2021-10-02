@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the License group.
  *
@@ -10,18 +12,25 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (!isset($collapseable)) {
-	$collapseable = true;
+    $collapseable = true;
 }
 ?>
 <div class="wf-row">
-	<div class="wf-col-xs-12">
-		<div class="wf-block<?php if (!$collapseable) { echo ' wf-always-active'; } else { echo (wfPersistenceController::shared()->isActive($stateKey) ? ' wf-active' : ''); } ?>" data-persistence-key="<?php echo esc_attr($stateKey); ?>">
-			<div class="wf-block-header">
-				<div class="wf-block-header-content">
-					<div class="wf-block-title">
-						<strong><?php esc_html_e('Wordfence License', 'wordfence'); ?></strong>
-					</div>
-					<?php if ($collapseable): ?><div class="wf-block-header-action"><div class="wf-block-header-action-disclosure" role="checkbox" aria-checked="<?php echo (wfPersistenceController::shared()->isActive($stateKey) ? 'true' : 'false'); ?>" tabindex="0"></div></div><?php endif; ?>
+    <div class="wf-col-xs-12">
+        <div class="wf-block<?php if (!$collapseable) {
+            echo ' wf-always-active';
+        } else {
+            echo(wfPersistenceController::shared()->isActive($stateKey) ? ' wf-active' : '');
+        } ?>" data-persistence-key="<?php echo esc_attr($stateKey); ?>">
+            <div class="wf-block-header">
+                <div class="wf-block-header-content">
+                    <div class="wf-block-title">
+                        <strong><?php esc_html_e('Wordfence License', 'wordfence'); ?></strong>
+                    </div>
+                    <?php if ($collapseable): ?>
+                        <div class="wf-block-header-action">
+                        <div class="wf-block-header-action-disclosure" role="checkbox" aria-checked="<?php echo(wfPersistenceController::shared()->isActive($stateKey) ? 'true' : 'false'); ?>" tabindex="0"></div>
+                        </div><?php endif; ?>
                 </div>
             </div>
             <div class="wf-block-content">
@@ -49,22 +58,19 @@ if (!isset($collapseable)) {
                                 <ul class="wf-flex-horizontal wf-flex-vertical-xs wf-flex-full-width">
                                     <li><strong><?php esc_html_e('License Status:', 'wordfence'); ?></strong>
                                         <?php
-										if (wfConfig::get('hasKeyConflict')) {
-											esc_html_e('Premium License already in use', 'wordfence');
-										}
-										else if (wfConfig::get('isPaid')) {
-											esc_html_e('Premium License Active', 'wordfence');
-										}
-										else if (wfConfig::get('keyType') == wfAPI::KEY_TYPE_PAID_EXPIRED) {
-											esc_html_e('Premium License Expired', 'wordfence');
-										}
-										else {
-											esc_html_e('Free License Active', 'wordfence');
-										}
-										?>
-									</li>
-									<li class="wf-right wf-flex-vertical-xs wf-flex-align-left wf-left-xs wf-padding-add-top-xs" id="wf-license-controls">
-										<?php if (wfConfig::get('hasKeyConflict')): ?>
+                                        if (wfConfig::get('hasKeyConflict')) {
+                                            esc_html_e('Premium License already in use', 'wordfence');
+                                        } else if (wfConfig::get('isPaid')) {
+                                            esc_html_e('Premium License Active', 'wordfence');
+                                        } else if (wfConfig::get('keyType') == wfAPI::KEY_TYPE_PAID_EXPIRED) {
+                                            esc_html_e('Premium License Expired', 'wordfence');
+                                        } else {
+                                            esc_html_e('Free License Active', 'wordfence');
+                                        }
+                                        ?>
+                                    </li>
+                                    <li class="wf-right wf-flex-vertical-xs wf-flex-align-left wf-left-xs wf-padding-add-top-xs" id="wf-license-controls">
+                                        <?php if (wfConfig::get('hasKeyConflict')): ?>
                                             <a href="#"
                                                class="wf-btn wf-btn-default wf-btn-callout-subtle wf-downgrade-license"
                                                role="button"><?php esc_html_e('Downgrade to a free license', 'wordfence'); ?></a>&nbsp;&nbsp;
@@ -115,75 +121,80 @@ if (!isset($collapseable)) {
                                                 e.preventDefault();
                                                 e.stopPropagation();
 
-												WFAD.setOption('apiKey', $('#wf-license-input').val(), function() {
-													delete WFAD.pendingChanges['apiKey'];
-													WFAD.updatePendingChanges();
-													window.location.reload(true);
-												});
-											});
+                                                WFAD.setOption('apiKey', $('#wf-license-input').val(), function () {
+                                                    delete WFAD.pendingChanges['apiKey'];
+                                                    WFAD.updatePendingChanges();
+                                                    window.location.reload(true);
+                                                });
+                                            });
 
-											$('#wf-license-input').on('focus', function() {
-												var field = $(this);
-												setTimeout(function() {
-													field.select();
-												}, 100);
-											}).on('change paste keyup', function() {
-												setTimeout(function() {
-													var originalKey = $('#wf-license-input').closest('.wf-option').data('originalTextValue');
-													if (originalKey != $('#wf-license-input').val()) {
-														$('#wf-license-controls a').hide();
-														$('#wf-install-license').show();
-													}
-												}, 100);
-											});
+                                            $('#wf-license-input').on('focus', function () {
+                                                var field = $(this);
+                                                setTimeout(function () {
+                                                    field.select();
+                                                }, 100);
+                                            }).on('change paste keyup', function () {
+                                                setTimeout(function () {
+                                                    var originalKey = $('#wf-license-input').closest('.wf-option').data('originalTextValue');
+                                                    if (originalKey != $('#wf-license-input').val()) {
+                                                        $('#wf-license-controls a').hide();
+                                                        $('#wf-install-license').show();
+                                                    }
+                                                }, 100);
+                                            });
 
-											$(window).on('wfOptionsReset', function() {
-												$('#wf-license-controls a').show();
-												$('#wf-install-license').hide();
-											});
+                                            $(window).on('wfOptionsReset', function () {
+                                                $('#wf-license-controls a').show();
+                                                $('#wf-install-license').hide();
+                                            });
 
-											$('.wf-downgrade-license').on('click', function(e) {
-												e.preventDefault();
-												e.stopPropagation();
+                                            $('.wf-downgrade-license').on('click', function (e) {
+                                                e.preventDefault();
+                                                e.stopPropagation();
 
-												var prompt = $('#wfTmpl_downgradePrompt').tmpl();
-												var promptHTML = $("<div />").append(prompt).html();
-												WFAD.colorboxHTML('400px', promptHTML, {overlayClose: false, closeButton: false, className: 'wf-modal', onComplete: function() {
-													$('#wf-downgrade-prompt-cancel').on('click', function(e) {
-														e.preventDefault();
-														e.stopPropagation();
+                                                var prompt = $('#wfTmpl_downgradePrompt').tmpl();
+                                                var promptHTML = $("<div />").append(prompt).html();
+                                                WFAD.colorboxHTML('400px', promptHTML, {
+                                                    overlayClose: false,
+                                                    closeButton: false,
+                                                    className: 'wf-modal',
+                                                    onComplete: function () {
+                                                        $('#wf-downgrade-prompt-cancel').on('click', function (e) {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
 
-														WFAD.colorboxClose();
-													});
+                                                            WFAD.colorboxClose();
+                                                        });
 
-													$('#wf-downgrade-prompt-downgrade').on('click', function(e) {
-														e.preventDefault();
-														e.stopPropagation();
+                                                        $('#wf-downgrade-prompt-downgrade').on('click', function (e) {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
 
-														WFAD.ajax('wordfence_downgradeLicense', {}, function(res) {
-															window.location.reload(true);
-														});
-													});
-												}});
-											});
-										});
-									})(jQuery);
-								</script>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			</div>
-		</div>
-	</div>
+                                                            WFAD.ajax('wordfence_downgradeLicense', {}, function (res) {
+                                                                window.location.reload(true);
+                                                            });
+                                                        });
+                                                    }
+                                                });
+                                            });
+                                        });
+                                    })(jQuery);
+                                </script>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div> <!-- end license options -->
 <script type="text/x-jquery-template" id="wfTmpl_downgradePrompt">
-	<?php
-	echo wfView::create('common/modal-prompt', array(
-		'title' => __('Confirm Downgrade', 'wordfence'),
-		'messageHTML' => wp_kses(__('<p>Are you sure you want to downgrade your Wordfence Premium License? This will disable all Premium features and return you to the free version of Wordfence.</p><p>If autorenew is enabled for the current premium license, the license will renew at the next expiration date. If you would like to turn renewal off or assign the license to another site, log into wordfence.com to change it.</p>', 'wordfence'), array('p'=>array())),
-		'primaryButton' => array('id' => 'wf-downgrade-prompt-cancel', 'label' => __('Cancel', 'wordfence'), 'link' => '#'),
-		'secondaryButtons' => array(array('id' => 'wf-downgrade-prompt-downgrade', 'label' => __('Downgrade', 'wordfence'), 'link' => '#')),
-	))->render();
-	?>
+    <?php
+    echo wfView::create('common/modal-prompt', array(
+        'title' => __('Confirm Downgrade', 'wordfence'),
+        'messageHTML' => wp_kses(__('<p>Are you sure you want to downgrade your Wordfence Premium License? This will disable all Premium features and return you to the free version of Wordfence.</p><p>If autorenew is enabled for the current premium license, the license will renew at the next expiration date. If you would like to turn renewal off or assign the license to another site, log into wordfence.com to change it.</p>', 'wordfence'), array('p' => array())),
+        'primaryButton' => array('id' => 'wf-downgrade-prompt-cancel', 'label' => __('Cancel', 'wordfence'), 'link' => '#'),
+        'secondaryButtons' => array(array('id' => 'wf-downgrade-prompt-downgrade', 'label' => __('Downgrade', 'wordfence'), 'link' => '#')),
+    ))->render();
+    ?>
 </script>

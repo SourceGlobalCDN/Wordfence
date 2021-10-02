@@ -13,66 +13,13 @@ if (class_exists('ParagonIE_Sodium_Core32_SipHash', false)) {
 class ParagonIE_Sodium_Core32_SipHash extends ParagonIE_Sodium_Core32_Util
 {
     /**
-     * @internal You should not use this directly from another application
-     *
-     * @param array<int, ParagonIE_Sodium_Core32_Int64> $v
-     * @return array<int, ParagonIE_Sodium_Core32_Int64>
-     */
-    public static function sipRound(array $v)
-    {
-        # v0 += v1;
-        $v[0] = $v[0]->addInt64($v[1]);
-
-        # v1 = ROTL(v1, 13);
-        $v[1] = $v[1]->rotateLeft(13);
-
-        #  v1 ^= v0;
-        $v[1] = $v[1]->xorInt64($v[0]);
-
-        #  v0=ROTL(v0,32);
-        $v[0] = $v[0]->rotateLeft(32);
-
-        # v2 += v3;
-        $v[2] = $v[2]->addInt64($v[3]);
-
-        # v3=ROTL(v3,16);
-        $v[3] = $v[3]->rotateLeft(16);
-
-        #  v3 ^= v2;
-        $v[3] = $v[3]->xorInt64($v[2]);
-
-        # v0 += v3;
-        $v[0] = $v[0]->addInt64($v[3]);
-
-        # v3=ROTL(v3,21);
-        $v[3] = $v[3]->rotateLeft(21);
-
-        # v3 ^= v0;
-        $v[3] = $v[3]->xorInt64($v[0]);
-
-        # v2 += v1;
-        $v[2] = $v[2]->addInt64($v[1]);
-
-        # v1=ROTL(v1,17);
-        $v[1] = $v[1]->rotateLeft(17);
-
-        #  v1 ^= v2;
-        $v[1] = $v[1]->xorInt64($v[2]);
-
-        # v2=ROTL(v2,32)
-        $v[2] = $v[2]->rotateLeft(32);
-
-        return $v;
-    }
-
-    /**
-     * @internal You should not use this directly from another application
-     *
      * @param string $in
      * @param string $key
      * @return string
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function sipHash24($in, $key)
     {
@@ -235,5 +182,58 @@ class ParagonIE_Sodium_Core32_SipHash extends ParagonIE_Sodium_Core32_Util
             ->xorInt64($v[2])
             ->xorInt64($v[3])
             ->toReverseString();
+    }
+
+    /**
+     * @param array<int, ParagonIE_Sodium_Core32_Int64> $v
+     * @return array<int, ParagonIE_Sodium_Core32_Int64>
+     * @internal You should not use this directly from another application
+     *
+     */
+    public static function sipRound(array $v)
+    {
+        # v0 += v1;
+        $v[0] = $v[0]->addInt64($v[1]);
+
+        # v1 = ROTL(v1, 13);
+        $v[1] = $v[1]->rotateLeft(13);
+
+        #  v1 ^= v0;
+        $v[1] = $v[1]->xorInt64($v[0]);
+
+        #  v0=ROTL(v0,32);
+        $v[0] = $v[0]->rotateLeft(32);
+
+        # v2 += v3;
+        $v[2] = $v[2]->addInt64($v[3]);
+
+        # v3=ROTL(v3,16);
+        $v[3] = $v[3]->rotateLeft(16);
+
+        #  v3 ^= v2;
+        $v[3] = $v[3]->xorInt64($v[2]);
+
+        # v0 += v3;
+        $v[0] = $v[0]->addInt64($v[3]);
+
+        # v3=ROTL(v3,21);
+        $v[3] = $v[3]->rotateLeft(21);
+
+        # v3 ^= v0;
+        $v[3] = $v[3]->xorInt64($v[0]);
+
+        # v2 += v1;
+        $v[2] = $v[2]->addInt64($v[1]);
+
+        # v1=ROTL(v1,17);
+        $v[1] = $v[1]->rotateLeft(17);
+
+        #  v1 ^= v2;
+        $v[1] = $v[1]->xorInt64($v[2]);
+
+        # v2=ROTL(v2,32)
+        $v[2] = $v[2]->rotateLeft(32);
+
+        return $v;
     }
 }

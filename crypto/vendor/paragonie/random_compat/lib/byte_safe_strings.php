@@ -30,8 +30,8 @@
 if (!is_callable('RandomCompat_strlen')) {
     if (
         defined('MB_OVERLOAD_STRING')
-            &&
-        ((int) ini_get('mbstring.func_overload')) & MB_OVERLOAD_STRING
+        &&
+        ((int)ini_get('mbstring.func_overload')) & MB_OVERLOAD_STRING
     ) {
         /**
          * strlen() implementation that isn't brittle to mbstring.func_overload
@@ -41,9 +41,9 @@ if (!is_callable('RandomCompat_strlen')) {
          *
          * @param string $binary_string
          *
+         * @return int
          * @throws TypeError
          *
-         * @return int
          */
         function RandomCompat_strlen($binary_string)
         {
@@ -53,7 +53,7 @@ if (!is_callable('RandomCompat_strlen')) {
                 );
             }
 
-            return (int) mb_strlen($binary_string, '8bit');
+            return (int)mb_strlen($binary_string, '8bit');
         }
 
     } else {
@@ -64,9 +64,9 @@ if (!is_callable('RandomCompat_strlen')) {
          *
          * @param string $binary_string
          *
+         * @return int
          * @throws TypeError
          *
-         * @return int
          */
         function RandomCompat_strlen($binary_string)
         {
@@ -75,7 +75,7 @@ if (!is_callable('RandomCompat_strlen')) {
                     'RandomCompat_strlen() expects a string'
                 );
             }
-            return (int) strlen($binary_string);
+            return (int)strlen($binary_string);
         }
     }
 }
@@ -84,8 +84,8 @@ if (!is_callable('RandomCompat_substr')) {
 
     if (
         defined('MB_OVERLOAD_STRING')
-            &&
-        ((int) ini_get('mbstring.func_overload')) & MB_OVERLOAD_STRING
+        &&
+        ((int)ini_get('mbstring.func_overload')) & MB_OVERLOAD_STRING
     ) {
         /**
          * substr() implementation that isn't brittle to mbstring.func_overload
@@ -97,9 +97,9 @@ if (!is_callable('RandomCompat_substr')) {
          * @param int $start
          * @param int|null $length (optional)
          *
+         * @return string
          * @throws TypeError
          *
-         * @return string
          */
         function RandomCompat_substr($binary_string, $start, $length = null)
         {
@@ -122,7 +122,7 @@ if (!is_callable('RandomCompat_substr')) {
                  */
                 /** @var int $length */
                 $length = RandomCompat_strlen($binary_string) - $start;
-            } elseif (!is_int($length)) {
+            } else if (!is_int($length)) {
                 throw new TypeError(
                     'RandomCompat_substr(): Third argument should be an integer, or omitted'
                 );
@@ -136,10 +136,10 @@ if (!is_callable('RandomCompat_substr')) {
                 return '';
             }
 
-            return (string) mb_substr(
-                (string) $binary_string,
-                (int) $start,
-                (int) $length,
+            return (string)mb_substr(
+                (string)$binary_string,
+                (int)$start,
+                (int)$length,
                 '8bit'
             );
         }
@@ -155,9 +155,9 @@ if (!is_callable('RandomCompat_substr')) {
          * @param int $start
          * @param int|null $length (optional)
          *
+         * @return string
          * @throws TypeError
          *
-         * @return string
          */
         function RandomCompat_substr($binary_string, $start, $length = null)
         {
@@ -180,16 +180,16 @@ if (!is_callable('RandomCompat_substr')) {
                     );
                 }
 
-                return (string) substr(
+                return (string)substr(
                     (string )$binary_string,
-                    (int) $start,
-                    (int) $length
+                    (int)$start,
+                    (int)$length
                 );
             }
 
-            return (string) substr(
-                (string) $binary_string,
-                (int) $start
+            return (string)substr(
+                (string)$binary_string,
+                (int)$start
             );
         }
     }

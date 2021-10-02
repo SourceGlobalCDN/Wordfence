@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Expects $id, $percentage (as decimal value), $title, $subtitle, $link, $linkLabel, and $statusList to be defined.
  * If $linkLabel is null, the link will be hidden.
@@ -8,22 +10,22 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (!isset($activeColor)) {
-	$activeColor = '#fcb214';
-	if ($percentage == 0) {
-		$activeColor = '#ececec';
-	}
-	else if ($percentage <= 0.50) {
-		$activeColor = '#9e0000';
-	}
-	else if ($percentage == 1) {
-		$activeColor = '#16bc9b';
-	}
+    $activeColor = '#fcb214';
+    if ($percentage == 0) {
+        $activeColor = '#ececec';
+    } else if ($percentage <= 0.50) {
+        $activeColor = '#9e0000';
+    } else if ($percentage == 1) {
+        $activeColor = '#16bc9b';
+    }
 }
 
-if (!isset($linkNewWindow)) { $linkNewWindow = false; }
+if (!isset($linkNewWindow)) {
+    $linkNewWindow = false;
+}
 ?>
 <div id="<?php echo esc_attr($id); ?>" class="wf-status-detail">
-	<?php
+    <?php
     echo wfView::create('common/status-circular', array(
         'id' => 'circle-' . $id,
         'diameter' => 100,

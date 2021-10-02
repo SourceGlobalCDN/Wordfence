@@ -35,6 +35,23 @@ class ParagonIE_Sodium_Core_SecretStream_State
     }
 
     /**
+     * @param string $string
+     * @return self
+     */
+    public static function fromString($string)
+    {
+        $state = new ParagonIE_Sodium_Core_SecretStream_State(
+            ParagonIE_Sodium_Core_Util::substr($string, 0, 32)
+        );
+        $state->counter = ParagonIE_Sodium_Core_Util::load_4(
+            ParagonIE_Sodium_Core_Util::substr($string, 32, 4)
+        );
+        $state->nonce = ParagonIE_Sodium_Core_Util::substr($string, 36, 12);
+        $state->_pad = ParagonIE_Sodium_Core_Util::substr($string, 48, 8);
+        return $state;
+    }
+
+    /**
      * @return self
      */
     public function counterReset()
@@ -50,6 +67,15 @@ class ParagonIE_Sodium_Core_SecretStream_State
     public function getKey()
     {
         return $this->key;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCombinedNonce()
+    {
+        return $this->getCounter() .
+            ParagonIE_Sodium_Core_Util::substr($this->getNonce(), 0, 8);
     }
 
     /**
@@ -72,15 +98,6 @@ class ParagonIE_Sodium_Core_SecretStream_State
             $this->nonce = str_pad($this->nonce, 12, "\0", STR_PAD_RIGHT);
         }
         return $this->nonce;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCombinedNonce()
-    {
-        return $this->getCounter() .
-            ParagonIE_Sodium_Core_Util::substr($this->getNonce(), 0, 8);
     }
 
     /**
@@ -132,23 +149,6 @@ class ParagonIE_Sodium_Core_SecretStream_State
             )
         );
         return $this;
-    }
-
-    /**
-     * @param string $string
-     * @return self
-     */
-    public static function fromString($string)
-    {
-        $state = new ParagonIE_Sodium_Core_SecretStream_State(
-            ParagonIE_Sodium_Core_Util::substr($string, 0, 32)
-        );
-        $state->counter = ParagonIE_Sodium_Core_Util::load_4(
-            ParagonIE_Sodium_Core_Util::substr($string, 32, 4)
-        );
-        $state->nonce = ParagonIE_Sodium_Core_Util::substr($string, 36, 12);
-        $state->_pad = ParagonIE_Sodium_Core_Util::substr($string, 48, 8);
-        return $state;
     }
 
     /**

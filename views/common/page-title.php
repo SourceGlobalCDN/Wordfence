@@ -1,14 +1,22 @@
-<?php if (!defined('WORDFENCE_VERSION')) { exit; } ?>
+<?php if (!defined('WORDFENCE_VERSION')) {
+    exit;
+} ?>
 <div class="wf-row">
-	<div class="wf-col-xs-12">
-		<div class="wf-page-title">
-			<div class="wordfence-lock-icon wordfence-icon32"></div><h2 id="wfHeading"><?php echo esc_html($title); ?></h2><?php if (isset($accessory)) { echo (string) $accessory; } ?><?php if (isset($help)) { echo (string) $help; } ?>
-		</div>
-		<div class="wp-header-end"></div>
-	</div>
-	<?php if (isset($wantsLiveActivity) && $wantsLiveActivity): ?><div class="wf-col-xs-12"><?php include('live_activity.php'); ?></div><?php endif; ?>
-	<div class="wf-col-xs-12">
-		<?php if (isset($options)): ?>
+    <div class="wf-col-xs-12">
+        <div class="wf-page-title">
+            <div class="wordfence-lock-icon wordfence-icon32"></div>
+            <h2 id="wfHeading"><?php echo esc_html($title); ?></h2><?php if (isset($accessory)) {
+                echo (string)$accessory;
+            } ?><?php if (isset($help)) {
+                echo (string)$help;
+            } ?>
+        </div>
+        <div class="wp-header-end"></div>
+    </div>
+    <?php if (isset($wantsLiveActivity) && $wantsLiveActivity): ?>
+        <div class="wf-col-xs-12"><?php include('live_activity.php'); ?></div><?php endif; ?>
+    <div class="wf-col-xs-12">
+        <?php if (isset($options)): ?>
             <h2 class="wf-hidden-xs nav-tab-wrapper<?php if (count($options) <= 1 || (isset($hideBar) && $hideBar)) {
                 echo ' wf-hidden';
             } ?>" id="wordfenceTopTabs">

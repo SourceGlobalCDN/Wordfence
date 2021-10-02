@@ -1,22 +1,24 @@
 <?php if (wfOnboardingController::shouldShowNewTour(wfOnboardingController::TOUR_LOGIN_SECURITY)): ?>
-	<script type="application/javascript">
-		(function($) {
-			$(function() {
-				WFAD.tour1 = function() {
-					$('#wfls-tab-manage a').trigger('click');
-					WFAD.tour('wfNewTour1', 'wfls-tab-manage', 'top', 'left', null, WFAD.tour2);
-				};
-				WFAD.tour2 = function() {
-					$('#wfls-tab-settings a').trigger('click');
-					WFAD.tour('wfNewTour2', 'wfls-option-whitelisted', 'bottom', 'right', WFAD.tour1, WFAD.tour3);
-				};
-				WFAD.tour3 = function() {
-					$('#wfls-tab-settings a').trigger('click');
-					WFAD.tour('wfNewTour3', 'wfls-enable-auth-captcha', 'bottom', 'left', WFAD.tour2, WFAD.tourComplete);
-				};
-				WFAD.tourComplete = function() { WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_LOGIN_SECURITY); ?>'); };
-				
-				<?php if (wfOnboardingController::shouldShowNewTour(wfOnboardingController::TOUR_LOGIN_SECURITY)): ?>
+    <script type="application/javascript">
+        (function ($) {
+            $(function () {
+                WFAD.tour1 = function () {
+                    $('#wfls-tab-manage a').trigger('click');
+                    WFAD.tour('wfNewTour1', 'wfls-tab-manage', 'top', 'left', null, WFAD.tour2);
+                };
+                WFAD.tour2 = function () {
+                    $('#wfls-tab-settings a').trigger('click');
+                    WFAD.tour('wfNewTour2', 'wfls-option-whitelisted', 'bottom', 'right', WFAD.tour1, WFAD.tour3);
+                };
+                WFAD.tour3 = function () {
+                    $('#wfls-tab-settings a').trigger('click');
+                    WFAD.tour('wfNewTour3', 'wfls-enable-auth-captcha', 'bottom', 'left', WFAD.tour2, WFAD.tourComplete);
+                };
+                WFAD.tourComplete = function () {
+                    WFAD.tourFinish('<?php echo esc_attr(wfOnboardingController::TOUR_LOGIN_SECURITY); ?>');
+                };
+
+                <?php if (wfOnboardingController::shouldShowNewTour(wfOnboardingController::TOUR_LOGIN_SECURITY)): ?>
                 if (!WFAD.isSmallScreen) {
                     WFAD.tour1();
                 }

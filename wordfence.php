@@ -38,23 +38,24 @@ if (!defined('WORDFENCE_FCPATH')) {
     define('WORDFENCE_PATH', trailingslashit(dirname(WORDFENCE_FCPATH)));
 }
 if (!defined('WF_IS_WP_ENGINE')) {
-	define('WF_IS_WP_ENGINE', isset($_SERVER['IS_WPE']));
+    define('WF_IS_WP_ENGINE', isset($_SERVER['IS_WPE']));
 }
 if (!defined('WF_IS_PRESSABLE')) {
-	define('WF_IS_PRESSABLE', (defined('IS_ATOMIC') && IS_ATOMIC) || (defined('IS_PRESSABLE') && IS_PRESSABLE));
+    define('WF_IS_PRESSABLE', (defined('IS_ATOMIC') && IS_ATOMIC) || (defined('IS_PRESSABLE') && IS_PRESSABLE));
 }
 if (!defined('WF_PHP_UNSUPPORTED')) {
-	define('WF_PHP_UNSUPPORTED', version_compare(PHP_VERSION, '5.3', '<'));
+    define('WF_PHP_UNSUPPORTED', version_compare(PHP_VERSION, '5.3', '<'));
 }
 
 if (WF_PHP_UNSUPPORTED) {
-	add_action('all_admin_notices', 'wfUnsupportedPHPOverlay');
+    add_action('all_admin_notices', 'wfUnsupportedPHPOverlay');
 
     function wfUnsupportedPHPOverlay()
     {
         include "views/unsupported-php/admin-message.php";
     }
-	return;
+
+    return;
 }
 
 if (get_option('wordfenceActivated') != 1) {
@@ -87,20 +88,20 @@ if (!defined('WORDFENCE_VERSIONONLY_MODE')) { //Used to get version from file.
      * Constant to determine if Wordfence is installed on another WordPress site one or more directories up in
      * auto_prepend_file mode.
      */
-	define('WFWAF_SUBDIRECTORY_INSTALL', class_exists('wfWAF') &&
-		!in_array(realpath(dirname(__FILE__) . '/vendor/wordfence/wf-waf/src/init.php'), get_included_files()));
-	if (!WFWAF_SUBDIRECTORY_INSTALL) {
-		require_once(dirname(__FILE__) . '/vendor/wordfence/wf-waf/src/init.php');
-		if (!wfWAF::getInstance()) {
-			define('WFWAF_AUTO_PREPEND', false);
-			require_once(dirname(__FILE__) . '/waf/bootstrap.php');
-		}
-	}
+    define('WFWAF_SUBDIRECTORY_INSTALL', class_exists('wfWAF') &&
+        !in_array(realpath(dirname(__FILE__) . '/vendor/wordfence/wf-waf/src/init.php'), get_included_files()));
+    if (!WFWAF_SUBDIRECTORY_INSTALL) {
+        require_once(dirname(__FILE__) . '/vendor/wordfence/wf-waf/src/init.php');
+        if (!wfWAF::getInstance()) {
+            define('WFWAF_AUTO_PREPEND', false);
+            require_once(dirname(__FILE__) . '/waf/bootstrap.php');
+        }
+    }
 
     //Modules
 
-	//Load
-	require_once(dirname(__FILE__) . '/lib/wordfenceConstants.php');
-	require_once(dirname(__FILE__) . '/lib/wordfenceClass.php');
-	wordfence::install_actions();
+    //Load
+    require_once(dirname(__FILE__) . '/lib/wordfenceConstants.php');
+    require_once(dirname(__FILE__) . '/lib/wordfenceClass.php');
+    wordfence::install_actions();
 }

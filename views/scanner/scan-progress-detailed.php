@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the scan activity log and its controls.
  *
@@ -39,33 +41,36 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                 e.preventDefault();
                 e.stopPropagation();
 
-				WFAD.emailActivityLog();
-			});
+                WFAD.emailActivityLog();
+            });
 
-			$('#wf-scan-toggle-activity-log').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+            $('#wf-scan-toggle-activity-log').on('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-				var isActive = $('#wf-scan-activity-log').hasClass('wf-active');
-				if (isActive) {
-					$('#wf-scan-activity-log').slideUp({
-						always: function() {
-							$('#wf-scan-activity-log').removeClass('wf-active');
-							$('#wf-scan-toggle-activity-log').removeClass('wf-active');
-						}
-					});
-				}
-				else {
-					$('#wf-scan-activity-log').slideDown({
-						always: function() {
-							$('#wf-scan-activity-log').addClass('wf-active');
-							$('#wf-scan-toggle-activity-log').addClass('wf-active');
-						}
-					});
-				}
+                var isActive = $('#wf-scan-activity-log').hasClass('wf-active');
+                if (isActive) {
+                    $('#wf-scan-activity-log').slideUp({
+                        always: function () {
+                            $('#wf-scan-activity-log').removeClass('wf-active');
+                            $('#wf-scan-toggle-activity-log').removeClass('wf-active');
+                        }
+                    });
+                } else {
+                    $('#wf-scan-activity-log').slideDown({
+                        always: function () {
+                            $('#wf-scan-activity-log').addClass('wf-active');
+                            $('#wf-scan-toggle-activity-log').addClass('wf-active');
+                        }
+                    });
+                }
 
-				WFAD.ajax('wordfence_saveDisclosureState', {name: 'wf-scan-activity-log', state: !isActive}, function() {});
-			});
-		});
-	})(jQuery);
+                WFAD.ajax('wordfence_saveDisclosureState', {
+                    name: 'wf-scan-activity-log',
+                    state: !isActive
+                }, function () {
+                });
+            });
+        });
+    })(jQuery);
 </script>

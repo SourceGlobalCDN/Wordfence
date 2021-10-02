@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 ?>
 <script type="text/x-jquery-template" id="wafTmpl_install">
     <div class="wf-modal">
@@ -37,29 +39,31 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                     <li data-option-value="override"><?php esc_html_e('Override', 'wordfence'); ?></li>
                 </ul>
             <?php endif; ?>
-			<div class="wf-notice"><strong><?php esc_html_e('NOTE:', 'wordfence'); ?></strong> <?php esc_html_e('If you have separate WordPress installations with Wordfence installed within a subdirectory of this site, it is recommended that you perform the Firewall installation procedure on those sites before this one.', 'wordfence'); ?></div>
-			<?php
-			$serverInfo = wfWebServerInfo::createFromEnvironment();
-			$dropdown = array(
-				array("apache-mod_php", __('Apache + mod_php', 'wordfence'), $serverInfo->isApacheModPHP(), wfWAFAutoPrependHelper::helper('apache-mod_php')->getFilesNeededForBackup()),
-				array("apache-suphp", __('Apache + suPHP', 'wordfence'), $serverInfo->isApacheSuPHP(), wfWAFAutoPrependHelper::helper('apache-suphp')->getFilesNeededForBackup()),
-				array("cgi", __('Apache + CGI/FastCGI', 'wordfence'), $serverInfo->isApache() && !$serverInfo->isApacheSuPHP() && ($serverInfo->isCGI() || $serverInfo->isFastCGI()), wfWAFAutoPrependHelper::helper('cgi')->getFilesNeededForBackup()),
-				array("litespeed", __('LiteSpeed/lsapi', 'wordfence'), $serverInfo->isLiteSpeed(), wfWAFAutoPrependHelper::helper('litespeed')->getFilesNeededForBackup()),
-				array("nginx", __('NGINX', 'wordfence'), $serverInfo->isNGINX(), wfWAFAutoPrependHelper::helper('nginx')->getFilesNeededForBackup()),
-				array("iis", __('Windows (IIS)', 'wordfence'), $serverInfo->isIIS(), wfWAFAutoPrependHelper::helper('iis')->getFilesNeededForBackup()),
-				array("manual", __('Manual Configuration', 'wordfence'), false, array()),
-			);
-			
-			$hasRecommendedOption = false;
-			$wafPrependOptions = '';
-			foreach ($dropdown as $option) {
-				list($optionValue, $optionText, $selected) = $option;
-				$optionValue=esc_attr($optionValue);
-				$optionText=esc_html($optionText);
-				$wafPrependOptions .= "<option value=\"{$optionValue}\"" . ($selected ? ' selected' : '') . ">{$optionText}" . ($selected ? ' (recommended based on our tests)' : '') . "</option>\n";
-				if ($selected) {
-					$hasRecommendedOption = true;
-				}
+            <div class="wf-notice">
+                <strong><?php esc_html_e('NOTE:', 'wordfence'); ?></strong> <?php esc_html_e('If you have separate WordPress installations with Wordfence installed within a subdirectory of this site, it is recommended that you perform the Firewall installation procedure on those sites before this one.', 'wordfence'); ?>
+            </div>
+            <?php
+            $serverInfo = wfWebServerInfo::createFromEnvironment();
+            $dropdown = array(
+                array("apache-mod_php", __('Apache + mod_php', 'wordfence'), $serverInfo->isApacheModPHP(), wfWAFAutoPrependHelper::helper('apache-mod_php')->getFilesNeededForBackup()),
+                array("apache-suphp", __('Apache + suPHP', 'wordfence'), $serverInfo->isApacheSuPHP(), wfWAFAutoPrependHelper::helper('apache-suphp')->getFilesNeededForBackup()),
+                array("cgi", __('Apache + CGI/FastCGI', 'wordfence'), $serverInfo->isApache() && !$serverInfo->isApacheSuPHP() && ($serverInfo->isCGI() || $serverInfo->isFastCGI()), wfWAFAutoPrependHelper::helper('cgi')->getFilesNeededForBackup()),
+                array("litespeed", __('LiteSpeed/lsapi', 'wordfence'), $serverInfo->isLiteSpeed(), wfWAFAutoPrependHelper::helper('litespeed')->getFilesNeededForBackup()),
+                array("nginx", __('NGINX', 'wordfence'), $serverInfo->isNGINX(), wfWAFAutoPrependHelper::helper('nginx')->getFilesNeededForBackup()),
+                array("iis", __('Windows (IIS)', 'wordfence'), $serverInfo->isIIS(), wfWAFAutoPrependHelper::helper('iis')->getFilesNeededForBackup()),
+                array("manual", __('Manual Configuration', 'wordfence'), false, array()),
+            );
+
+            $hasRecommendedOption = false;
+            $wafPrependOptions = '';
+            foreach ($dropdown as $option) {
+                list($optionValue, $optionText, $selected) = $option;
+                $optionValue = esc_attr($optionValue);
+                $optionText = esc_html($optionText);
+                $wafPrependOptions .= "<option value=\"{$optionValue}\"" . ($selected ? ' selected' : '') . ">{$optionText}" . ($selected ? ' (recommended based on our tests)' : '') . "</option>\n";
+                if ($selected) {
+                    $hasRecommendedOption = true;
+                }
             }
 
             if (!$hasRecommendedOption): ?>
@@ -82,28 +86,29 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                 list($optionValue, $optionText, $selected) = $option;
                 $class = preg_replace('/[^a-z0-9\-]/i', '', $optionValue);
                 $helper = new wfWAFAutoPrependHelper($optionValue, null);
-				$backups = $helper->getFilesNeededForBackup();
-				$filteredBackups = array();
-				foreach ($backups as $index => $backup) {
-					if (!file_exists($backup)) {
-						continue;
-					}
-					
-					$filteredBackups[$index] = $backup;
-				}
-				$jsonBackups = json_encode(array_map('basename', $filteredBackups));
-				?>
-				<div class="wf-waf-backups wf-waf-backups-<?php echo $class; ?>" style="display: none;" data-backups="<?php echo esc_attr($jsonBackups); ?>">
-					<?php if (count($filteredBackups)): ?><p><?php esc_html_e('Please download a backup of the following files before we make the necessary changes:', 'wordfence'); ?></p><?php endif; ?>
-					<ul class="wf-waf-backup-file-list">
-						<?php
-						foreach ($filteredBackups as $index => $backup) {
-							echo '<li><a class="wf-btn wf-btn-default wf-waf-backup-download" data-backup-index="' . $index . '" href="' .
-								esc_url(add_query_arg(array(
-									'downloadBackup'      => 1,
-									'backupIndex'         => $index,
-									'serverConfiguration' => $helper->getServerConfig(),
-									'wfnonce'             => $wfnonce,
+                $backups = $helper->getFilesNeededForBackup();
+                $filteredBackups = array();
+                foreach ($backups as $index => $backup) {
+                    if (!file_exists($backup)) {
+                        continue;
+                    }
+
+                    $filteredBackups[$index] = $backup;
+                }
+                $jsonBackups = json_encode(array_map('basename', $filteredBackups));
+                ?>
+                <div class="wf-waf-backups wf-waf-backups-<?php echo $class; ?>" style="display: none;" data-backups="<?php echo esc_attr($jsonBackups); ?>">
+                    <?php if (count($filteredBackups)): ?>
+                        <p><?php esc_html_e('Please download a backup of the following files before we make the necessary changes:', 'wordfence'); ?></p><?php endif; ?>
+                    <ul class="wf-waf-backup-file-list">
+                        <?php
+                        foreach ($filteredBackups as $index => $backup) {
+                            echo '<li><a class="wf-btn wf-btn-default wf-waf-backup-download" data-backup-index="' . $index . '" href="' .
+                                esc_url(add_query_arg(array(
+                                    'downloadBackup' => 1,
+                                    'backupIndex' => $index,
+                                    'serverConfiguration' => $helper->getServerConfig(),
+                                    'wfnonce' => $wfnonce,
                                 ), $adminURL)) . '">' . esc_html(sprintf(/* translators: File path. */ __('Download %s', 'wordfence'), basename($backup))) . '</a></li>';
                         }
                         ?>

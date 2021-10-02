@@ -78,7 +78,7 @@ if (!is_callable('random_bytes')) {
         // See random_bytes_libsodium.php
         if (PHP_VERSION_ID >= 50300 && is_callable('\\Sodium\\randombytes_buf')) {
             require_once $RandomCompatDIR . DIRECTORY_SEPARATOR . 'random_bytes_libsodium.php';
-        } elseif (method_exists('Sodium', 'randombytes_buf')) {
+        } else if (method_exists('Sodium', 'randombytes_buf')) {
             require_once $RandomCompatDIR . DIRECTORY_SEPARATOR . 'random_bytes_libsodium_legacy.php';
         }
     }
@@ -98,9 +98,9 @@ if (!is_callable('random_bytes')) {
                 strtolower($RandomCompat_basedir)
             );
             $RandomCompatUrandom = (array() !== array_intersect(
-                array('/dev', '/dev/', '/dev/urandom'),
-                $RandomCompat_open_basedir
-            ));
+                    array('/dev', '/dev/', '/dev/urandom'),
+                    $RandomCompat_open_basedir
+                ));
             $RandomCompat_open_basedir = null;
         }
 
@@ -205,8 +205,8 @@ if (!is_callable('random_bytes')) {
          *
          * @param mixed $length
          * @psalm-suppress InvalidReturnType
-         * @throws Exception
          * @return string
+         * @throws Exception
          */
         function random_bytes($length)
         {

@@ -6,7 +6,7 @@ namespace Composer\Autoload;
 
 class ComposerStaticInite213e65b2dafae4ad799b13fe0d36f8e
 {
-    public static $files = array (
+    public static $files = array(
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
         '3109cb1a231dcd04bee1f9f620d46975' => __DIR__ . '/..' . '/paragonie/sodium_compat/autoload.php',
     );

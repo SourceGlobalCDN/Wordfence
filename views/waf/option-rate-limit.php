@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents a rate limit option with popup menus for limit value and action selections.
  *
@@ -55,10 +57,14 @@ $actionID = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $actionOptionName);
                                 value="<?php echo esc_attr($o['value']); ?>"<?php if ($o['value'] == $actionValue) {
                             echo ' selected';
                         } ?>><?php echo esc_html($o['label']); ?></option>
-					<?php endforeach; ?>
-				</select>
-				<div class="wf-rate-limit-warning"><div class="wf-inline-notice"><i class="wf-fa wf-fa-exclamation-triangle" aria-hidden="true"></i><span>Very strict. May cause false positives.</span></div></div>
-			</li>
-		</ul>
-	</li>
+                    <?php endforeach; ?>
+                </select>
+                <div class="wf-rate-limit-warning">
+                    <div class="wf-inline-notice">
+                        <i class="wf-fa wf-fa-exclamation-triangle" aria-hidden="true"></i><span>Very strict. May cause false positives.</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </li>
 </ul>

@@ -17,9 +17,9 @@ class Domain extends AbstractModel
     protected $ipAddress;
 
     /**
+     * @param mixed $raw
      * @ignore
      *
-     * @param mixed $raw
      */
     public function __construct($raw)
     {

@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the Dashboard Notification Options group.
  *
@@ -10,95 +12,102 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (!isset($collapseable)) {
-	$collapseable = true;
+    $collapseable = true;
 }
 ?>
 <div class="wf-row">
-	<div class="wf-col-xs-12">
-		<div class="wf-block<?php if (!$collapseable) { echo ' wf-always-active'; } else { echo (wfPersistenceController::shared()->isActive($stateKey) ? ' wf-active' : ''); } ?>" data-persistence-key="<?php echo esc_attr($stateKey); ?>">
-			<div class="wf-block-header">
-				<div class="wf-block-header-content">
-					<div class="wf-block-title">
-						<strong><?php esc_html_e('Dashboard Notification Options', 'wordfence'); ?></strong>
-					</div>
-					<?php if ($collapseable): ?><div class="wf-block-header-action"><div class="wf-block-header-action-disclosure" role="checkbox" aria-checked="<?php echo (wfPersistenceController::shared()->isActive($stateKey) ? 'true' : 'false'); ?>" tabindex="0"></div></div><?php endif; ?>
-				</div>
-			</div>
-			<div class="wf-block-content">
-				<ul class="wf-block-list">
-					<li>
-						<?php
-						echo wfView::create('options/option-toggled', array(
-							'optionName' => 'notification_updatesNeeded',
-							'enabledValue' => 1,
-							'disabledValue' => 0,
-							'value' => wfConfig::get('notification_updatesNeeded') ? 1 : 0,
-							'title' => __('Updates Needed (Plugin, Theme, or Core)', 'wordfence'),
-						))->render();
-						?>
-					</li>
-					<?php if (wfConfig::p()): ?>
-						<li>
-							<?php
-							echo wfView::create('options/option-toggled', array(
-								'optionName' => 'notification_securityAlerts',
-								'enabledValue' => 1,
-								'disabledValue' => 0,
-								'value' => wfConfig::get('notification_securityAlerts') ? 1 : 0,
-								'title' => __('Security Alerts', 'wordfence'),
-								'premium' => true,
-							))->render();
-							?>
-						</li>
-						<li>
-							<?php
-							echo wfView::create('options/option-toggled', array(
-								'optionName' => 'notification_promotions',
-								'enabledValue' => 1,
-								'disabledValue' => 0,
-								'value' => wfConfig::get('notification_promotions') ? 1 : 0,
-								'title' => __('Promotions', 'wordfence'),
-								'premium' => true,
-							))->render();
-							?>
-						</li>
-						<li>
-							<?php
-							echo wfView::create('options/option-toggled', array(
-								'optionName' => 'notification_blogHighlights',
-								'enabledValue' => 1,
-								'disabledValue' => 0,
-								'value' => wfConfig::get('notification_blogHighlights') ? 1 : 0,
-								'title' => __('Blog Highlights', 'wordfence'),
-								'premium' => true,
-							))->render();
-							?>
-						</li>
-						<li>
-							<?php
-							echo wfView::create('options/option-toggled', array(
-								'optionName' => 'notification_productUpdates',
-								'enabledValue' => 1,
-								'disabledValue' => 0,
-								'value' => wfConfig::get('notification_productUpdates') ? 1 : 0,
-								'title' => __('Product Updates', 'wordfence'),
-								'premium' => true,
-							))->render();
-							?>
-						</li>
-					<?php endif; ?>
-					<li>
-						<?php
-						echo wfView::create('options/option-toggled', array(
-							'optionName' => 'notification_scanStatus',
-							'enabledValue' => 1,
-							'disabledValue' => 0,
-							'value' => wfConfig::get('notification_scanStatus') ? 1 : 0,
-							'title' => __('Scan Status', 'wordfence'),
-						))->render();
-						?>
-					</li>
-					<?php if (!wfConfig::p()): ?>
+    <div class="wf-col-xs-12">
+        <div class="wf-block<?php if (!$collapseable) {
+            echo ' wf-always-active';
+        } else {
+            echo(wfPersistenceController::shared()->isActive($stateKey) ? ' wf-active' : '');
+        } ?>" data-persistence-key="<?php echo esc_attr($stateKey); ?>">
+            <div class="wf-block-header">
+                <div class="wf-block-header-content">
+                    <div class="wf-block-title">
+                        <strong><?php esc_html_e('Dashboard Notification Options', 'wordfence'); ?></strong>
+                    </div>
+                    <?php if ($collapseable): ?>
+                        <div class="wf-block-header-action">
+                        <div class="wf-block-header-action-disclosure" role="checkbox" aria-checked="<?php echo(wfPersistenceController::shared()->isActive($stateKey) ? 'true' : 'false'); ?>" tabindex="0"></div>
+                        </div><?php endif; ?>
+                </div>
+            </div>
+            <div class="wf-block-content">
+                <ul class="wf-block-list">
+                    <li>
+                        <?php
+                        echo wfView::create('options/option-toggled', array(
+                            'optionName' => 'notification_updatesNeeded',
+                            'enabledValue' => 1,
+                            'disabledValue' => 0,
+                            'value' => wfConfig::get('notification_updatesNeeded') ? 1 : 0,
+                            'title' => __('Updates Needed (Plugin, Theme, or Core)', 'wordfence'),
+                        ))->render();
+                        ?>
+                    </li>
+                    <?php if (wfConfig::p()): ?>
+                        <li>
+                            <?php
+                            echo wfView::create('options/option-toggled', array(
+                                'optionName' => 'notification_securityAlerts',
+                                'enabledValue' => 1,
+                                'disabledValue' => 0,
+                                'value' => wfConfig::get('notification_securityAlerts') ? 1 : 0,
+                                'title' => __('Security Alerts', 'wordfence'),
+                                'premium' => true,
+                            ))->render();
+                            ?>
+                        </li>
+                        <li>
+                            <?php
+                            echo wfView::create('options/option-toggled', array(
+                                'optionName' => 'notification_promotions',
+                                'enabledValue' => 1,
+                                'disabledValue' => 0,
+                                'value' => wfConfig::get('notification_promotions') ? 1 : 0,
+                                'title' => __('Promotions', 'wordfence'),
+                                'premium' => true,
+                            ))->render();
+                            ?>
+                        </li>
+                        <li>
+                            <?php
+                            echo wfView::create('options/option-toggled', array(
+                                'optionName' => 'notification_blogHighlights',
+                                'enabledValue' => 1,
+                                'disabledValue' => 0,
+                                'value' => wfConfig::get('notification_blogHighlights') ? 1 : 0,
+                                'title' => __('Blog Highlights', 'wordfence'),
+                                'premium' => true,
+                            ))->render();
+                            ?>
+                        </li>
+                        <li>
+                            <?php
+                            echo wfView::create('options/option-toggled', array(
+                                'optionName' => 'notification_productUpdates',
+                                'enabledValue' => 1,
+                                'disabledValue' => 0,
+                                'value' => wfConfig::get('notification_productUpdates') ? 1 : 0,
+                                'title' => __('Product Updates', 'wordfence'),
+                                'premium' => true,
+                            ))->render();
+                            ?>
+                        </li>
+                    <?php endif; ?>
+                    <li>
+                        <?php
+                        echo wfView::create('options/option-toggled', array(
+                            'optionName' => 'notification_scanStatus',
+                            'enabledValue' => 1,
+                            'disabledValue' => 0,
+                            'value' => wfConfig::get('notification_scanStatus') ? 1 : 0,
+                            'title' => __('Scan Status', 'wordfence'),
+                        ))->render();
+                        ?>
+                    </li>
+                    <?php if (!wfConfig::p()): ?>
                         <li>
                             <ul class="wf-option">
                                 <li class="wf-option-spacer"></li>
@@ -118,8 +127,8 @@ if (!isset($collapseable)) {
                             </ul>
                         </li>
                     <?php endif; ?>
-				</ul>
-			</div>
-		</div>
-	</div>
+                </ul>
+            </div>
+        </div>
+    </div>
 </div> <!-- end dashboard options -->

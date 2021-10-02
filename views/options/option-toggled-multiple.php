@@ -1,17 +1,19 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents multiple boolean options under a single heading with a checkbox toggle control for each.
  *
- * Expects $options and $title to be defined. $options is an array of 
- * 	array(
- * 		'name' => <option name>, 
- * 		'enabledValue' => <value saved if the toggle is enabled>, 
- * 		'disabledValue' => <value saved if the toggle is disabled>,
- * 		'value' => <current value of the option>,
- * 		'title' => <title displayed to label the checkbox>
- * 	)
- * 
+ * Expects $options and $title to be defined. $options is an array of
+ *    array(
+ *        'name' => <option name>,
+ *        'enabledValue' => <value saved if the toggle is enabled>,
+ *        'disabledValue' => <value saved if the toggle is disabled>,
+ *        'value' => <current value of the option>,
+ *        'title' => <title displayed to label the checkbox>
+ *    )
+ *
  * $helpLink may also be defined.
  *
  * @var array $options The options shown. The structure is defined above.
@@ -54,7 +56,7 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                             class="wf-option-title"><?php echo esc_html($o['title']); ?></li>
                     </ul>
                 <?php endforeach; ?>
-			</li>
-		</ul>
-	</li>
+            </li>
+        </ul>
+    </li>
 </ul>

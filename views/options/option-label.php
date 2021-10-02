@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents an option-styled text value.
  *
@@ -11,7 +13,7 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (!isset($titleHTML)) {
-	$titleHTML = esc_html($title);
+    $titleHTML = esc_html($title);
 }
 ?>
 <ul class="wf-option wf-option-label">

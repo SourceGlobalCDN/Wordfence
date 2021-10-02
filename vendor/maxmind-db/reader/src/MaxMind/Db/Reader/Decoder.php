@@ -8,16 +8,10 @@ namespace MaxMind\Db\Reader;
 
 class Decoder
 {
-    private $fileStream;
-    private $pointerBase;
-    private $pointerBaseByteSize;
-    // This is only used for unit testing
-    private $pointerTestHack;
-    private $switchByteOrder;
-
     const _EXTENDED = 0;
     const _POINTER = 1;
     const _UTF8_STRING = 2;
+    // This is only used for unit testing
     const _DOUBLE = 3;
     const _BYTES = 4;
     const _UINT16 = 5;
@@ -31,12 +25,18 @@ class Decoder
     const _END_MARKER = 13;
     const _BOOLEAN = 14;
     const _FLOAT = 15;
+    private $fileStream;
+    private $pointerBase;
+    private $pointerBaseByteSize;
+    private $pointerTestHack;
+    private $switchByteOrder;
 
     public function __construct(
         $fileStream,
         $pointerBase = 0,
         $pointerTestHack = false
-    ) {
+    )
+    {
         $this->fileStream = $fileStream;
         $this->pointerBase = $pointerBase;
 
@@ -44,6 +44,14 @@ class Decoder
         $this->pointerTestHack = $pointerTestHack;
 
         $this->switchByteOrder = $this->isPlatformLittleEndian();
+    }
+
+    private function isPlatformLittleEndian()
+    {
+        $testint = 0x00FF;
+        $packed = pack('S', $testint);
+
+        return $testint === current(unpack('v', $packed));
     }
 
     public function decode($offset)
@@ -97,6 +105,108 @@ class Decoder
         return $this->decodeByType($type, $offset, $size);
     }
 
+    private function decodePointer($ctrlByte, $offset)
+    {
+        $pointerSize = (($ctrlByte >> 3) & 0x3) + 1;
+
+        $buffer = Util::read($this->fileStream, $offset, $pointerSize);
+        $offset = $offset + $pointerSize;
+
+        switch ($pointerSize) {
+            case 1:
+                $packed = (pack('C', $ctrlByte & 0x7)) . $buffer;
+                list(, $pointer) = unpack('n', $packed);
+                $pointer += $this->pointerBase;
+                break;
+            case 2:
+                $packed = "\x00" . (pack('C', $ctrlByte & 0x7)) . $buffer;
+                list(, $pointer) = unpack('N', $packed);
+                $pointer += $this->pointerBase + 2048;
+                break;
+            case 3:
+                $packed = (pack('C', $ctrlByte & 0x7)) . $buffer;
+
+                // It is safe to use 'N' here, even on 32 bit machines as the
+                // first bit is 0.
+                list(, $pointer) = unpack('N', $packed);
+                $pointer += $this->pointerBase + 526336;
+                break;
+            case 4:
+                // We cannot use unpack here as we might overflow on 32 bit
+                // machines
+                $pointerOffset = $this->decodeUint($buffer, $pointerSize);
+
+                $byteLength = $pointerSize + $this->pointerBaseByteSize;
+
+                if ($byteLength <= _MM_MAX_INT_BYTES) {
+                    $pointer = $pointerOffset + $this->pointerBase;
+                } else if (\extension_loaded('gmp')) {
+                    $pointer = gmp_strval(gmp_add($pointerOffset, $this->pointerBase));
+                } else if (\extension_loaded('bcmath')) {
+                    $pointer = bcadd($pointerOffset, $this->pointerBase);
+                } else {
+                    throw new \RuntimeException(
+                        'The gmp or bcmath extension must be installed to read this database.'
+                    );
+                }
+        }
+
+        return [$pointer, $offset];
+    }
+
+    private function decodeUint($bytes, $byteLength)
+    {
+        if ($byteLength === 0) {
+            return 0;
+        }
+
+        $integer = 0;
+
+        for ($i = 0; $i < $byteLength; ++$i) {
+            $part = \ord($bytes[$i]);
+
+            // We only use gmp or bcmath if the final value is too big
+            if ($byteLength <= _MM_MAX_INT_BYTES) {
+                $integer = ($integer << 8) + $part;
+            } else if (\extension_loaded('gmp')) {
+                $integer = gmp_strval(gmp_add(gmp_mul($integer, 256), $part));
+            } else if (\extension_loaded('bcmath')) {
+                $integer = bcadd(bcmul($integer, 256), $part);
+            } else {
+                throw new \RuntimeException(
+                    'The gmp or bcmath extension must be installed to read this database.'
+                );
+            }
+        }
+
+        return $integer;
+    }
+
+    private function sizeFromCtrlByte($ctrlByte, $offset)
+    {
+        $size = $ctrlByte & 0x1f;
+
+        if ($size < 29) {
+            return [$size, $offset];
+        }
+
+        $bytesToRead = $size - 28;
+        $bytes = Util::read($this->fileStream, $offset, $bytesToRead);
+
+        if ($size === 29) {
+            $size = 29 + \ord($bytes);
+        } else if ($size === 30) {
+            list(, $adjust) = unpack('n', $bytes);
+            $size = 285 + $adjust;
+        } else if ($size > 30) {
+            list(, $adjust) = unpack('N', "\x00" . $bytes);
+            $size = ($adjust & (0x0FFFFFFF >> (32 - (8 * $bytesToRead))))
+                + 65821;
+        }
+
+        return [$size, $offset + $bytesToRead];
+    }
+
     private function decodeByType($type, $offset, $size)
     {
         switch ($type) {
@@ -136,13 +246,17 @@ class Decoder
         }
     }
 
-    private function verifySize($expected, $actual)
+    private function decodeMap($size, $offset)
     {
-        if ($expected !== $actual) {
-            throw new InvalidDatabaseException(
-                "The MaxMind DB file's data section contains bad data (unknown data type or corrupt data)"
-            );
+        $map = [];
+
+        for ($i = 0; $i < $size; ++$i) {
+            list($key, $offset) = $this->decode($offset);
+            list($value, $offset) = $this->decode($offset);
+            $map[$key] = $value;
         }
+
+        return [$map, $offset];
     }
 
     private function decodeArray($size, $offset)
@@ -162,6 +276,15 @@ class Decoder
         return $size === 0 ? false : true;
     }
 
+    private function verifySize($expected, $actual)
+    {
+        if ($expected !== $actual) {
+            throw new InvalidDatabaseException(
+                "The MaxMind DB file's data section contains bad data (unknown data type or corrupt data)"
+            );
+        }
+    }
+
     private function decodeDouble($bits)
     {
         // This assumes IEEE 754 doubles, but most (all?) modern platforms
@@ -173,6 +296,11 @@ class Decoder
         list(, $double) = unpack('d', $this->maybeSwitchByteOrder($bits));
 
         return $double;
+    }
+
+    private function maybeSwitchByteOrder($bytes)
+    {
+        return $this->switchByteOrder ? strrev($bytes) : $bytes;
     }
 
     private function decodeFloat($bits)
@@ -209,133 +337,5 @@ class Decoder
         list(, $int) = unpack('l', $this->maybeSwitchByteOrder($bytes));
 
         return $int;
-    }
-
-    private function decodeMap($size, $offset)
-    {
-        $map = [];
-
-        for ($i = 0; $i < $size; ++$i) {
-            list($key, $offset) = $this->decode($offset);
-            list($value, $offset) = $this->decode($offset);
-            $map[$key] = $value;
-        }
-
-        return [$map, $offset];
-    }
-
-    private function decodePointer($ctrlByte, $offset)
-    {
-        $pointerSize = (($ctrlByte >> 3) & 0x3) + 1;
-
-        $buffer = Util::read($this->fileStream, $offset, $pointerSize);
-        $offset = $offset + $pointerSize;
-
-        switch ($pointerSize) {
-            case 1:
-                $packed = (pack('C', $ctrlByte & 0x7)) . $buffer;
-                list(, $pointer) = unpack('n', $packed);
-                $pointer += $this->pointerBase;
-                break;
-            case 2:
-                $packed = "\x00" . (pack('C', $ctrlByte & 0x7)) . $buffer;
-                list(, $pointer) = unpack('N', $packed);
-                $pointer += $this->pointerBase + 2048;
-                break;
-            case 3:
-                $packed = (pack('C', $ctrlByte & 0x7)) . $buffer;
-
-                // It is safe to use 'N' here, even on 32 bit machines as the
-                // first bit is 0.
-                list(, $pointer) = unpack('N', $packed);
-                $pointer += $this->pointerBase + 526336;
-                break;
-            case 4:
-                // We cannot use unpack here as we might overflow on 32 bit
-                // machines
-                $pointerOffset = $this->decodeUint($buffer, $pointerSize);
-
-                $byteLength = $pointerSize + $this->pointerBaseByteSize;
-
-                if ($byteLength <= _MM_MAX_INT_BYTES) {
-                    $pointer = $pointerOffset + $this->pointerBase;
-                } elseif (\extension_loaded('gmp')) {
-                    $pointer = gmp_strval(gmp_add($pointerOffset, $this->pointerBase));
-                } elseif (\extension_loaded('bcmath')) {
-                    $pointer = bcadd($pointerOffset, $this->pointerBase);
-                } else {
-                    throw new \RuntimeException(
-                        'The gmp or bcmath extension must be installed to read this database.'
-                    );
-                }
-        }
-
-        return [$pointer, $offset];
-    }
-
-    private function decodeUint($bytes, $byteLength)
-    {
-        if ($byteLength === 0) {
-            return 0;
-        }
-
-        $integer = 0;
-
-        for ($i = 0; $i < $byteLength; ++$i) {
-            $part = \ord($bytes[$i]);
-
-            // We only use gmp or bcmath if the final value is too big
-            if ($byteLength <= _MM_MAX_INT_BYTES) {
-                $integer = ($integer << 8) + $part;
-            } elseif (\extension_loaded('gmp')) {
-                $integer = gmp_strval(gmp_add(gmp_mul($integer, 256), $part));
-            } elseif (\extension_loaded('bcmath')) {
-                $integer = bcadd(bcmul($integer, 256), $part);
-            } else {
-                throw new \RuntimeException(
-                    'The gmp or bcmath extension must be installed to read this database.'
-                );
-            }
-        }
-
-        return $integer;
-    }
-
-    private function sizeFromCtrlByte($ctrlByte, $offset)
-    {
-        $size = $ctrlByte & 0x1f;
-
-        if ($size < 29) {
-            return [$size, $offset];
-        }
-
-        $bytesToRead = $size - 28;
-        $bytes = Util::read($this->fileStream, $offset, $bytesToRead);
-
-        if ($size === 29) {
-            $size = 29 + \ord($bytes);
-        } elseif ($size === 30) {
-            list(, $adjust) = unpack('n', $bytes);
-            $size = 285 + $adjust;
-        } elseif ($size > 30) {
-            list(, $adjust) = unpack('N', "\x00" . $bytes);
-            $size = ($adjust & (0x0FFFFFFF >> (32 - (8 * $bytesToRead))))
-                + 65821;
-        }
-
-        return [$size, $offset + $bytesToRead];
-    }
-
-    private function maybeSwitchByteOrder($bytes)
-    {
-        return $this->switchByteOrder ? strrev($bytes) : $bytes;
-    }
-
-    private function isPlatformLittleEndian()
-    {
-        $testint = 0x00FF;
-        $packed = pack('S', $testint);
-
-        return $testint === current(unpack('v', $packed));
     }
 }

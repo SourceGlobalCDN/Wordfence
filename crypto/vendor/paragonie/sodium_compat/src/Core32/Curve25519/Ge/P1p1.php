@@ -4,6 +4,7 @@
 if (class_exists('ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1', false)) {
     return;
 }
+
 /**
  * Class ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1
  */
@@ -32,8 +33,6 @@ class ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1
     /**
      * ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1 constructor.
      *
-     * @internal You should not use this directly from another application
-     *
      * @param ParagonIE_Sodium_Core32_Curve25519_Fe|null $x
      * @param ParagonIE_Sodium_Core32_Curve25519_Fe|null $y
      * @param ParagonIE_Sodium_Core32_Curve25519_Fe|null $z
@@ -41,13 +40,16 @@ class ParagonIE_Sodium_Core32_Curve25519_Ge_P1p1
      *
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public function __construct(
         ParagonIE_Sodium_Core32_Curve25519_Fe $x = null,
         ParagonIE_Sodium_Core32_Curve25519_Fe $y = null,
         ParagonIE_Sodium_Core32_Curve25519_Fe $z = null,
         ParagonIE_Sodium_Core32_Curve25519_Fe $t = null
-    ) {
+    )
+    {
         if ($x === null) {
             $x = ParagonIE_Sodium_Core32_Curve25519::fe_0();
         }

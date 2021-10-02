@@ -1,8 +1,10 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 ?>
 <script type="application/javascript">
-	(function($) {
+    (function ($) {
         $(function () {
             document.title = "<?php esc_attr_e('Import/Export Options', 'wordfence'); ?>" + " \u2039 " + WFAD.basePageName;
         });
@@ -24,5 +26,5 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
         'stateKey' => 'global-options-import',
         'collapseable' => false,
     ))->render();
-	?>
+    ?>
 </div>

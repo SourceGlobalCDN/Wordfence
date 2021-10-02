@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents a switch option.
  *
@@ -15,12 +17,14 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (!isset($titleHTML)) {
-	$titleHTML = esc_html($title);
+    $titleHTML = esc_html($title);
 }
 
 $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $optionName);
 ?>
-<ul id="<?php echo esc_attr($id); ?>" class="wf-option wf-option-switch<?php if (!wfConfig::p() && isset($premium) && $premium) { echo ' wf-option-premium'; } ?>" data-option-name="<?php echo esc_attr($optionName); ?>" data-original-value="<?php echo esc_attr($value); ?>">
+<ul id="<?php echo esc_attr($id); ?>" class="wf-option wf-option-switch<?php if (!wfConfig::p() && isset($premium) && $premium) {
+    echo ' wf-option-premium';
+} ?>" data-option-name="<?php echo esc_attr($optionName); ?>" data-original-value="<?php echo esc_attr($value); ?>">
     <?php if (!isset($noSpacer) || !$noSpacer): ?>
         <li class="wf-option-spacer"></li>
     <?php endif; ?>
@@ -53,9 +57,9 @@ $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $optionName);
                         } ?> data-option-value="<?php echo esc_attr($s['value']); ?>" role="radio"
                              aria-checked="<?php echo($s['value'] == $value ? 'true' : 'false'); ?>"
                              tabindex="0"><?php echo esc_html($s['label']); ?></li>
-				<?php endforeach; ?>
-				</ul>
-			</li>
-		</ul>
-	</li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
+        </ul>
+    </li>
 </ul>

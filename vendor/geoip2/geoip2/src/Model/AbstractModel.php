@@ -10,9 +10,9 @@ abstract class AbstractModel implements \JsonSerializable
     protected $raw;
 
     /**
+     * @param mixed $raw
      * @ignore
      *
-     * @param mixed $raw
      */
     public function __construct($raw)
     {
@@ -20,26 +20,9 @@ abstract class AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @ignore
-     *
-     * @param mixed $field
-     */
-    protected function get($field)
-    {
-        if (isset($this->raw[$field])) {
-            return $this->raw[$field];
-        }
-        if (preg_match('/^is_/', $field)) {
-            return false;
-        }
-
-        return null;
-    }
-
-    /**
-     * @ignore
-     *
      * @param mixed $attr
+     * @ignore
+     *
      */
     public function __get($attr)
     {
@@ -51,9 +34,9 @@ abstract class AbstractModel implements \JsonSerializable
     }
 
     /**
+     * @param mixed $attr
      * @ignore
      *
-     * @param mixed $attr
      */
     public function __isset($attr)
     {
@@ -63,5 +46,22 @@ abstract class AbstractModel implements \JsonSerializable
     public function jsonSerialize()
     {
         return $this->raw;
+    }
+
+    /**
+     * @param mixed $field
+     * @ignore
+     *
+     */
+    protected function get($field)
+    {
+        if (isset($this->raw[$field])) {
+            return $this->raw[$field];
+        }
+        if (preg_match('/^is_/', $field)) {
+            return false;
+        }
+
+        return null;
     }
 }

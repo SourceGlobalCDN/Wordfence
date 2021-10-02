@@ -1,13 +1,15 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the global option howGetIPs with a value select menu and text area (hidden by default) for trusted proxies.
  */
 
 $selectOptions = array(
-	array('value' => '', 'label' => esc_html__('Let Wordfence use the most secure method to get visitor IP addresses. Prevents spoofing and works with most sites.', 'wordfence') . ' <strong>' . esc_html__('(Recommended)', 'wordfence') . '</strong>'),
-	array('value' => 'REMOTE_ADDR', 'label' => esc_html__('Use PHP\'s built in REMOTE_ADDR and don\'t use anything else. Very secure if this is compatible with your site.', 'wordfence')),
-	array('value' => 'HTTP_X_FORWARDED_FOR', 'label' => esc_html__('Use the X-Forwarded-For HTTP header. Only use if you have a front-end proxy or spoofing may result.', 'wordfence')),
+    array('value' => '', 'label' => esc_html__('Let Wordfence use the most secure method to get visitor IP addresses. Prevents spoofing and works with most sites.', 'wordfence') . ' <strong>' . esc_html__('(Recommended)', 'wordfence') . '</strong>'),
+    array('value' => 'REMOTE_ADDR', 'label' => esc_html__('Use PHP\'s built in REMOTE_ADDR and don\'t use anything else. Very secure if this is compatible with your site.', 'wordfence')),
+    array('value' => 'HTTP_X_FORWARDED_FOR', 'label' => esc_html__('Use the X-Forwarded-For HTTP header. Only use if you have a front-end proxy or spoofing may result.', 'wordfence')),
     array('value' => 'HTTP_X_REAL_IP', 'label' => esc_html__('Use the X-Real-IP HTTP header. Only use if you have a front-end proxy or spoofing may result.', 'wordfence')),
     array('value' => 'HTTP_CF_CONNECTING_IP', 'label' => esc_html__('Use the Cloudflare "CF-Connecting-IP" HTTP header to get a visitor IP. Only use if you\'re using Cloudflare.', 'wordfence')),
 );
@@ -64,130 +66,129 @@ $selectOptions = array(
         <ul id="wf-option-howGetIPs-trusted-proxies" class="wf-option wf-option-textarea"
             data-text-option="howGetIPs_trusted_proxies"
             data-original-text-value="<?php echo esc_attr(wfConfig::get('howGetIPs_trusted_proxies')); ?>">
-			<li class="wf-option-spacer"></li>
-			<li class="wf-option-content">
-				<ul>
-					<li class="wf-option-title">
-						<ul class="wf-flex-vertical wf-flex-align-left">
-							<li><?php esc_html_e('Trusted Proxies', 'wordfence'); ?></li>
-							<li class="wf-option-subtitle"><?php esc_html_e('These IPs (or CIDR ranges) will be ignored when determining the requesting IP via the X-Forwarded-For HTTP header. Enter one IP or CIDR range per line.', 'wordfence'); ?></li>
-						</ul>
-					</li>
-					<li class="wf-option-textarea">
-						<textarea spellcheck="false" autocapitalize="none" autocomplete="off" name="howGetIPs_trusted_proxies"><?php echo esc_html(wfConfig::get('howGetIPs_trusted_proxies')); ?></textarea>
-					</li>
-				</ul>
-			</li>
-		</ul>
-	</li>
+            <li class="wf-option-spacer"></li>
+            <li class="wf-option-content">
+                <ul>
+                    <li class="wf-option-title">
+                        <ul class="wf-flex-vertical wf-flex-align-left">
+                            <li><?php esc_html_e('Trusted Proxies', 'wordfence'); ?></li>
+                            <li class="wf-option-subtitle"><?php esc_html_e('These IPs (or CIDR ranges) will be ignored when determining the requesting IP via the X-Forwarded-For HTTP header. Enter one IP or CIDR range per line.', 'wordfence'); ?></li>
+                        </ul>
+                    </li>
+                    <li class="wf-option-textarea">
+                        <textarea spellcheck="false" autocapitalize="none" autocomplete="off" name="howGetIPs_trusted_proxies"><?php echo esc_html(wfConfig::get('howGetIPs_trusted_proxies')); ?></textarea>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
 </ul>
 <script type="application/javascript">
-	(function($) {
-		$(function() {
-			var updateIPPreview = function() {
-				WFAD.updateIPPreview({howGetIPs: $('input[name="wf-howgetIPs"]:checked').val(), 'howGetIPs_trusted_proxies': $('#howGetIPs-trusted-proxies textarea').val()}, function(ret) {
-					if (ret && ret.ok) {
-						$('#howGetIPs-preview-all').html(ret.ipAll);
-						$('#howGetIPs-preview-single').html(ret.ip);
-					}
-					else {
-						//TODO: implementing testing whether or not this setting will lock them out and show the error saying that they'd lock themselves out
-					}
-				});
-			};
+    (function ($) {
+        $(function () {
+            var updateIPPreview = function () {
+                WFAD.updateIPPreview({
+                    howGetIPs: $('input[name="wf-howgetIPs"]:checked').val(),
+                    'howGetIPs_trusted_proxies': $('#howGetIPs-trusted-proxies textarea').val()
+                }, function (ret) {
+                    if (ret && ret.ok) {
+                        $('#howGetIPs-preview-all').html(ret.ipAll);
+                        $('#howGetIPs-preview-single').html(ret.ip);
+                    } else {
+                        //TODO: implementing testing whether or not this setting will lock them out and show the error saying that they'd lock themselves out
+                    }
+                });
+            };
 
-			$('input[name="wf-howgetIPs"]').on('change', function() {
-				var optionElement = $(this).closest('.wf-option.wf-option-howgetips');
-				var option = optionElement.data('option');
-				var value = $('input[name="wf-howgetIPs"]:checked').val();
+            $('input[name="wf-howgetIPs"]').on('change', function () {
+                var optionElement = $(this).closest('.wf-option.wf-option-howgetips');
+                var option = optionElement.data('option');
+                var value = $('input[name="wf-howgetIPs"]:checked').val();
 
-				var originalValue = optionElement.data('originalValue');
-				if (originalValue == value) {
-					delete WFAD.pendingChanges[option];
-				}
-				else {
-					WFAD.pendingChanges[option] = value;
-				}
+                var originalValue = optionElement.data('originalValue');
+                if (originalValue == value) {
+                    delete WFAD.pendingChanges[option];
+                } else {
+                    WFAD.pendingChanges[option] = value;
+                }
 
-				WFAD.updatePendingChanges();
-				
-				updateIPPreview();
-			});
+                WFAD.updatePendingChanges();
 
-			var coalescingUpdateTimer;
-			$('#howGetIPs-trusted-proxies textarea').on('change paste keyup', function() {
-				var e = this;
-				
-				setTimeout(function() {
-					clearTimeout(coalescingUpdateTimer);
-					coalescingUpdateTimer = setTimeout(updateIPPreview, 1000);
-	
-					var optionElement = $(e).closest('.wf-option.wf-option-textarea');
-					var option = optionElement.data('textOption');
-					var value = $(e).val();
-	
-					var originalValue = optionElement.data('originalTextValue');
-					if (originalValue == value) {
-						delete WFAD.pendingChanges[option];
-					}
-					else {
-						WFAD.pendingChanges[option] = value;
-					}
-	
-					WFAD.updatePendingChanges();
-				}, 4);
-			});
+                updateIPPreview();
+            });
 
-			$(window).on('wfOptionsReset', function() {
-				$('input[name="wf-howgetIPs"]').each(function() {
-					var optionElement = $(this).closest('.wf-option.wf-option-howgetips');
-					var option = optionElement.data('option');
-					var originalValue = optionElement.data('originalValue');
-					
-					$(this).prop('checked', originalValue == $(this).attr('value'));
-				});
-						
-				$('#howGetIPs-trusted-proxies textarea').each(function() {
-					var optionElement = $(this).closest('.wf-option.wf-option-textarea');
-					var originalValue = optionElement.data('originalTextAreaValue');
-					$(this).val(originalValue);
-				});
+            var coalescingUpdateTimer;
+            $('#howGetIPs-trusted-proxies textarea').on('change paste keyup', function () {
+                var e = this;
 
-				updateIPPreview();
-			});
+                setTimeout(function () {
+                    clearTimeout(coalescingUpdateTimer);
+                    coalescingUpdateTimer = setTimeout(updateIPPreview, 1000);
 
-			$('#howGetIPs-trusted-proxies-show').each(function() {
-				$(this).on('keydown', function(e) {
-					if (e.keyCode == 32) {
-						e.preventDefault();
-						e.stopPropagation();
+                    var optionElement = $(e).closest('.wf-option.wf-option-textarea');
+                    var option = optionElement.data('textOption');
+                    var value = $(e).val();
 
-						$(this).trigger('click');
-					}
-				});
-				
-				$(this).on('click', function(e) {
-					e.preventDefault();
-					e.stopPropagation();
+                    var originalValue = optionElement.data('originalTextValue');
+                    if (originalValue == value) {
+                        delete WFAD.pendingChanges[option];
+                    } else {
+                        WFAD.pendingChanges[option] = value;
+                    }
 
-					var isActive = $('#howGetIPs-trusted-proxies').hasClass('wf-active');
-					if (isActive) {
-						$('#howGetIPs-trusted-proxies').slideUp({
-							always: function() {
-								$('#howGetIPs-trusted-proxies').removeClass('wf-active');
-							}
-						});
-					}
-					else {
-						$(this).parent().slideUp(); 
-						$('#howGetIPs-trusted-proxies').slideDown({
-							always: function() {
-								$('#howGetIPs-trusted-proxies').addClass('wf-active');
-							}
-						});
-					}
-				});
-			});
-		});
-	})(jQuery);
+                    WFAD.updatePendingChanges();
+                }, 4);
+            });
+
+            $(window).on('wfOptionsReset', function () {
+                $('input[name="wf-howgetIPs"]').each(function () {
+                    var optionElement = $(this).closest('.wf-option.wf-option-howgetips');
+                    var option = optionElement.data('option');
+                    var originalValue = optionElement.data('originalValue');
+
+                    $(this).prop('checked', originalValue == $(this).attr('value'));
+                });
+
+                $('#howGetIPs-trusted-proxies textarea').each(function () {
+                    var optionElement = $(this).closest('.wf-option.wf-option-textarea');
+                    var originalValue = optionElement.data('originalTextAreaValue');
+                    $(this).val(originalValue);
+                });
+
+                updateIPPreview();
+            });
+
+            $('#howGetIPs-trusted-proxies-show').each(function () {
+                $(this).on('keydown', function (e) {
+                    if (e.keyCode == 32) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        $(this).trigger('click');
+                    }
+                });
+
+                $(this).on('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    var isActive = $('#howGetIPs-trusted-proxies').hasClass('wf-active');
+                    if (isActive) {
+                        $('#howGetIPs-trusted-proxies').slideUp({
+                            always: function () {
+                                $('#howGetIPs-trusted-proxies').removeClass('wf-active');
+                            }
+                        });
+                    } else {
+                        $(this).parent().slideUp();
+                        $('#howGetIPs-trusted-proxies').slideDown({
+                            always: function () {
+                                $('#howGetIPs-trusted-proxies').addClass('wf-active');
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    })(jQuery);
 </script> 

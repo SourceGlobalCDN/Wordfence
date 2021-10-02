@@ -29,36 +29,35 @@ if (!defined('WORDFENCE_VERSION')) {
                             class="wf-right wf-padding-add-top-small"><?php esc_html_e('then set a cookie that will bypass country blocking in future in case that user hits the site from a blocked country.', 'wordfence'); ?></td>
                     </tr>
                 </table>
-				<script type="application/javascript">
-					(function($) {
-						$(function() {
-							$('#wf-bypass-view-url').on('change paste keyup', function() {
-								setTimeout(function() {
-									var option = $('#wf-bypass-view-url').data('option');
-									var value = $('#wf-bypass-view-url').val();
-			
-									var originalValue = $('#wf-bypass-view-url').data('originalValue');
-									if (originalValue == value) {
-										delete WFAD.pendingChanges[option];
-									}
-									else {
-										WFAD.pendingChanges[option] = value;
-									}
-			
-									WFAD.updatePendingChanges();
-								}, 4);
-							});
-		
-							$(window).on('wfOptionsReset', function() {
-								$('#wf-bypass-view-url').each(function() {
-									var originalValue = $(this).data('originalValue');
-									$(this).val(originalValue);
-								});
-							});
-						});
-					})(jQuery);
-				</script>
-			</li>
-		</ul>
-	</li>
+                <script type="application/javascript">
+                    (function ($) {
+                        $(function () {
+                            $('#wf-bypass-view-url').on('change paste keyup', function () {
+                                setTimeout(function () {
+                                    var option = $('#wf-bypass-view-url').data('option');
+                                    var value = $('#wf-bypass-view-url').val();
+
+                                    var originalValue = $('#wf-bypass-view-url').data('originalValue');
+                                    if (originalValue == value) {
+                                        delete WFAD.pendingChanges[option];
+                                    } else {
+                                        WFAD.pendingChanges[option] = value;
+                                    }
+
+                                    WFAD.updatePendingChanges();
+                                }, 4);
+                            });
+
+                            $(window).on('wfOptionsReset', function () {
+                                $('#wf-bypass-view-url').each(function () {
+                                    var originalValue = $(this).data('originalValue');
+                                    $(this).val(originalValue);
+                                });
+                            });
+                        });
+                    })(jQuery);
+                </script>
+            </li>
+        </ul>
+    </li>
 </ul>

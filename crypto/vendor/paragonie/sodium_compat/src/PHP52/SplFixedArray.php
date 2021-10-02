@@ -31,6 +31,29 @@ class SplFixedArray implements Iterator, ArrayAccess, Countable
     }
 
     /**
+     * @param array $array
+     * @param bool $save_indexes
+     * @return SplFixedArray
+     * @psalm-suppress MixedAssignment
+     */
+    public static function fromArray(array $array, $save_indexes = true)
+    {
+        $self = new SplFixedArray(count($array));
+        if ($save_indexes) {
+            foreach ($array as $key => $value) {
+                $self[(int)$key] = $value;
+            }
+        } else {
+            $i = 0;
+            foreach (array_values($array) as $value) {
+                $self[$i] = $value;
+                $i++;
+            }
+        }
+        return $self;
+    }
+
+    /**
      * @return int
      */
     public function count()
@@ -44,30 +67,7 @@ class SplFixedArray implements Iterator, ArrayAccess, Countable
     public function toArray()
     {
         ksort($this->internalArray);
-        return (array) $this->internalArray;
-    }
-
-    /**
-     * @param array $array
-     * @param bool $save_indexes
-     * @return SplFixedArray
-     * @psalm-suppress MixedAssignment
-     */
-    public static function fromArray(array $array, $save_indexes = true)
-    {
-        $self = new SplFixedArray(count($array));
-        if($save_indexes) {
-            foreach($array as $key => $value) {
-                $self[(int) $key] = $value;
-            }
-        } else {
-            $i = 0;
-            foreach (array_values($array) as $value) {
-                $self[$i] = $value;
-                $i++;
-            }
-        }
-        return $self;
+        return (array)$this->internalArray;
     }
 
     /**
@@ -94,7 +94,7 @@ class SplFixedArray implements Iterator, ArrayAccess, Countable
      */
     public function offsetExists($index)
     {
-        return array_key_exists((int) $index, $this->internalArray);
+        return array_key_exists((int)$index, $this->internalArray);
     }
 
     /**
@@ -103,7 +103,7 @@ class SplFixedArray implements Iterator, ArrayAccess, Countable
      */
     public function offsetGet($index)
     {
-        return $this->internalArray[(int) $index];
+        return $this->internalArray[(int)$index];
     }
 
     /**
@@ -113,7 +113,7 @@ class SplFixedArray implements Iterator, ArrayAccess, Countable
      */
     public function offsetSet($index, $newval)
     {
-        $this->internalArray[(int) $index] = $newval;
+        $this->internalArray[(int)$index] = $newval;
     }
 
     /**
@@ -121,7 +121,7 @@ class SplFixedArray implements Iterator, ArrayAccess, Countable
      */
     public function offsetUnset($index)
     {
-        unset($this->internalArray[(int) $index]);
+        unset($this->internalArray[(int)$index]);
     }
 
     /**

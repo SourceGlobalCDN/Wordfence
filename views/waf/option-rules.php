@@ -27,41 +27,39 @@ if (!defined('WORDFENCE_VERSION')) {
 
                         WFAD.wafUpdateRules();
                     });
-			})(jQuery);
-		<?php
-		try {
-			$lastUpdated = wfWAF::getInstance()->getStorageEngine()->getConfig('rulesLastUpdated', null, 'transient');
-			
-			$nextUpdate = PHP_INT_MAX;
-			$cron = (array) wfWAF::getInstance()->getStorageEngine()->getConfig('cron', null, 'livewaf');
-			if (is_array($cron)) {
-				/** @var wfWAFCronEvent $event */
-				foreach ($cron as $index => $event) {
-					if ($event instanceof wfWAFCronFetchRulesEvent) {
-						$event->setWaf(wfWAF::getInstance());
-						if (!$event->isInPast()) {
-							$nextUpdate = min($nextUpdate, $event->getFireTime());
-						}
-					}
-				}
-			}
-		}
-		catch (wfWAFStorageFileException $e) {
-			error_log($e->getMessage());
-		}
-		catch (wfWAFStorageEngineMySQLiException $e) {
-			error_log($e->getMessage());
-		}
-		if (!empty($lastUpdated)): ?>
-			var lastUpdated = <?php echo (int) $lastUpdated ?>;
-			WFAD.renderWAFRulesLastUpdated(new Date(lastUpdated * 1000));
-		<?php endif ?>
-		
-		<?php if ($nextUpdate < PHP_INT_MAX): ?>
-			var nextUpdate = <?php echo (int) $nextUpdate ?>;
-			WFAD.renderWAFRulesNextUpdate(new Date(nextUpdate * 1000));
-		<?php endif ?>
-		</script>
-	</li>
-	<?php endif ?>
+                })(jQuery);
+                <?php
+                try {
+                    $lastUpdated = wfWAF::getInstance()->getStorageEngine()->getConfig('rulesLastUpdated', null, 'transient');
+
+                    $nextUpdate = PHP_INT_MAX;
+                    $cron = (array)wfWAF::getInstance()->getStorageEngine()->getConfig('cron', null, 'livewaf');
+                    if (is_array($cron)) {
+                        /** @var wfWAFCronEvent $event */
+                        foreach ($cron as $index => $event) {
+                            if ($event instanceof wfWAFCronFetchRulesEvent) {
+                                $event->setWaf(wfWAF::getInstance());
+                                if (!$event->isInPast()) {
+                                    $nextUpdate = min($nextUpdate, $event->getFireTime());
+                                }
+                            }
+                        }
+                    }
+                } catch (wfWAFStorageFileException $e) {
+                    error_log($e->getMessage());
+                } catch (wfWAFStorageEngineMySQLiException $e) {
+                    error_log($e->getMessage());
+                }
+                if (!empty($lastUpdated)): ?>
+                var lastUpdated = <?php echo (int)$lastUpdated ?>;
+                WFAD.renderWAFRulesLastUpdated(new Date(lastUpdated * 1000));
+                <?php endif ?>
+
+                <?php if ($nextUpdate < PHP_INT_MAX): ?>
+                var nextUpdate = <?php echo (int)$nextUpdate ?>;
+                WFAD.renderWAFRulesNextUpdate(new Date(nextUpdate * 1000));
+                <?php endif ?>
+            </script>
+        </li>
+    <?php endif ?>
 </ul>

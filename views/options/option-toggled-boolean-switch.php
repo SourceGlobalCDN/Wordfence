@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents a boolean option with a switch toggle control.
  *
@@ -17,7 +19,7 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (isset($subtitle) && !isset($subtitleHTML)) {
-	$subtitleHTML = esc_html($subtitle);
+    $subtitleHTML = esc_html($subtitle);
 }
 
 $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $optionName);

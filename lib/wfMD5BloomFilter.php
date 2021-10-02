@@ -30,104 +30,137 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // Modified for PHP 5.2 compatibility and to support serialization.
 
-class wfMD5BloomFilter {
-	private static function merge($bf1,$bf2,$bfout,$union = false){
-		if ($bf1->m != $bf2->m) throw new Exception('Unable to merge due to vector difference.');
-		if ($bf1->k != $bf2->k) throw new Exception('Unable to merge due to hash count difference.');
-		$length = strlen($bfout->bit_array);
-		if ($union){
-			$bfout->bit_array = $bf1->bit_array | $bf2->bit_array;
-			$bfout->n = $bf1->n + $bf2->n;
-		} else {
-			$bfout->bit_array = $bf1->bit_array & $bf2->bit_array;
-			$bfout->n = abs($bf1->n - $bf2->n);
-		}
-	}
-	public static function createFromProbability($n, $p){
-		if ($p <= 0 || $p >= 1) throw new Exception('Invalid false positive rate requested.');
-		if ($n <= 0) throw new Exception('Invalid capacity requested.');
-		$k = floor(log(1/$p,2));
-		$m = pow(2,ceil(log(-$n*log($p)/pow(log(2),2),2))); //approximate estimator method
-		return new self($m,$k);
-	}
-	public static function getUnion($bf1,$bf2){
-		$bf = new self($bf1->m,$bf1->k,$bf1->hash);
-		self::merge($bf1,$bf2,$bf,true);
-		return $bf;
-	}
-	public static function getIntersection($bf1,$bf2){
-		$bf = new self($bf1->m,$bf1->k,$bf1->hash);
-		self::merge($bf1,$bf2,$bf,false);
-		return $bf;
-	}
-	private $n = 0; // # of entries
-	private $m; // # of bits in array
-	private $k; // # of hash functions
-	private $k2;
-	private $mask;
-	private $bit_array; // data structure
-	public function __construct($m, $k){
-		if ($m < 8) throw new Exception('The bit array length must be at least 8 bits.');
-		if (($m & ($m - 1)) !== 0) throw new Exception('The bit array length must be power of 2.');
-		if ($m > 65536) throw new Exception('The maximum data structure size is 8KB.');
-		if ($k > 8) throw new Exception('The maximum bits to set is 8.');
-		$this->m = $m;
-		$this->k = $k;
-		$this->k2 = $k * 2;
-		$address_bits = (int)log($m,2);
-		$this->mask = (1 << $address_bits) - 8;
-		$this->bit_array = (binary)(str_repeat("\0",$this->getArraySize(true)));
-	}
-	public function __sleep() {
-		return array('n', 'm', 'k', 'k2', 'mask', 'bit_array');
-	}
-	public function calculateProbability($n = 0){
-		return pow(1-pow(1-1/$this->m,$this->k*($n ? $n : $this->n)),$this->k);
-	}
-	public function calculateCapacity($p){
-		return floor($this->m*log(2)/log($p,1-pow(1-1/$this->m,$this->m*log(2))));
-	}
-	public function getElementCount(){
-		return $this->n;
-	}
-	public function getArraySize($bytes = false){
-		return $this->m >> ($bytes ? 3 : 0);
-	}
-	public function getHashCount(){
-		return $this->k;
-	}
-	public function getInfo($p = null){
-		$units = array('','K','M','G','T','P','E','Z','Y');
-		$M = $this->getArraySize(true);
-		$magnitude = intval(floor(log($M,1024)));
-		$unit = $units[$magnitude];
-		$M /= pow(1024,$magnitude);
-		return 'Allocated '.$this->getArraySize().' bits ('.$M.' '.$unit.'Bytes)'.PHP_EOL.
-		'Using '.$this->getHashCount(). ' (16b) hashes'.PHP_EOL.
-		'Contains '.$this->getElementCount().' elements'.PHP_EOL.
-		(isset($p) ? 'Capacity of '.number_format($this->calculateCapacity($p)).' (p='.$p.')'.PHP_EOL : '');
-	}
-	public function add($key){
-		$hash = md5($key,true);
-		for ($index = 0; $index < $this->k2; $index++){
-			$hash_sub = (ord($hash[$index++]) << 8) | ord($hash[$index]);
-			$word = ($hash_sub & $this->mask) >> 3;
-			$this->bit_array[$word] = $this->bit_array[$word] | chr(1 << ($hash_sub & 7));
-		}
-		$this->n++;
-	}
-	public function contains($key){
-		$hash = md5($key,true);
-		for ($index = 0; $index < $this->k2; $index++){
-			$hash_sub = (ord($hash[$index++]) << 8) | ord($hash[$index]);
-			if ((ord($this->bit_array[($hash_sub & $this->mask) >> 3]) & (1 << ($hash_sub & 7))) === 0) return false;
-		}
-		return true;
-	}
-	public function unionWith($bf){
-		self::merge($this,$bf,$this,true);
-	}
-	public function intersectWith($bf){
-		self::merge($this,$bf,$this,false);
-	}
+class wfMD5BloomFilter
+{
+    private $n = 0;
+    private $m;
+    private $k;
+    private $k2;
+    private $mask; // # of entries
+    private $bit_array; // # of bits in array
+
+    public function __construct($m, $k)
+    {
+        if ($m < 8) throw new Exception('The bit array length must be at least 8 bits.');
+        if (($m & ($m - 1)) !== 0) throw new Exception('The bit array length must be power of 2.');
+        if ($m > 65536) throw new Exception('The maximum data structure size is 8KB.');
+        if ($k > 8) throw new Exception('The maximum bits to set is 8.');
+        $this->m = $m;
+        $this->k = $k;
+        $this->k2 = $k * 2;
+        $address_bits = (int)log($m, 2);
+        $this->mask = (1 << $address_bits) - 8;
+        $this->bit_array = (binary)(str_repeat("\0", $this->getArraySize(true)));
+    } // # of hash functions
+
+    public function getArraySize($bytes = false)
+    {
+        return $this->m >> ($bytes ? 3 : 0);
+    }
+
+    public static function createFromProbability($n, $p)
+    {
+        if ($p <= 0 || $p >= 1) throw new Exception('Invalid false positive rate requested.');
+        if ($n <= 0) throw new Exception('Invalid capacity requested.');
+        $k = floor(log(1 / $p, 2));
+        $m = pow(2, ceil(log(-$n * log($p) / pow(log(2), 2), 2))); //approximate estimator method
+        return new self($m, $k);
+    }
+
+    public static function getUnion($bf1, $bf2)
+    {
+        $bf = new self($bf1->m, $bf1->k, $bf1->hash);
+        self::merge($bf1, $bf2, $bf, true);
+        return $bf;
+    } // data structure
+
+    private static function merge($bf1, $bf2, $bfout, $union = false)
+    {
+        if ($bf1->m != $bf2->m) throw new Exception('Unable to merge due to vector difference.');
+        if ($bf1->k != $bf2->k) throw new Exception('Unable to merge due to hash count difference.');
+        $length = strlen($bfout->bit_array);
+        if ($union) {
+            $bfout->bit_array = $bf1->bit_array | $bf2->bit_array;
+            $bfout->n = $bf1->n + $bf2->n;
+        } else {
+            $bfout->bit_array = $bf1->bit_array & $bf2->bit_array;
+            $bfout->n = abs($bf1->n - $bf2->n);
+        }
+    }
+
+    public static function getIntersection($bf1, $bf2)
+    {
+        $bf = new self($bf1->m, $bf1->k, $bf1->hash);
+        self::merge($bf1, $bf2, $bf, false);
+        return $bf;
+    }
+
+    public function __sleep()
+    {
+        return array('n', 'm', 'k', 'k2', 'mask', 'bit_array');
+    }
+
+    public function calculateProbability($n = 0)
+    {
+        return pow(1 - pow(1 - 1 / $this->m, $this->k * ($n ? $n : $this->n)), $this->k);
+    }
+
+    public function getInfo($p = null)
+    {
+        $units = array('', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y');
+        $M = $this->getArraySize(true);
+        $magnitude = intval(floor(log($M, 1024)));
+        $unit = $units[$magnitude];
+        $M /= pow(1024, $magnitude);
+        return 'Allocated ' . $this->getArraySize() . ' bits (' . $M . ' ' . $unit . 'Bytes)' . PHP_EOL .
+            'Using ' . $this->getHashCount() . ' (16b) hashes' . PHP_EOL .
+            'Contains ' . $this->getElementCount() . ' elements' . PHP_EOL .
+            (isset($p) ? 'Capacity of ' . number_format($this->calculateCapacity($p)) . ' (p=' . $p . ')' . PHP_EOL : '');
+    }
+
+    public function getHashCount()
+    {
+        return $this->k;
+    }
+
+    public function getElementCount()
+    {
+        return $this->n;
+    }
+
+    public function calculateCapacity($p)
+    {
+        return floor($this->m * log(2) / log($p, 1 - pow(1 - 1 / $this->m, $this->m * log(2))));
+    }
+
+    public function add($key)
+    {
+        $hash = md5($key, true);
+        for ($index = 0; $index < $this->k2; $index++) {
+            $hash_sub = (ord($hash[$index++]) << 8) | ord($hash[$index]);
+            $word = ($hash_sub & $this->mask) >> 3;
+            $this->bit_array[$word] = $this->bit_array[$word] | chr(1 << ($hash_sub & 7));
+        }
+        $this->n++;
+    }
+
+    public function contains($key)
+    {
+        $hash = md5($key, true);
+        for ($index = 0; $index < $this->k2; $index++) {
+            $hash_sub = (ord($hash[$index++]) << 8) | ord($hash[$index]);
+            if ((ord($this->bit_array[($hash_sub & $this->mask) >> 3]) & (1 << ($hash_sub & 7))) === 0) return false;
+        }
+        return true;
+    }
+
+    public function unionWith($bf)
+    {
+        self::merge($this, $bf, $this, true);
+    }
+
+    public function intersectWith($bf)
+    {
+        self::merge($this, $bf, $this, false);
+    }
 }

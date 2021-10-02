@@ -1,21 +1,27 @@
-<?php if (!defined('WORDFENCE_VERSION')) { exit; } ?>
+<?php if (!defined('WORDFENCE_VERSION')) {
+    exit;
+} ?>
 <div class="wf-row">
-	<div class="wf-col-xs-12">
-		<div class="wf-dashboard-item active">
-			<div class="wf-dashboard-item-inner">
-				<div class="wf-dashboard-item-content">
-					<div class="wf-dashboard-item-title">
-						<strong><?php esc_html_e('Total Attacks Blocked:', 'wordfence'); ?> </strong><?php esc_html_e('Wordfence Network', 'wordfence'); ?>
-					</div>
-					<div class="wf-dashboard-item-action"><div class="wf-dashboard-item-action-disclosure"></div></div>
-				</div>
-			</div>
-			<div class="wf-dashboard-item-extra">
-				<ul class="wf-dashboard-item-list">
-					<li>
-						<?php if ($d->networkBlock24h === null): ?>
-							<div class="wf-dashboard-item-list-text"><p><em><?php esc_html_e('Blocked attack counts not available yet.', 'wordfence'); ?></em></p></div>
-						<?php else: ?>
+    <div class="wf-col-xs-12">
+        <div class="wf-dashboard-item active">
+            <div class="wf-dashboard-item-inner">
+                <div class="wf-dashboard-item-content">
+                    <div class="wf-dashboard-item-title">
+                        <strong><?php esc_html_e('Total Attacks Blocked:', 'wordfence'); ?> </strong><?php esc_html_e('Wordfence Network', 'wordfence'); ?>
+                    </div>
+                    <div class="wf-dashboard-item-action">
+                        <div class="wf-dashboard-item-action-disclosure"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="wf-dashboard-item-extra">
+                <ul class="wf-dashboard-item-list">
+                    <li>
+                        <?php if ($d->networkBlock24h === null): ?>
+                            <div class="wf-dashboard-item-list-text"><p>
+                                    <em><?php esc_html_e('Blocked attack counts not available yet.', 'wordfence'); ?></em>
+                                </p></div>
+                        <?php else: ?>
                             <div class="wf-dashboard-graph-wrapper">
                                 <div class="wf-dashboard-toggle-btns">
                                     <ul class="wf-pagination wf-pagination-sm">
@@ -61,162 +67,162 @@
 																		pointHitRadius: 10,
 																		spanGaps: false,
 STYLING;
-								
-								?>
-								(function($) {
-									$(document).ready(function() {
-										new Chart($('#wf-dashboard-network-blocks-24h'), {
-											type: 'line',
-											data: {
-												<?php
-												$blocks = $d->networkBlock24h;
-												$labels = array();
-												$values = array();
-												
-												foreach ($blocks as $b) {
-													$values[] = $b['c'];
-													$labels[] = "'" . wfUtils::formatLocalTime('g a', $b['t']) . "'";
-												}
-												?>
-												labels: [<?php echo implode(',', $labels); ?>],
-												datasets: [
-													{
-														<?php echo $styling; ?>
-														data: [<?php echo implode(',', $values) ?>]
-													}
-												]
-											},
-											options: {
-												scales: {
-													yAxes: [{
-														ticks: {
-															beginAtZero: true,
-															callback: function(value, index, values) {
-																return value.toLocaleString();
-															}
-														}
-													}]
-												},
-												tooltips: {
-													callbacks: {
-														label: function(tooltipItem, data) {
-															var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || 'Other';
-															var label = parseInt(tooltipItem.yLabel).toLocaleString();
-															return datasetLabel + ': ' + label;
-														}
-													}
-												}
-											}
-										});
 
-										new Chart($('#wf-dashboard-network-blocks-7d'), {
-											type: 'line',
-											data: {
-												<?php
-												$blocks = $d->networkBlock7d;
-												$labels = array();
-												$values = array();
-												
-												foreach ($blocks as $b) {
-													$values[] = $b['c'];
-													$labels[] = "'" . wfUtils::formatLocalTime('M j', $b['t']) . "'";
-												}
-												?>
-												labels: [<?php echo implode(',', $labels); ?>],
-												datasets: [
-													{
-														<?php echo $styling; ?>
-														data: [<?php echo implode(',', $values) ?>]
-													}
-												]
-											},
-											options: {
-												scales: {
-													yAxes: [{
-														ticks: {
-															beginAtZero: true,
-															callback: function(value, index, values) {
-																return value.toLocaleString();
-															}
-														}
-													}]
-												},
-												tooltips: {
-													callbacks: {
-														label: function(tooltipItem, data) {
-															var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || 'Other';
-															var label = parseInt(tooltipItem.yLabel).toLocaleString();
-															return datasetLabel + ': ' + label;
-														}
-													}
-												}
-											}
-										});
+                                ?>
+                                (function ($) {
+                                    $(document).ready(function () {
+                                        new Chart($('#wf-dashboard-network-blocks-24h'), {
+                                            type: 'line',
+                                            data: {
+                                                <?php
+                                                $blocks = $d->networkBlock24h;
+                                                $labels = array();
+                                                $values = array();
 
-										new Chart($('#wf-dashboard-network-blocks-30d'), {
-											type: 'line',
-											data: {
-												<?php
-												$blocks = $d->networkBlock30d;
-												$labels = array();
-												$values = array();
-												
-												foreach ($blocks as $b) {
-													$values[] = $b['c'];
-													$labels[] = "'" . wfUtils::formatLocalTime('M j', $b['t']) . "'";
-												}
-												?>
-												labels: [<?php echo implode(',', $labels); ?>],
-												datasets: [
-													{
-														<?php echo $styling; ?>
-														data: [<?php echo implode(',', $values) ?>]
-													}
-												]
-											},
-											options: {
-												scales: {
-													yAxes: [{
-														ticks: {
-															beginAtZero: true,
-															callback: function(value, index, values) {
-																return value.toLocaleString();
-															}
-														}
-													}]
-												},
-												tooltips: {
-													callbacks: {
-														label: function(tooltipItem, data) {
-															var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || 'Other';
-															var label = parseInt(tooltipItem.yLabel).toLocaleString();
-															return datasetLabel + ': ' + label;
-														}
-													}
-												}
-											}
-										});
-									});
-									
-									$('.wf-dashboard-graph-attacks').on('click', function(e) {
-										e.preventDefault();
-										e.stopPropagation();
+                                                foreach ($blocks as $b) {
+                                                    $values[] = $b['c'];
+                                                    $labels[] = "'" . wfUtils::formatLocalTime('g a', $b['t']) . "'";
+                                                }
+                                                ?>
+                                                labels: [<?php echo implode(',', $labels); ?>],
+                                                datasets: [
+                                                    {
+                                                        <?php echo $styling; ?>
+                                                        data: [<?php echo implode(',', $values) ?>]
+                                                    }
+                                                ]
+                                            },
+                                            options: {
+                                                scales: {
+                                                    yAxes: [{
+                                                        ticks: {
+                                                            beginAtZero: true,
+                                                            callback: function (value, index, values) {
+                                                                return value.toLocaleString();
+                                                            }
+                                                        }
+                                                    }]
+                                                },
+                                                tooltips: {
+                                                    callbacks: {
+                                                        label: function (tooltipItem, data) {
+                                                            var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || 'Other';
+                                                            var label = parseInt(tooltipItem.yLabel).toLocaleString();
+                                                            return datasetLabel + ': ' + label;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        });
 
-										$(this).closest('ul').find('li').removeClass('wf-active');
-										$(this).closest('li').addClass('wf-active');
+                                        new Chart($('#wf-dashboard-network-blocks-7d'), {
+                                            type: 'line',
+                                            data: {
+                                                <?php
+                                                $blocks = $d->networkBlock7d;
+                                                $labels = array();
+                                                $values = array();
 
-										$('.wf-dashboard-network-blocks').addClass('wf-hidden');
-										$('#wf-dashboard-network-blocks-' + $(this).data('grouping')).closest('.wf-dashboard-network-blocks').removeClass('wf-hidden');
-									});
-								})(jQuery);
-							</script>
-						<?php endif; ?>
-					</li>
-				</ul>
-				<p class="wf-dashboard-last-updated"><?php echo esc_html(sprintf(
-					/* translators: Time since. Example: 1 minute, 2 seconds */
-						__('Last Updated: %s ago', 'wordfence'), wfUtils::makeTimeAgo(time() - $d->lastGenerated))); ?></p>
-			</div>
-		</div>
-	</div>
+                                                foreach ($blocks as $b) {
+                                                    $values[] = $b['c'];
+                                                    $labels[] = "'" . wfUtils::formatLocalTime('M j', $b['t']) . "'";
+                                                }
+                                                ?>
+                                                labels: [<?php echo implode(',', $labels); ?>],
+                                                datasets: [
+                                                    {
+                                                        <?php echo $styling; ?>
+                                                        data: [<?php echo implode(',', $values) ?>]
+                                                    }
+                                                ]
+                                            },
+                                            options: {
+                                                scales: {
+                                                    yAxes: [{
+                                                        ticks: {
+                                                            beginAtZero: true,
+                                                            callback: function (value, index, values) {
+                                                                return value.toLocaleString();
+                                                            }
+                                                        }
+                                                    }]
+                                                },
+                                                tooltips: {
+                                                    callbacks: {
+                                                        label: function (tooltipItem, data) {
+                                                            var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || 'Other';
+                                                            var label = parseInt(tooltipItem.yLabel).toLocaleString();
+                                                            return datasetLabel + ': ' + label;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        });
+
+                                        new Chart($('#wf-dashboard-network-blocks-30d'), {
+                                            type: 'line',
+                                            data: {
+                                                <?php
+                                                $blocks = $d->networkBlock30d;
+                                                $labels = array();
+                                                $values = array();
+
+                                                foreach ($blocks as $b) {
+                                                    $values[] = $b['c'];
+                                                    $labels[] = "'" . wfUtils::formatLocalTime('M j', $b['t']) . "'";
+                                                }
+                                                ?>
+                                                labels: [<?php echo implode(',', $labels); ?>],
+                                                datasets: [
+                                                    {
+                                                        <?php echo $styling; ?>
+                                                        data: [<?php echo implode(',', $values) ?>]
+                                                    }
+                                                ]
+                                            },
+                                            options: {
+                                                scales: {
+                                                    yAxes: [{
+                                                        ticks: {
+                                                            beginAtZero: true,
+                                                            callback: function (value, index, values) {
+                                                                return value.toLocaleString();
+                                                            }
+                                                        }
+                                                    }]
+                                                },
+                                                tooltips: {
+                                                    callbacks: {
+                                                        label: function (tooltipItem, data) {
+                                                            var datasetLabel = data.datasets[tooltipItem.datasetIndex].label || 'Other';
+                                                            var label = parseInt(tooltipItem.yLabel).toLocaleString();
+                                                            return datasetLabel + ': ' + label;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    });
+
+                                    $('.wf-dashboard-graph-attacks').on('click', function (e) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+
+                                        $(this).closest('ul').find('li').removeClass('wf-active');
+                                        $(this).closest('li').addClass('wf-active');
+
+                                        $('.wf-dashboard-network-blocks').addClass('wf-hidden');
+                                        $('#wf-dashboard-network-blocks-' + $(this).data('grouping')).closest('.wf-dashboard-network-blocks').removeClass('wf-hidden');
+                                    });
+                                })(jQuery);
+                            </script>
+                        <?php endif; ?>
+                    </li>
+                </ul>
+                <p class="wf-dashboard-last-updated"><?php echo esc_html(sprintf(
+                    /* translators: Time since. Example: 1 minute, 2 seconds */
+                        __('Last Updated: %s ago', 'wordfence'), wfUtils::makeTimeAgo(time() - $d->lastGenerated))); ?></p>
+            </div>
+        </div>
+    </div>
 </div>

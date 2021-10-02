@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents a text area option.
  *
@@ -14,16 +16,18 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (!isset($subtitleHTML) && isset($subtitle)) {
-	$subtitleHTML = esc_html($subtitle);
+    $subtitleHTML = esc_html($subtitle);
 }
 
 if (!isset($subtitlePosition)) { //May be 'title' to appear below the title or 'value' to appear below the field
-	$subtitlePosition = 'title';
+    $subtitlePosition = 'title';
 }
 
 $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $textOptionName);
 ?>
-<ul id="<?php echo esc_attr($id); ?>" class="wf-option wf-option-textarea<?php if (!wfConfig::p() && isset($premium) && $premium) { echo ' wf-option-premium'; } ?>" data-text-option="<?php echo esc_attr($textOptionName); ?>" data-original-text-value="<?php echo esc_attr($textValue); ?>">
+<ul id="<?php echo esc_attr($id); ?>" class="wf-option wf-option-textarea<?php if (!wfConfig::p() && isset($premium) && $premium) {
+    echo ' wf-option-premium';
+} ?>" data-text-option="<?php echo esc_attr($textOptionName); ?>" data-original-text-value="<?php echo esc_attr($textValue); ?>">
     <?php if (!isset($noSpacer) || !$noSpacer): ?>
         <li class="wf-option-spacer"></li>
     <?php endif; ?>
@@ -51,14 +55,14 @@ $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $textOptionName);
                 <?php if (isset($subtitleHTML) && $subtitlePosition == 'value'): ?>
                 <ul class="wf-flex-vertical wf-flex-align-left wf-flex-full-width">
                     <li>
-				<?php endif; ?>
-				<textarea<?php echo (!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' disabled'); ?> aria-labelledby="<?php echo esc_attr($id); ?>-label"><?php echo esc_html($textValue); ?></textarea>
-				<?php if (isset($subtitleHTML) && $subtitlePosition == 'value'): ?>
-					</li>
-					<li class="wf-option-subtitle"><?php echo $subtitleHTML; ?></li>
-				</ul>
-				<?php endif; ?>
-			</li>
-		</ul>
-	</li>
+                        <?php endif; ?>
+                        <textarea<?php echo(!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' disabled'); ?> aria-labelledby="<?php echo esc_attr($id); ?>-label"><?php echo esc_html($textValue); ?></textarea>
+                        <?php if (isset($subtitleHTML) && $subtitlePosition == 'value'): ?>
+                    </li>
+                    <li class="wf-option-subtitle"><?php echo $subtitleHTML; ?></li>
+                </ul>
+            <?php endif; ?>
+            </li>
+        </ul>
+    </li>
 </ul>

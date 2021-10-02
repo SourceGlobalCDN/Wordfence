@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Expects $title (or $titleHTML) and $stateKeys to be defined.
  *
@@ -9,16 +11,16 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (isset($title) && !isset($titleHTML)) {
-	$titleHTML = esc_html($title);
+    $titleHTML = esc_html($title);
 }
 
 if (isset($helpLabel) && !isset($helpLabelHTML)) {
-	$helpLabelHTML = esc_html($helpLabel);
+    $helpLabelHTML = esc_html($helpLabel);
 }
 
 $expanded = true;
 foreach ($stateKeys as $k) {
-	if (!wfPersistenceController::shared()->isActive($k)) {
+    if (!wfPersistenceController::shared()->isActive($k)) {
         $expanded = false;
         break;
     }
@@ -42,42 +44,51 @@ foreach ($stateKeys as $k) {
             $('.wf-toggle-all-sections').on('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-				
-				if ($(this).data('expanded') == 1) {
-					$('.wf-block[data-persistence-key]').each(function() {
-						var block = $(this);
-						if (block.hasClass('wf-active')) {
-							block.find('.wf-block-content').slideUp({
-								always: function() {
-									block.removeClass('wf-active');
-								}
-							});
-						}
-					});
 
-					WFAD.ajax('wordfence_saveDisclosureState', {names: <?php echo json_encode($stateKeys) ?>, state: false}, function() {}, function() {}, true);
-					
-					$(this).data('expanded', 0);
-					$('.wf-toggle-all-sections').text($('.wf-toggle-all-sections').data('collapsedTitle'));
-				}
-				else {
-					$('.wf-block[data-persistence-key]').each(function() {
-						var block = $(this);
-						if (!block.hasClass('wf-active')) {
-							block.find('.wf-block-content').slideDown({
-								always: function() {
-									block.addClass('wf-active');
-								}
-							});
-						}
-					});
+                if ($(this).data('expanded') == 1) {
+                    $('.wf-block[data-persistence-key]').each(function () {
+                        var block = $(this);
+                        if (block.hasClass('wf-active')) {
+                            block.find('.wf-block-content').slideUp({
+                                always: function () {
+                                    block.removeClass('wf-active');
+                                }
+                            });
+                        }
+                    });
 
-					WFAD.ajax('wordfence_saveDisclosureState', {names: <?php echo json_encode($stateKeys) ?>, state: true}, function() {}, function() {}, true);
-					
-					$(this).data('expanded', 1);
-					$('.wf-toggle-all-sections').text($('.wf-toggle-all-sections').data('expandedTitle'));
-				}
-			});
-		});
-	})(jQuery);
+                    WFAD.ajax('wordfence_saveDisclosureState', {
+                        names: <?php echo json_encode($stateKeys) ?>,
+                        state: false
+                    }, function () {
+                    }, function () {
+                    }, true);
+
+                    $(this).data('expanded', 0);
+                    $('.wf-toggle-all-sections').text($('.wf-toggle-all-sections').data('collapsedTitle'));
+                } else {
+                    $('.wf-block[data-persistence-key]').each(function () {
+                        var block = $(this);
+                        if (!block.hasClass('wf-active')) {
+                            block.find('.wf-block-content').slideDown({
+                                always: function () {
+                                    block.addClass('wf-active');
+                                }
+                            });
+                        }
+                    });
+
+                    WFAD.ajax('wordfence_saveDisclosureState', {
+                        names: <?php echo json_encode($stateKeys) ?>,
+                        state: true
+                    }, function () {
+                    }, function () {
+                    }, true);
+
+                    $(this).data('expanded', 1);
+                    $('.wf-toggle-all-sections').text($('.wf-toggle-all-sections').data('expandedTitle'));
+                }
+            });
+        });
+    })(jQuery);
 </script> 

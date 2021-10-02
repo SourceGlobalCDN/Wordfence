@@ -1,81 +1,82 @@
 <?php
 if (defined('WFWAF_VERSION') && !defined('WFWAF_RUN_COMPLETE')) {
 
-interface wfWAFStorageInterface {
-	const IP_BLOCKS_ALL = PHP_INT_MAX;
-	const IP_BLOCKS_SINGLE = 1; //1 << 0
-	const IP_BLOCKS_BLACKLIST = 2; //1 << 1
-	
-	public function hasPreviousAttackData($olderThan);
+    interface wfWAFStorageInterface
+    {
+        const IP_BLOCKS_ALL = PHP_INT_MAX;
+        const IP_BLOCKS_SINGLE = 1; //1 << 0
+        const IP_BLOCKS_BLACKLIST = 2; //1 << 1
 
-	public function hasNewerAttackData($newerThan);
+        public function hasPreviousAttackData($olderThan);
 
-	public function getAttackData();
+        public function hasNewerAttackData($newerThan);
 
-	public function getAttackDataArray();
+        public function getAttackData();
 
-	public function getNewestAttackDataArray($newerThan);
+        public function getAttackDataArray();
 
-	public function truncateAttackData();
+        public function getNewestAttackDataArray($newerThan);
 
-	/**
-	 * @param array $failedRules
-	 * @param string $failedParamKey
-	 * @param string $failedParamValue
-	 * @param wfWAFRequestInterface $request
-	 * @param mixed $_
-	 * @return mixed
-	 */
-	public function logAttack($failedRules, $failedParamKey, $failedParamValue, $request, $_ = null);
+        public function truncateAttackData();
 
-	/**
-	 * @param int $timestamp
-	 * @param string $ip
-	 * @param bool $ssl
-	 * @param array $failedRuleIDs
-	 * @param wfWAFRequestInterface|string $request
-	 * @param mixed $_
-	 * @return mixed
-	 */
+        /**
+         * @param array $failedRules
+         * @param string $failedParamKey
+         * @param string $failedParamValue
+         * @param wfWAFRequestInterface $request
+         * @param mixed $_
+         * @return mixed
+         */
+        public function logAttack($failedRules, $failedParamKey, $failedParamValue, $request, $_ = null);
+
+        /**
+         * @param int $timestamp
+         * @param string $ip
+         * @param bool $ssl
+         * @param array $failedRuleIDs
+         * @param wfWAFRequestInterface|string $request
+         * @param mixed $_
+         * @return mixed
+         */
 //	public function logAttack($timestamp, $ip, $ssl, $failedRuleIDs, $request, $_ = null);
 
-	/**
-	 * @param float $timestamp
-	 * @param string $ip
-	 * @return mixed
-	 */
-	public function blockIP($timestamp, $ip);
+        /**
+         * @param float $timestamp
+         * @param string $ip
+         * @return mixed
+         */
+        public function blockIP($timestamp, $ip);
 
-	public function isIPBlocked($ip);
-	
-	public function purgeIPBlocks($types = wfWAFStorageInterface::IP_BLOCKS_ALL);
+        public function isIPBlocked($ip);
 
-	public function getConfig($key, $default = null, $category = '');
+        public function purgeIPBlocks($types = wfWAFStorageInterface::IP_BLOCKS_ALL);
 
-	public function setConfig($key, $value, $category = '');
+        public function getConfig($key, $default = null, $category = '');
 
-	public function unsetConfig($key, $category = '');
+        public function setConfig($key, $value, $category = '');
 
-	public function uninstall();
-	
-	//optional public function fileList();
+        public function unsetConfig($key, $category = '');
 
-	public function isInLearningMode();
+        public function uninstall();
 
-	public function isDisabled();
+        //optional public function fileList();
 
-	public function getRulesDSLCacheFile();
+        public function isInLearningMode();
 
-	public function isAttackDataFull();
+        public function isDisabled();
 
-	public function vacuum();
+        public function getRulesDSLCacheFile();
 
-	public function getRules();
+        public function isAttackDataFull();
 
-	public function setRules($rules);
+        public function vacuum();
 
-	public function needsInitialRules();
+        public function getRules();
 
-	public function getDescription();
-}
+        public function setRules($rules);
+
+        public function needsInitialRules();
+
+        public function getDescription();
+    }
 }

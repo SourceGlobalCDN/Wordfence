@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents a text field option.
  *
@@ -14,7 +16,7 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (!isset($placeholder)) {
-	$placeholder = '';
+    $placeholder = '';
 }
 $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $textOptionName);
 ?>
@@ -48,5 +50,5 @@ $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $textOptionName);
                        aria-labelledby="<?php echo esc_attr($id); ?>-label">
             </li>
         </ul>
-	</li>
+    </li>
 </ul>

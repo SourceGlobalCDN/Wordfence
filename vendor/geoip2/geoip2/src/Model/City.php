@@ -64,10 +64,10 @@ class City extends Country
     protected $subdivisions = [];
 
     /**
-     * @ignore
-     *
      * @param mixed $raw
      * @param mixed $locales
+     * @ignore
+     *
      */
     public function __construct($raw, $locales = ['en'])
     {
@@ -95,9 +95,9 @@ class City extends Country
     }
 
     /**
+     * @param mixed $attr
      * @ignore
      *
-     * @param mixed $attr
      */
     public function __get($attr)
     {
@@ -109,9 +109,9 @@ class City extends Country
     }
 
     /**
+     * @param mixed $attr
      * @ignore
      *
-     * @param mixed $attr
      */
     public function __isset($attr)
     {

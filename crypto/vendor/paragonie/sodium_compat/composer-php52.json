@@ -47,7 +47,9 @@
     }
   ],
   "autoload": {
-    "files": ["autoload.php"]
+    "files": [
+      "autoload.php"
+    ]
   },
   "repositories": [
     {

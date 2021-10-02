@@ -27,9 +27,9 @@ abstract class ParagonIE_Sodium_Core_Util
         }
 
         $negative = -(($integer >> $size) & 1);
-        return (int) (
+        return (int)(
             ($integer ^ $negative)
-                +
+            +
             (($negative >> $realSize) & 1)
         );
     }
@@ -38,11 +38,11 @@ abstract class ParagonIE_Sodium_Core_Util
      * Convert a binary string into a hexadecimal string without cache-timing
      * leaks
      *
-     * @internal You should not use this directly from another application
-     *
      * @param string $binaryString (raw binary)
      * @return string
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function bin2hex($binaryString)
     {
@@ -70,14 +70,61 @@ abstract class ParagonIE_Sodium_Core_Util
     }
 
     /**
+     * Safe string length
+     *
+     * @param string $str
+     * @return int
+     * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
+     * @ref mbstring.func_overload
+     *
+     */
+    public static function strlen($str)
+    {
+        /* Type checks: */
+        if (!is_string($str)) {
+            throw new TypeError('String expected');
+        }
+
+        return (int)(
+        self::isMbStringOverride()
+            ? mb_strlen($str, '8bit')
+            : strlen($str)
+        );
+    }
+
+    /**
+     * Returns whether or not mbstring.func_overload is in effect.
+     *
+     * @return bool
+     * @internal You should not use this directly from another application
+     *
+     */
+    protected static function isMbStringOverride()
+    {
+        static $mbstring = null;
+
+        if ($mbstring === null) {
+            $mbstring = extension_loaded('mbstring')
+                && defined('MB_OVERLOAD_STRING')
+                &&
+                ((int)(ini_get('mbstring.func_overload')) & MB_OVERLOAD_STRING);
+        }
+        /** @var bool $mbstring */
+
+        return $mbstring;
+    }
+
+    /**
      * Convert a binary string into a hexadecimal string without cache-timing
      * leaks, returning uppercase letters (as per RFC 4648)
-     *
-     * @internal You should not use this directly from another application
      *
      * @param string $bin_string (raw binary)
      * @return string
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function bin2hexUpper($bin_string)
     {
@@ -115,33 +162,7 @@ abstract class ParagonIE_Sodium_Core_Util
     }
 
     /**
-     * Cache-timing-safe variant of ord()
-     *
-     * @internal You should not use this directly from another application
-     *
-     * @param string $chr
-     * @return int
-     * @throws SodiumException
-     * @throws TypeError
-     */
-    public static function chrToInt($chr)
-    {
-        /* Type checks: */
-        if (!is_string($chr)) {
-            throw new TypeError('Argument 1 must be a string, ' . gettype($chr) . ' given.');
-        }
-        if (self::strlen($chr) !== 1) {
-            throw new SodiumException('chrToInt() expects a string that is exactly 1 character long');
-        }
-        /** @var array<int, int> $chunk */
-        $chunk = unpack('C', $chr);
-        return (int) ($chunk[1]);
-    }
-
-    /**
      * Compares two strings.
-     *
-     * @internal You should not use this directly from another application
      *
      * @param string $left
      * @param string $right
@@ -149,6 +170,8 @@ abstract class ParagonIE_Sodium_Core_Util
      * @return int
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function compare($left, $right, $len = null)
     {
@@ -172,14 +195,38 @@ abstract class ParagonIE_Sodium_Core_Util
     }
 
     /**
+     * Cache-timing-safe variant of ord()
+     *
+     * @param string $chr
+     * @return int
+     * @throws SodiumException
+     * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
+     */
+    public static function chrToInt($chr)
+    {
+        /* Type checks: */
+        if (!is_string($chr)) {
+            throw new TypeError('Argument 1 must be a string, ' . gettype($chr) . ' given.');
+        }
+        if (self::strlen($chr) !== 1) {
+            throw new SodiumException('chrToInt() expects a string that is exactly 1 character long');
+        }
+        /** @var array<int, int> $chunk */
+        $chunk = unpack('C', $chr);
+        return (int)($chunk[1]);
+    }
+
+    /**
      * If a variable does not match a given type, throw a TypeError.
      *
      * @param mixed $mixedVar
      * @param string $type
      * @param int $argumentIndex
-     * @throws TypeError
-     * @throws SodiumException
      * @return void
+     * @throws SodiumException
+     * @throws TypeError
      */
     public static function declareScalarType(&$mixedVar = null, $type = 'void', $argumentIndex = 0)
     {
@@ -204,7 +251,7 @@ abstract class ParagonIE_Sodium_Core_Util
                 if (!in_array($type, $allow)) {
                     throw new TypeError('Argument ' . $argumentIndex . ' must be an integer, ' . $realType . ' given.');
                 }
-                $mixedVar = (int) $mixedVar;
+            $mixedVar = (int)$mixedVar;
                 break;
             case 'boolean':
             case 'bool':
@@ -212,13 +259,13 @@ abstract class ParagonIE_Sodium_Core_Util
                 if (!in_array($type, $allow)) {
                     throw new TypeError('Argument ' . $argumentIndex . ' must be a boolean, ' . $realType . ' given.');
                 }
-                $mixedVar = (bool) $mixedVar;
+            $mixedVar = (bool)$mixedVar;
                 break;
             case 'string':
                 if (!is_string($mixedVar)) {
                     throw new TypeError('Argument ' . $argumentIndex . ' must be a string, ' . $realType . ' given.');
                 }
-                $mixedVar = (string) $mixedVar;
+                $mixedVar = (string)$mixedVar;
                 break;
             case 'decimal':
             case 'double':
@@ -227,7 +274,7 @@ abstract class ParagonIE_Sodium_Core_Util
                 if (!in_array($type, $allow)) {
                     throw new TypeError('Argument ' . $argumentIndex . ' must be a float, ' . $realType . ' given.');
                 }
-                $mixedVar = (float) $mixedVar;
+            $mixedVar = (float)$mixedVar;
                 break;
             case 'object':
                 if (!is_object($mixedVar)) {
@@ -245,59 +292,21 @@ abstract class ParagonIE_Sodium_Core_Util
                 }
                 break;
             default:
-                throw new SodiumException('Unknown type (' . $realType .') does not match expect type (' . $type . ')');
+                throw new SodiumException('Unknown type (' . $realType . ') does not match expect type (' . $type . ')');
         }
-    }
-
-    /**
-     * Evaluate whether or not two strings are equal (in constant-time)
-     *
-     * @param string $left
-     * @param string $right
-     * @return bool
-     * @throws SodiumException
-     * @throws TypeError
-     */
-    public static function hashEquals($left, $right)
-    {
-        /* Type checks: */
-        if (!is_string($left)) {
-            throw new TypeError('Argument 1 must be a string, ' . gettype($left) . ' given.');
-        }
-        if (!is_string($right)) {
-            throw new TypeError('Argument 2 must be a string, ' . gettype($right) . ' given.');
-        }
-
-        if (is_callable('hash_equals')) {
-            return hash_equals($left, $right);
-        }
-        $d = 0;
-        /** @var int $len */
-        $len = self::strlen($left);
-        if ($len !== self::strlen($right)) {
-            return false;
-        }
-        for ($i = 0; $i < $len; ++$i) {
-            $d |= self::chrToInt($left[$i]) ^ self::chrToInt($right[$i]);
-        }
-
-        if ($d !== 0) {
-            return false;
-        }
-        return $left === $right;
     }
 
     /**
      * Convert a hexadecimal string into a binary string without cache-timing
      * leaks
      *
-     * @internal You should not use this directly from another application
-     *
      * @param string $hexString
      * @param bool $strictPadding
      * @return string (raw binary)
      * @throws RangeException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function hex2bin($hexString, $strictPadding = false)
     {
@@ -360,45 +369,31 @@ abstract class ParagonIE_Sodium_Core_Util
     /**
      * Turn an array of integers into a string
      *
-     * @internal You should not use this directly from another application
-     *
      * @param array<int, int> $ints
      * @return string
+     * @internal You should not use this directly from another application
+     *
      */
     public static function intArrayToString(array $ints)
     {
         /** @var array<int, int> $args */
         $args = $ints;
         foreach ($args as $i => $v) {
-            $args[$i] = (int) ($v & 0xff);
+            $args[$i] = (int)($v & 0xff);
         }
         array_unshift($args, str_repeat('C', count($ints)));
-        return (string) (call_user_func_array('pack', $args));
-    }
-
-    /**
-     * Cache-timing-safe variant of ord()
-     *
-     * @internal You should not use this directly from another application
-     *
-     * @param int $int
-     * @return string
-     * @throws TypeError
-     */
-    public static function intToChr($int)
-    {
-        return pack('C', $int);
+        return (string)(call_user_func_array('pack', $args));
     }
 
     /**
      * Load a 3 character substring into an integer
      *
-     * @internal You should not use this directly from another application
-     *
      * @param string $string
      * @return int
      * @throws RangeException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function load_3($string)
     {
@@ -415,18 +410,18 @@ abstract class ParagonIE_Sodium_Core_Util
         }
         /** @var array<int, int> $unpacked */
         $unpacked = unpack('V', $string . "\0");
-        return (int) ($unpacked[1] & 0xffffff);
+        return (int)($unpacked[1] & 0xffffff);
     }
 
     /**
      * Load a 4 character substring into an integer
      *
-     * @internal You should not use this directly from another application
-     *
      * @param string $string
      * @return int
      * @throws RangeException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function load_4($string)
     {
@@ -443,19 +438,19 @@ abstract class ParagonIE_Sodium_Core_Util
         }
         /** @var array<int, int> $unpacked */
         $unpacked = unpack('V', $string);
-        return (int) ($unpacked[1] & 0xffffffff);
+        return (int)($unpacked[1] & 0xffffffff);
     }
 
     /**
      * Load a 8 character substring into an integer
-     *
-     * @internal You should not use this directly from another application
      *
      * @param string $string
      * @return int
      * @throws RangeException
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function load64_le($string)
     {
@@ -473,29 +468,29 @@ abstract class ParagonIE_Sodium_Core_Util
         if (PHP_VERSION_ID >= 50603 && PHP_INT_SIZE === 8) {
             /** @var array<int, int> $unpacked */
             $unpacked = unpack('P', $string);
-            return (int) $unpacked[1];
+            return (int)$unpacked[1];
         }
 
         /** @var int $result */
-        $result  = (self::chrToInt($string[0]) & 0xff);
-        $result |= (self::chrToInt($string[1]) & 0xff) <<  8;
+        $result = (self::chrToInt($string[0]) & 0xff);
+        $result |= (self::chrToInt($string[1]) & 0xff) << 8;
         $result |= (self::chrToInt($string[2]) & 0xff) << 16;
         $result |= (self::chrToInt($string[3]) & 0xff) << 24;
         $result |= (self::chrToInt($string[4]) & 0xff) << 32;
         $result |= (self::chrToInt($string[5]) & 0xff) << 40;
         $result |= (self::chrToInt($string[6]) & 0xff) << 48;
         $result |= (self::chrToInt($string[7]) & 0xff) << 56;
-        return (int) $result;
+        return (int)$result;
     }
 
     /**
-     * @internal You should not use this directly from another application
-     *
      * @param string $left
      * @param string $right
      * @return int
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function memcmp($left, $right)
     {
@@ -503,6 +498,44 @@ abstract class ParagonIE_Sodium_Core_Util
             return 0;
         }
         return -1;
+    }
+
+    /**
+     * Evaluate whether or not two strings are equal (in constant-time)
+     *
+     * @param string $left
+     * @param string $right
+     * @return bool
+     * @throws SodiumException
+     * @throws TypeError
+     */
+    public static function hashEquals($left, $right)
+    {
+        /* Type checks: */
+        if (!is_string($left)) {
+            throw new TypeError('Argument 1 must be a string, ' . gettype($left) . ' given.');
+        }
+        if (!is_string($right)) {
+            throw new TypeError('Argument 2 must be a string, ' . gettype($right) . ' given.');
+        }
+
+        if (is_callable('hash_equals')) {
+            return hash_equals($left, $right);
+        }
+        $d = 0;
+        /** @var int $len */
+        $len = self::strlen($left);
+        if ($len !== self::strlen($right)) {
+            return false;
+        }
+        for ($i = 0; $i < $len; ++$i) {
+            $d |= self::chrToInt($left[$i]) ^ self::chrToInt($right[$i]);
+        }
+
+        if ($d !== 0) {
+            return false;
+        }
+        return $left === $right;
     }
 
     /**
@@ -514,18 +547,18 @@ abstract class ParagonIE_Sodium_Core_Util
      * the same number of operations to complete, regardless of the values
      * of $a and $b.
      *
-     * @internal You should not use this directly from another application
-     *
      * @param int $a
      * @param int $b
      * @param int $size Limits the number of operations (useful for small,
      *                  constant operands)
      * @return int
+     * @internal You should not use this directly from another application
+     *
      */
     public static function mul($a, $b, $size = 0)
     {
         if (ParagonIE_Sodium_Compat::$fastMult) {
-            return (int) ($a * $b);
+            return (int)($a * $b);
         }
 
         static $defaultSize = null;
@@ -550,7 +583,7 @@ abstract class ParagonIE_Sodium_Core_Util
          *
          * @var int
          */
-        $mask = -(($b >> ((int) $defaultSize)) & 1);
+        $mask = -(($b >> ((int)$defaultSize)) & 1);
 
         /**
          * Ensure $b is a positive integer, without creating
@@ -567,7 +600,7 @@ abstract class ParagonIE_Sodium_Core_Util
          * This loop always runs 64 times when PHP_INT_SIZE is 8.
          */
         for ($i = $size; $i >= 0; --$i) {
-            $c += (int) ($a & -($b & 1));
+            $c += (int)($a & -($b & 1));
             $a <<= 1;
             $b >>= 1;
         }
@@ -581,51 +614,24 @@ abstract class ParagonIE_Sodium_Core_Util
          *
          * The end result is what we'd expect from integer multiplication.
          */
-        return (int) (($c & ~$mask) | ($mask & -$c));
-    }
-
-    /**
-     * Convert any arbitrary numbers into two 32-bit integers that represent
-     * a 64-bit integer.
-     *
-     * @internal You should not use this directly from another application
-     *
-     * @param int|float $num
-     * @return array<int, int>
-     */
-    public static function numericTo64BitInteger($num)
-    {
-        $high = 0;
-        /** @var int $low */
-        $low = $num & 0xffffffff;
-
-        if ((+(abs($num))) >= 1) {
-            if ($num > 0) {
-                /** @var int $high */
-                $high = min((+(floor($num/4294967296))), 4294967295);
-            } else {
-                /** @var int $high */
-                $high = ~~((+(ceil(($num - (+((~~($num)))))/4294967296))));
-            }
-        }
-        return array((int) $high, (int) $low);
+        return (int)(($c & ~$mask) | ($mask & -$c));
     }
 
     /**
      * Store a 24-bit integer into a string, treating it as big-endian.
      *
-     * @internal You should not use this directly from another application
-     *
      * @param int $int
      * @return string
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function store_3($int)
     {
         /* Type checks: */
         if (!is_int($int)) {
             if (is_numeric($int)) {
-                $int = (int) $int;
+                $int = (int)$int;
             } else {
                 throw new TypeError('Argument 1 must be an integer, ' . gettype($int) . ' given.');
             }
@@ -636,166 +642,17 @@ abstract class ParagonIE_Sodium_Core_Util
     }
 
     /**
-     * Store a 32-bit integer into a string, treating it as little-endian.
-     *
-     * @internal You should not use this directly from another application
-     *
-     * @param int $int
-     * @return string
-     * @throws TypeError
-     */
-    public static function store32_le($int)
-    {
-        /* Type checks: */
-        if (!is_int($int)) {
-            if (is_numeric($int)) {
-                $int = (int) $int;
-            } else {
-                throw new TypeError('Argument 1 must be an integer, ' . gettype($int) . ' given.');
-            }
-        }
-
-        /** @var string $packed */
-        $packed = pack('V', $int);
-        return $packed;
-    }
-
-    /**
-     * Store a 32-bit integer into a string, treating it as big-endian.
-     *
-     * @internal You should not use this directly from another application
-     *
-     * @param int $int
-     * @return string
-     * @throws TypeError
-     */
-    public static function store_4($int)
-    {
-        /* Type checks: */
-        if (!is_int($int)) {
-            if (is_numeric($int)) {
-                $int = (int) $int;
-            } else {
-                throw new TypeError('Argument 1 must be an integer, ' . gettype($int) . ' given.');
-            }
-        }
-
-        /** @var string $packed */
-        $packed = pack('N', $int);
-        return $packed;
-    }
-
-    /**
-     * Stores a 64-bit integer as an string, treating it as little-endian.
-     *
-     * @internal You should not use this directly from another application
-     *
-     * @param int $int
-     * @return string
-     * @throws TypeError
-     */
-    public static function store64_le($int)
-    {
-        /* Type checks: */
-        if (!is_int($int)) {
-            if (is_numeric($int)) {
-                $int = (int) $int;
-            } else {
-                throw new TypeError('Argument 1 must be an integer, ' . gettype($int) . ' given.');
-            }
-        }
-
-        if (PHP_INT_SIZE === 8) {
-            if (PHP_VERSION_ID >= 50603) {
-                /** @var string $packed */
-                $packed = pack('P', $int);
-                return $packed;
-            }
-            return self::intToChr($int & 0xff) .
-                self::intToChr(($int >>  8) & 0xff) .
-                self::intToChr(($int >> 16) & 0xff) .
-                self::intToChr(($int >> 24) & 0xff) .
-                self::intToChr(($int >> 32) & 0xff) .
-                self::intToChr(($int >> 40) & 0xff) .
-                self::intToChr(($int >> 48) & 0xff) .
-                self::intToChr(($int >> 56) & 0xff);
-        }
-        if ($int > PHP_INT_MAX) {
-            list($hiB, $int) = self::numericTo64BitInteger($int);
-        } else {
-            $hiB = 0;
-        }
-        return
-            self::intToChr(($int      ) & 0xff) .
-            self::intToChr(($int >>  8) & 0xff) .
-            self::intToChr(($int >> 16) & 0xff) .
-            self::intToChr(($int >> 24) & 0xff) .
-            self::intToChr($hiB & 0xff) .
-            self::intToChr(($hiB >>  8) & 0xff) .
-            self::intToChr(($hiB >> 16) & 0xff) .
-            self::intToChr(($hiB >> 24) & 0xff);
-    }
-
-    /**
-     * Safe string length
-     *
-     * @internal You should not use this directly from another application
-     *
-     * @ref mbstring.func_overload
-     *
-     * @param string $str
-     * @return int
-     * @throws TypeError
-     */
-    public static function strlen($str)
-    {
-        /* Type checks: */
-        if (!is_string($str)) {
-            throw new TypeError('String expected');
-        }
-
-        return (int) (
-        self::isMbStringOverride()
-            ? mb_strlen($str, '8bit')
-            : strlen($str)
-        );
-    }
-
-    /**
-     * Turn a string into an array of integers
-     *
-     * @internal You should not use this directly from another application
-     *
-     * @param string $string
-     * @return array<int, int>
-     * @throws TypeError
-     */
-    public static function stringToIntArray($string)
-    {
-        if (!is_string($string)) {
-            throw new TypeError('String expected');
-        }
-        /**
-         * @var array<int, int>
-         */
-        $values = array_values(
-            unpack('C*', $string)
-        );
-        return $values;
-    }
-
-    /**
      * Safe substring
-     *
-     * @internal You should not use this directly from another application
-     *
-     * @ref mbstring.func_overload
      *
      * @param string $str
      * @param int $start
      * @param int $length
      * @return string
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
+     * @ref mbstring.func_overload
+     *
      */
     public static function substr($str, $start = 0, $length = null)
     {
@@ -812,11 +669,11 @@ abstract class ParagonIE_Sodium_Core_Util
             if (PHP_VERSION_ID < 50400 && $length === null) {
                 $length = self::strlen($str);
             }
-            $sub = (string) mb_substr($str, $start, $length, '8bit');
-        } elseif ($length === null) {
-            $sub = (string) substr($str, $start);
+            $sub = (string)mb_substr($str, $start, $length, '8bit');
+        } else if ($length === null) {
+            $sub = (string)substr($str, $start);
         } else {
-            $sub = (string) substr($str, $start, $length);
+            $sub = (string)substr($str, $start, $length);
         }
         if ($sub !== '') {
             return $sub;
@@ -825,15 +682,180 @@ abstract class ParagonIE_Sodium_Core_Util
     }
 
     /**
-     * Compare a 16-character byte string in constant time.
+     * Store a 32-bit integer into a string, treating it as little-endian.
      *
+     * @param int $int
+     * @return string
+     * @throws TypeError
      * @internal You should not use this directly from another application
+     *
+     */
+    public static function store32_le($int)
+    {
+        /* Type checks: */
+        if (!is_int($int)) {
+            if (is_numeric($int)) {
+                $int = (int)$int;
+            } else {
+                throw new TypeError('Argument 1 must be an integer, ' . gettype($int) . ' given.');
+            }
+        }
+
+        /** @var string $packed */
+        $packed = pack('V', $int);
+        return $packed;
+    }
+
+    /**
+     * Store a 32-bit integer into a string, treating it as big-endian.
+     *
+     * @param int $int
+     * @return string
+     * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
+     */
+    public static function store_4($int)
+    {
+        /* Type checks: */
+        if (!is_int($int)) {
+            if (is_numeric($int)) {
+                $int = (int)$int;
+            } else {
+                throw new TypeError('Argument 1 must be an integer, ' . gettype($int) . ' given.');
+            }
+        }
+
+        /** @var string $packed */
+        $packed = pack('N', $int);
+        return $packed;
+    }
+
+    /**
+     * Stores a 64-bit integer as an string, treating it as little-endian.
+     *
+     * @param int $int
+     * @return string
+     * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
+     */
+    public static function store64_le($int)
+    {
+        /* Type checks: */
+        if (!is_int($int)) {
+            if (is_numeric($int)) {
+                $int = (int)$int;
+            } else {
+                throw new TypeError('Argument 1 must be an integer, ' . gettype($int) . ' given.');
+            }
+        }
+
+        if (PHP_INT_SIZE === 8) {
+            if (PHP_VERSION_ID >= 50603) {
+                /** @var string $packed */
+                $packed = pack('P', $int);
+                return $packed;
+            }
+            return self::intToChr($int & 0xff) .
+                self::intToChr(($int >> 8) & 0xff) .
+                self::intToChr(($int >> 16) & 0xff) .
+                self::intToChr(($int >> 24) & 0xff) .
+                self::intToChr(($int >> 32) & 0xff) .
+                self::intToChr(($int >> 40) & 0xff) .
+                self::intToChr(($int >> 48) & 0xff) .
+                self::intToChr(($int >> 56) & 0xff);
+        }
+        if ($int > PHP_INT_MAX) {
+            list($hiB, $int) = self::numericTo64BitInteger($int);
+        } else {
+            $hiB = 0;
+        }
+        return
+            self::intToChr(($int) & 0xff) .
+            self::intToChr(($int >> 8) & 0xff) .
+            self::intToChr(($int >> 16) & 0xff) .
+            self::intToChr(($int >> 24) & 0xff) .
+            self::intToChr($hiB & 0xff) .
+            self::intToChr(($hiB >> 8) & 0xff) .
+            self::intToChr(($hiB >> 16) & 0xff) .
+            self::intToChr(($hiB >> 24) & 0xff);
+    }
+
+    /**
+     * Cache-timing-safe variant of ord()
+     *
+     * @param int $int
+     * @return string
+     * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
+     */
+    public static function intToChr($int)
+    {
+        return pack('C', $int);
+    }
+
+    /**
+     * Convert any arbitrary numbers into two 32-bit integers that represent
+     * a 64-bit integer.
+     *
+     * @param int|float $num
+     * @return array<int, int>
+     * @internal You should not use this directly from another application
+     *
+     */
+    public static function numericTo64BitInteger($num)
+    {
+        $high = 0;
+        /** @var int $low */
+        $low = $num & 0xffffffff;
+
+        if ((+(abs($num))) >= 1) {
+            if ($num > 0) {
+                /** @var int $high */
+                $high = min((+(floor($num / 4294967296))), 4294967295);
+            } else {
+                /** @var int $high */
+                $high = ~~((+(ceil(($num - (+((~~($num))))) / 4294967296))));
+            }
+        }
+        return array((int)$high, (int)$low);
+    }
+
+    /**
+     * Turn a string into an array of integers
+     *
+     * @param string $string
+     * @return array<int, int>
+     * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
+     */
+    public static function stringToIntArray($string)
+    {
+        if (!is_string($string)) {
+            throw new TypeError('String expected');
+        }
+        /**
+         * @var array<int, int>
+         */
+        $values = array_values(
+            unpack('C*', $string)
+        );
+        return $values;
+    }
+
+    /**
+     * Compare a 16-character byte string in constant time.
      *
      * @param string $a
      * @param string $b
      * @return bool
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function verify_16($a, $b)
     {
@@ -853,13 +875,13 @@ abstract class ParagonIE_Sodium_Core_Util
     /**
      * Compare a 32-character byte string in constant time.
      *
-     * @internal You should not use this directly from another application
-     *
      * @param string $a
      * @param string $b
      * @return bool
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function verify_32($a, $b)
     {
@@ -879,12 +901,12 @@ abstract class ParagonIE_Sodium_Core_Util
     /**
      * Calculate $a ^ $b for two strings.
      *
-     * @internal You should not use this directly from another application
-     *
      * @param string $a
      * @param string $b
      * @return string
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function xorStrings($a, $b)
     {
@@ -896,28 +918,6 @@ abstract class ParagonIE_Sodium_Core_Util
             throw new TypeError('Argument 2 must be a string');
         }
 
-        return (string) ($a ^ $b);
-    }
-
-    /**
-     * Returns whether or not mbstring.func_overload is in effect.
-     *
-     * @internal You should not use this directly from another application
-     *
-     * @return bool
-     */
-    protected static function isMbStringOverride()
-    {
-        static $mbstring = null;
-
-        if ($mbstring === null) {
-            $mbstring = extension_loaded('mbstring')
-                && defined('MB_OVERLOAD_STRING')
-                &&
-            ((int) (ini_get('mbstring.func_overload')) & MB_OVERLOAD_STRING);
-        }
-        /** @var bool $mbstring */
-
-        return $mbstring;
+        return (string)($a ^ $b);
     }
 }

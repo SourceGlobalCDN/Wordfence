@@ -1,10 +1,12 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents an option with a boolean on/off toggle checkbox and popup menu for detailed value selection.
- * 
+ *
  * Expects $toggleOptionName, $enabledToggleValue, $disabledToggleValue, $toggleValue, $selectOptionName, $selectOptions, $selectValue, and $title to be defined. $helpLink may also be defined.
- * 
+ *
  * @var string $toggleOptionName The option name for the toggle portion.
  * @var string $enabledToggleValue The value to save in $toggleOption if the toggle is enabled.
  * @var string $disabledToggleValue The value to save in $toggleOption if the toggle is disabled.

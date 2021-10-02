@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Expects $tabs to be defined as an array of wfTab instances
  */
@@ -33,16 +35,17 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
                             class="wf-caret"></span></a>
                 <ul class="wf-dropdown-menu">
                     <?php foreach ($tabs as $t): ?>
-						<?php
-						$a = $t->a;
-						if (!preg_match('/^https?:\/\//i', $a)) {
-							$a = '#top#' . urlencode($a);
-						}
-						?>
-						<li id="wf-tab-mobile-<?php echo esc_attr($t->id); ?>"><a href="<?php echo esc_attr($a); ?>"><?php echo esc_html($t->tabTitle); ?></a></li>
-					<?php endforeach; ?>
-				</ul>
-			</li>
-		</ul>
-	</div>
+                        <?php
+                        $a = $t->a;
+                        if (!preg_match('/^https?:\/\//i', $a)) {
+                            $a = '#top#' . urlencode($a);
+                        }
+                        ?>
+                        <li id="wf-tab-mobile-<?php echo esc_attr($t->id); ?>">
+                            <a href="<?php echo esc_attr($a); ?>"><?php echo esc_html($t->tabTitle); ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </li>
+        </ul>
+    </div>
 </div>

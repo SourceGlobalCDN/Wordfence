@@ -33,12 +33,12 @@ class ParagonIE_Sodium_Core32_HChaCha20 extends ParagonIE_Sodium_Core32_ChaCha20
             $ctx[2] = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($c, 8, 4));
             $ctx[3] = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($c, 12, 4));
         }
-        $ctx[4]  = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 0, 4));
-        $ctx[5]  = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 4, 4));
-        $ctx[6]  = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 8, 4));
-        $ctx[7]  = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 12, 4));
-        $ctx[8]  = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 16, 4));
-        $ctx[9]  = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 20, 4));
+        $ctx[4] = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 0, 4));
+        $ctx[5] = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 4, 4));
+        $ctx[6] = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 8, 4));
+        $ctx[7] = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 12, 4));
+        $ctx[8] = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 16, 4));
+        $ctx[9] = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 20, 4));
         $ctx[10] = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 24, 4));
         $ctx[11] = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($key, 28, 4));
         $ctx[12] = ParagonIE_Sodium_Core32_Int32::fromReverseString(self::substr($in, 0, 4));
@@ -58,25 +58,25 @@ class ParagonIE_Sodium_Core32_HChaCha20 extends ParagonIE_Sodium_Core32_ChaCha20
     protected static function hChaCha20Bytes(array $ctx)
     {
         /** @var ParagonIE_Sodium_Core32_Int32 $x0 */
-        $x0  = $ctx[0];
+        $x0 = $ctx[0];
         /** @var ParagonIE_Sodium_Core32_Int32 $x1 */
-        $x1  = $ctx[1];
+        $x1 = $ctx[1];
         /** @var ParagonIE_Sodium_Core32_Int32 $x2 */
-        $x2  = $ctx[2];
+        $x2 = $ctx[2];
         /** @var ParagonIE_Sodium_Core32_Int32 $x3 */
-        $x3  = $ctx[3];
+        $x3 = $ctx[3];
         /** @var ParagonIE_Sodium_Core32_Int32 $x4 */
-        $x4  = $ctx[4];
+        $x4 = $ctx[4];
         /** @var ParagonIE_Sodium_Core32_Int32 $x5 */
-        $x5  = $ctx[5];
+        $x5 = $ctx[5];
         /** @var ParagonIE_Sodium_Core32_Int32 $x6 */
-        $x6  = $ctx[6];
+        $x6 = $ctx[6];
         /** @var ParagonIE_Sodium_Core32_Int32 $x7 */
-        $x7  = $ctx[7];
+        $x7 = $ctx[7];
         /** @var ParagonIE_Sodium_Core32_Int32 $x8 */
-        $x8  = $ctx[8];
+        $x8 = $ctx[8];
         /** @var ParagonIE_Sodium_Core32_Int32 $x9 */
-        $x9  = $ctx[9];
+        $x9 = $ctx[9];
         /** @var ParagonIE_Sodium_Core32_Int32 $x10 */
         $x10 = $ctx[10];
         /** @var ParagonIE_Sodium_Core32_Int32 $x11 */

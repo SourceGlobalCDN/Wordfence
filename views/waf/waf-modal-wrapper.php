@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the content given in a modal wrapper for the WAF install/uninstall flow.
  *
@@ -14,7 +16,7 @@ if (!defined('WORDFENCE_VERSION')) { exit; }
  */
 
 if (!isset($footerButtonTitle)) {
-	$footerButtonTitle = __('Continue', 'wordfence');
+    $footerButtonTitle = __('Continue', 'wordfence');
 }
 
 $showX = !isset($noX) || !$noX;

@@ -1,28 +1,34 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Presents the final onboarding attempt modal.
  */
 ?>
 <div class="wf-modal" id="wf-onboarding-final-attempt">
-	<div class="wf-modal-header">
-		<div class="wf-modal-header-content">
-			<div class="wf-modal-title"><?php esc_html_e('Please Complete Wordfence Installation', 'wordfence'); ?></div>
-		</div>
-		<div class="wf-modal-header-action">
-			<div class="wf-padding-add-left-small wf-modal-header-action-close"><a href="<?php echo esc_attr(network_admin_url('admin.php?page=Wordfence')); ?>"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
-		</div>
-	</div>
-	<div class="wf-modal-content">
-		<div id="wf-onboarding-final-attempt-1" class="wf-onboarding-modal-content"<?php if (wfConfig::get('onboardingAttempt3') == wfOnboardingController::ONBOARDING_THIRD_EMAILS) { echo ' style="display: none;"'; } ?>>
-			<h3><?php esc_html_e('Please tell us where Wordfence should send you security alerts for your website:', 'wordfence'); ?></h3>
-			<input type="text" id="wf-onboarding-alerts" placeholder="you@example.com" value="<?php echo esc_attr(implode(',', wfConfig::getAlertEmails())); ?>">
-			<p id="wf-onboarding-alerts-disclaimer"><?php esc_html_e('We do not use this email address for any other purpose unless you opt-in to receive other mailings. You can turn off alerts in the options.', 'wordfence'); ?></p>
-			<div id="wf-onboarding-subscribe">
-				<label for="wf-onboarding-email-list"><?php esc_html_e('Would you also like to join our WordPress security mailing list to receive WordPress security alerts and Wordfence news?', 'wordfence'); ?></label>
-				<div id="wf-onboarding-subscribe-controls">
-					<ul id="wf-onboarding-email-list" class="wf-switch">
-						<li data-option-value="1"><?php esc_html_e('Yes', 'wordfence'); ?></li>
+    <div class="wf-modal-header">
+        <div class="wf-modal-header-content">
+            <div class="wf-modal-title"><?php esc_html_e('Please Complete Wordfence Installation', 'wordfence'); ?></div>
+        </div>
+        <div class="wf-modal-header-action">
+            <div class="wf-padding-add-left-small wf-modal-header-action-close">
+                <a href="<?php echo esc_attr(network_admin_url('admin.php?page=Wordfence')); ?>"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="wf-modal-content">
+        <div id="wf-onboarding-final-attempt-1" class="wf-onboarding-modal-content"<?php if (wfConfig::get('onboardingAttempt3') == wfOnboardingController::ONBOARDING_THIRD_EMAILS) {
+            echo ' style="display: none;"';
+        } ?>>
+            <h3><?php esc_html_e('Please tell us where Wordfence should send you security alerts for your website:', 'wordfence'); ?></h3>
+            <input type="text" id="wf-onboarding-alerts" placeholder="you@example.com" value="<?php echo esc_attr(implode(',', wfConfig::getAlertEmails())); ?>">
+            <p id="wf-onboarding-alerts-disclaimer"><?php esc_html_e('We do not use this email address for any other purpose unless you opt-in to receive other mailings. You can turn off alerts in the options.', 'wordfence'); ?></p>
+            <div id="wf-onboarding-subscribe">
+                <label for="wf-onboarding-email-list"><?php esc_html_e('Would you also like to join our WordPress security mailing list to receive WordPress security alerts and Wordfence news?', 'wordfence'); ?></label>
+                <div id="wf-onboarding-subscribe-controls">
+                    <ul id="wf-onboarding-email-list" class="wf-switch">
+                        <li data-option-value="1"><?php esc_html_e('Yes', 'wordfence'); ?></li>
                         <li data-option-value="0"><?php esc_html_e('No', 'wordfence'); ?></li>
                     </ul>
                     <p><?php esc_html_e('(Choose One)', 'wordfence'); ?></p>

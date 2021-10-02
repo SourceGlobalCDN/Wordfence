@@ -1,5 +1,7 @@
 <?php
-if (!defined('WORDFENCE_VERSION')) { exit; }
+if (!defined('WORDFENCE_VERSION')) {
+    exit;
+}
 /**
  * Expects $id, $title, $subtitle, and $link, and $linkLabel to be defined.
  * If $linkLabel is null, the link will be hidden.

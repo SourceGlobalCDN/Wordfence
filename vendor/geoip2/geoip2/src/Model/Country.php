@@ -38,10 +38,10 @@ class Country extends AbstractModel
     protected $traits;
 
     /**
-     * @ignore
-     *
      * @param mixed $raw
      * @param mixed $locales
+     * @ignore
+     *
      */
     public function __construct($raw, $locales = ['en'])
     {

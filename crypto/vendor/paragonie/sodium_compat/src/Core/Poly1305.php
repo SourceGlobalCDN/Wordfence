@@ -13,13 +13,13 @@ abstract class ParagonIE_Sodium_Core_Poly1305 extends ParagonIE_Sodium_Core_Util
     const BLOCK_SIZE = 16;
 
     /**
-     * @internal You should not use this directly from another application
-     *
      * @param string $m
      * @param string $key
      * @return string
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function onetimeauth($m, $key)
     {
@@ -37,14 +37,14 @@ abstract class ParagonIE_Sodium_Core_Poly1305 extends ParagonIE_Sodium_Core_Util
     }
 
     /**
-     * @internal You should not use this directly from another application
-     *
      * @param string $mac
      * @param string $m
      * @param string $key
      * @return bool
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function onetimeauth_verify($mac, $m, $key)
     {

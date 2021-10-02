@@ -1,24 +1,26 @@
 <?php
 require_once(dirname(__FILE__) . '/wfDB.php');
-class wfSchema {
-	const TABLE_CASE_OPTION = 'wordfence_case'; //false is camel case, true is lower
-	
-	private static $_usingLowercase = null;
-	private static $deprecatedTables = array(
-		'wfBlocks',
-		'wfBlocksAdv',
-		'wfLockedOut',
-		'wfThrottleLog',
-		'wfNet404s',
-		'wfBlockedCommentLog',
-		'wfVulnScanners',
-		'wfBadLeechers',
-		'wfLeechers',
-		'wfScanners',
-	);
-	
-	private static $tables = array(
-"wfBlocks7" => "(
+
+class wfSchema
+{
+    const TABLE_CASE_OPTION = 'wordfence_case'; //false is camel case, true is lower
+
+    private static $_usingLowercase = null;
+    private static $deprecatedTables = array(
+        'wfBlocks',
+        'wfBlocksAdv',
+        'wfLockedOut',
+        'wfThrottleLog',
+        'wfNet404s',
+        'wfBlockedCommentLog',
+        'wfVulnScanners',
+        'wfBadLeechers',
+        'wfLeechers',
+        'wfScanners',
+    );
+
+    private static $tables = array(
+        "wfBlocks7" => "(
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `type` int(10) unsigned NOT NULL DEFAULT '0',
   `IP` binary(16) NOT NULL DEFAULT '\\\0\\\0\\\0\\\0\\\0\\\0\\\0\\\0\\\0\\\0\\\0\\\0\\\0\\\0\\\0\\\0',
@@ -33,13 +35,13 @@ class wfSchema {
   KEY `IP` (`IP`),
   KEY `expiration` (`expiration`)
 ) DEFAULT CHARSET=utf8",
-"wfConfig" => "(
+        "wfConfig" => "(
   `name` varchar(100) NOT NULL,
   `val` longblob,
   `autoload` enum('no','yes') NOT NULL DEFAULT 'yes',
   PRIMARY KEY (`name`)
 ) DEFAULT CHARSET=utf8",
-"wfCrawlers" => "(
+        "wfCrawlers" => "(
   `IP` binary(16) NOT NULL DEFAULT '\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0',
   `patternSig` binary(16) NOT NULL,
   `status` char(8) NOT NULL,
@@ -47,13 +49,13 @@ class wfSchema {
   `PTR` varchar(255) DEFAULT '',
   PRIMARY KEY (`IP`,`patternSig`)
 ) DEFAULT CHARSET=utf8",
-"wfFileChanges" => "(
+        "wfFileChanges" => "(
   `filenameHash` char(64) NOT NULL,
   `file` varchar(1000) NOT NULL,
   `md5` char(32) NOT NULL,
   PRIMARY KEY (`filenameHash`)
 ) CHARSET=utf8",
-"wfHits" => "(
+        "wfHits" => "(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `attackLogTime` double(17,6) unsigned NOT NULL,
   `ctime` double(17,6) unsigned NOT NULL,
@@ -74,7 +76,7 @@ class wfSchema {
   KEY `k2` (`IP`,`ctime`),
   KEY `attackLogTime` (`attackLogTime`)
 ) DEFAULT CHARSET=utf8",
-"wfIssues" => "(
+        "wfIssues" => "(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `time` int(10) unsigned NOT NULL,
   `lastUpdated` int(10) unsigned NOT NULL,
@@ -92,7 +94,7 @@ class wfSchema {
   KEY `ignoreP` (`ignoreP`),
   KEY `ignoreC` (`ignoreC`)
 ) DEFAULT CHARSET=utf8",
-"wfPendingIssues" => "(
+        "wfPendingIssues" => "(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `time` int(10) unsigned NOT NULL,
   `lastUpdated` int(10) unsigned NOT NULL,
@@ -110,14 +112,14 @@ class wfSchema {
   KEY `ignoreP` (`ignoreP`),
   KEY `ignoreC` (`ignoreC`)
 ) DEFAULT CHARSET=utf8",
-"wfTrafficRates" => "(
+        "wfTrafficRates" => "(
   `eMin` int(10) unsigned NOT NULL,
   `IP` binary(16) NOT NULL DEFAULT '\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0',
   `hitType` enum('hit','404') NOT NULL DEFAULT 'hit',
   `hits` int(10) unsigned NOT NULL,
   PRIMARY KEY (`eMin`,`IP`,`hitType`)
 ) DEFAULT CHARSET=utf8",
-"wfLocs" => "(
+        "wfLocs" => "(
   `IP` binary(16) NOT NULL DEFAULT '\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0',
   `ctime` int(10) unsigned NOT NULL,
   `failed` tinyint(3) unsigned NOT NULL,
@@ -129,7 +131,7 @@ class wfSchema {
   `lon` float(10,7) DEFAULT '0.0000000',
   PRIMARY KEY (`IP`)
 ) DEFAULT CHARSET=utf8",
-"wfLogins" => "(
+        "wfLogins" => "(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `hitID` int(11) DEFAULT NULL,
   `ctime` double(17,6) unsigned NOT NULL,
@@ -143,13 +145,13 @@ class wfSchema {
   KEY `k1` (`IP`,`fail`),
   KEY `hitID` (`hitID`)
 ) DEFAULT CHARSET=utf8",
-"wfReverseCache" => "(
+        "wfReverseCache" => "(
   `IP` binary(16) NOT NULL DEFAULT '\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0',
   `host` varchar(255) NOT NULL,
   `lastUpdate` int(10) unsigned NOT NULL,
   PRIMARY KEY (`IP`)
 ) DEFAULT CHARSET=utf8",
-"wfStatus" => "(
+        "wfStatus" => "(
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `ctime` double(17,6) unsigned NOT NULL,
   `level` tinyint(3) unsigned NOT NULL,
@@ -159,7 +161,7 @@ class wfSchema {
   KEY `k1` (`ctime`),
   KEY `k2` (`type`)
 ) DEFAULT CHARSET=utf8",
-'wfHoover' => "(
+        'wfHoover' => "(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `owner` text,
   `host` text,
@@ -168,7 +170,7 @@ class wfSchema {
   PRIMARY KEY (`id`),
   KEY `k2` (`hostKey`)
 ) DEFAULT CHARSET=utf8",
-'wfFileMods' => "(
+        'wfFileMods' => "(
   `filenameMD5` binary(16) NOT NULL,
   `filename` varchar(1000) NOT NULL,
   `knownFile` tinyint(3) unsigned NOT NULL,
@@ -180,7 +182,7 @@ class wfSchema {
   `isSafeFile` varchar(1) NOT NULL DEFAULT '?',
   PRIMARY KEY (`filenameMD5`)
 ) DEFAULT CHARSET=utf8",
-'wfBlockedIPLog' => "(
+        'wfBlockedIPLog' => "(
   `IP` binary(16) NOT NULL DEFAULT '\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0',
   `countryCode` varchar(2) NOT NULL,
   `blockCount` int(10) unsigned NOT NULL DEFAULT '0',
@@ -188,7 +190,7 @@ class wfSchema {
   `blockType` varchar(50) NOT NULL DEFAULT 'generic',
   PRIMARY KEY (`IP`,`unixday`,`blockType`)
 ) DEFAULT CHARSET=utf8",
-'wfSNIPCache' => "(
+        'wfSNIPCache' => "(
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `IP` varchar(45) NOT NULL DEFAULT '',
   `expiration` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -200,12 +202,12 @@ class wfSchema {
   KEY `IP` (`IP`),
   KEY `type` (`type`)
 ) DEFAULT CHARSET=utf8",
-'wfKnownFileList' => "(
+        'wfKnownFileList' => "(
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `path` text NOT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8",
-'wfNotifications' => "(
+        'wfNotifications' => "(
   `id` varchar(32) NOT NULL DEFAULT '',
   `new` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `category` varchar(255) NOT NULL,
@@ -215,81 +217,92 @@ class wfSchema {
   `links` text NOT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8;",
-'wfLiveTrafficHuman' => "(
+        'wfLiveTrafficHuman' => "(
   `IP` binary(16) NOT NULL DEFAULT '\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0',
   `identifier` binary(32) NOT NULL DEFAULT '\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0\\0',
   `expiration` int(10) unsigned NOT NULL,
   PRIMARY KEY (`IP`,`identifier`),
   KEY `expiration` (`expiration`)
 ) DEFAULT CHARSET=utf8;",
-);
-	private $db = false;
-	public function __construct($dbhost = false, $dbuser = false, $dbpassword = false, $dbname = false){
-		$this->db = new wfDB();
-	}
-	public function dropAll(){
-		foreach(self::$tables as $table => $def) {
-			$originalTable = wfDB::networkPrefix() . $table;
-			$convertedTable = wfDB::networkPrefix() . strtolower($table);
-			
-			$this->db->queryWrite("DROP TABLE IF EXISTS {$convertedTable}");
-			$this->db->queryWrite("DROP TABLE IF EXISTS {$originalTable}");
-		}
-		
-		foreach (self::$deprecatedTables as $table) {
-			$originalTable = wfDB::networkTable($table, false);
-			$convertedTable = wfDB::networkTable($table);
-			
-			$this->db->queryWrite("DROP TABLE IF EXISTS {$convertedTable}");
-			if ($originalTable !== $convertedTable) {
-				$this->db->queryWrite("DROP TABLE IF EXISTS {$originalTable}");
-			}
-		}
-	}
-	public function createAll() {
-		foreach(self::$tables as $table => $def){
-			$this->db->queryWrite("CREATE TABLE IF NOT EXISTS " . wfDB::networkTable($table) . " " . $def);
-		}
-	}
-	public function create($table) {
-		$this->db->queryWrite("CREATE TABLE IF NOT EXISTS " . wfDB::networkTable($table) . " " . self::$tables[$table]);
-	}
-	public function drop($table) {
-		$originalTable = wfDB::networkTable($table, false);
-		$convertedTable = wfDB::networkTable($table);
-		
-		$this->db->queryWrite("DROP TABLE IF EXISTS {$convertedTable}");
-		if ($originalTable !== $convertedTable) {
-			$this->db->queryWrite("DROP TABLE IF EXISTS {$originalTable}");
-		}
-	}
-	
-	public static function tableList() {
-		return array_keys(self::$tables);
-	}
-	
-	public static function updateTableCase() {
-		global $wpdb;
-		$hasCamelCaseTable = !!$wpdb->get_var($wpdb->prepare('SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s', wfDB::networkTable('wfConfig', false)));
-		if (is_multisite() && function_exists('update_network_option')) {
-			update_network_option(null, self::TABLE_CASE_OPTION, !$hasCamelCaseTable);
-			self::$_usingLowercase = !$hasCamelCaseTable;
-		}
-		else {
-			update_option(self::TABLE_CASE_OPTION, !$hasCamelCaseTable);
-			self::$_usingLowercase = !$hasCamelCaseTable;
-		}
-	}
-	
-	public static function usingLowercase() {
-		if (self::$_usingLowercase === null) {
-			if (is_multisite() && function_exists('update_network_option')) {
-				self::$_usingLowercase = !!get_network_option(null, self::TABLE_CASE_OPTION);
-			}
-			else {
-				self::$_usingLowercase = !!get_option(self::TABLE_CASE_OPTION);
-			}
-		}
-		return self::$_usingLowercase;
-	}
+    );
+    private $db = false;
+
+    public function __construct($dbhost = false, $dbuser = false, $dbpassword = false, $dbname = false)
+    {
+        $this->db = new wfDB();
+    }
+
+    public static function tableList()
+    {
+        return array_keys(self::$tables);
+    }
+
+    public static function updateTableCase()
+    {
+        global $wpdb;
+        $hasCamelCaseTable = !!$wpdb->get_var($wpdb->prepare('SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s', wfDB::networkTable('wfConfig', false)));
+        if (is_multisite() && function_exists('update_network_option')) {
+            update_network_option(null, self::TABLE_CASE_OPTION, !$hasCamelCaseTable);
+            self::$_usingLowercase = !$hasCamelCaseTable;
+        } else {
+            update_option(self::TABLE_CASE_OPTION, !$hasCamelCaseTable);
+            self::$_usingLowercase = !$hasCamelCaseTable;
+        }
+    }
+
+    public static function usingLowercase()
+    {
+        if (self::$_usingLowercase === null) {
+            if (is_multisite() && function_exists('update_network_option')) {
+                self::$_usingLowercase = !!get_network_option(null, self::TABLE_CASE_OPTION);
+            } else {
+                self::$_usingLowercase = !!get_option(self::TABLE_CASE_OPTION);
+            }
+        }
+        return self::$_usingLowercase;
+    }
+
+    public function dropAll()
+    {
+        foreach (self::$tables as $table => $def) {
+            $originalTable = wfDB::networkPrefix() . $table;
+            $convertedTable = wfDB::networkPrefix() . strtolower($table);
+
+            $this->db->queryWrite("DROP TABLE IF EXISTS {$convertedTable}");
+            $this->db->queryWrite("DROP TABLE IF EXISTS {$originalTable}");
+        }
+
+        foreach (self::$deprecatedTables as $table) {
+            $originalTable = wfDB::networkTable($table, false);
+            $convertedTable = wfDB::networkTable($table);
+
+            $this->db->queryWrite("DROP TABLE IF EXISTS {$convertedTable}");
+            if ($originalTable !== $convertedTable) {
+                $this->db->queryWrite("DROP TABLE IF EXISTS {$originalTable}");
+            }
+        }
+    }
+
+    public function createAll()
+    {
+        foreach (self::$tables as $table => $def) {
+            $this->db->queryWrite("CREATE TABLE IF NOT EXISTS " . wfDB::networkTable($table) . " " . $def);
+        }
+    }
+
+    public function create($table)
+    {
+        $this->db->queryWrite("CREATE TABLE IF NOT EXISTS " . wfDB::networkTable($table) . " " . self::$tables[$table]);
+    }
+
+    public function drop($table)
+    {
+        $originalTable = wfDB::networkTable($table, false);
+        $convertedTable = wfDB::networkTable($table);
+
+        $this->db->queryWrite("DROP TABLE IF EXISTS {$convertedTable}");
+        if ($originalTable !== $convertedTable) {
+            $this->db->queryWrite("DROP TABLE IF EXISTS {$originalTable}");
+        }
+    }
 }

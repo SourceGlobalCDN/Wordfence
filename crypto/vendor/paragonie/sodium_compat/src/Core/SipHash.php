@@ -13,137 +13,6 @@ if (class_exists('ParagonIE_Sodium_Core_SipHash', false)) {
 class ParagonIE_Sodium_Core_SipHash extends ParagonIE_Sodium_Core_Util
 {
     /**
-     * @internal You should not use this directly from another application
-     *
-     * @param int[] $v
-     * @return int[]
-     */
-    public static function sipRound(array $v)
-    {
-        # v0 += v1;
-        list($v[0], $v[1]) = self::add(
-            array($v[0], $v[1]),
-            array($v[2], $v[3])
-        );
-
-        #  v1=ROTL(v1,13);
-        list($v[2], $v[3]) = self::rotl_64($v[2], $v[3], 13);
-
-        #  v1 ^= v0;
-        $v[2] ^= $v[0];
-        $v[3] ^= $v[1];
-
-        #  v0=ROTL(v0,32);
-        list($v[0], $v[1]) = self::rotl_64((int) $v[0], (int) $v[1], 32);
-
-        # v2 += v3;
-        list($v[4], $v[5]) = self::add(
-            array($v[4], $v[5]),
-            array($v[6], $v[7])
-        );
-
-        # v3=ROTL(v3,16);
-        list($v[6], $v[7]) = self::rotl_64($v[6], $v[7], 16);
-
-        #  v3 ^= v2;
-        $v[6] ^= $v[4];
-        $v[7] ^= $v[5];
-
-        # v0 += v3;
-        list($v[0], $v[1]) = self::add(
-            array((int) $v[0], (int) $v[1]),
-            array((int) $v[6], (int) $v[7])
-        );
-
-        # v3=ROTL(v3,21);
-        list($v[6], $v[7]) = self::rotl_64((int) $v[6], (int) $v[7], 21);
-
-        # v3 ^= v0;
-        $v[6] ^= $v[0];
-        $v[7] ^= $v[1];
-
-        # v2 += v1;
-        list($v[4], $v[5]) = self::add(
-            array((int) $v[4], (int) $v[5]),
-            array((int) $v[2], (int) $v[3])
-        );
-
-        # v1=ROTL(v1,17);
-        list($v[2], $v[3]) = self::rotl_64((int) $v[2], (int) $v[3], 17);
-
-        #  v1 ^= v2;;
-        $v[2] ^= $v[4];
-        $v[3] ^= $v[5];
-
-        # v2=ROTL(v2,32)
-        list($v[4], $v[5]) = self::rotl_64((int) $v[4], (int) $v[5], 32);
-
-        return $v;
-    }
-
-    /**
-     * Add two 32 bit integers representing a 64-bit integer.
-     *
-     * @internal You should not use this directly from another application
-     *
-     * @param int[] $a
-     * @param int[] $b
-     * @return array<int, mixed>
-     */
-    public static function add(array $a, array $b)
-    {
-        /** @var int $x1 */
-        $x1 = $a[1] + $b[1];
-        /** @var int $c */
-        $c = $x1 >> 32; // Carry if ($a + $b) > 0xffffffff
-        /** @var int $x0 */
-        $x0 = $a[0] + $b[0] + $c;
-        return array(
-            $x0 & 0xffffffff,
-            $x1 & 0xffffffff
-        );
-    }
-
-    /**
-     * @internal You should not use this directly from another application
-     *
-     * @param int $int0
-     * @param int $int1
-     * @param int $c
-     * @return array<int, mixed>
-     */
-    public static function rotl_64($int0, $int1, $c)
-    {
-        $int0 &= 0xffffffff;
-        $int1 &= 0xffffffff;
-        $c &= 63;
-        if ($c === 32) {
-            return array($int1, $int0);
-        }
-        if ($c > 31) {
-            $tmp = $int1;
-            $int1 = $int0;
-            $int0 = $tmp;
-            $c &= 31;
-        }
-        if ($c === 0) {
-            return array($int0, $int1);
-        }
-        return array(
-            0xffffffff & (
-                ($int0 << $c)
-                    |
-                ($int1 >> (32 - $c))
-            ),
-            0xffffffff & (
-                ($int1 << $c)
-                    |
-                ($int0 >> (32 - $c))
-            ),
-        );
-    }
-
-    /**
      * Implements Siphash-2-4 using only 32-bit numbers.
      *
      * When we split an int into two, the higher bits go to the lower index.
@@ -152,13 +21,13 @@ class ParagonIE_Sodium_Core_SipHash extends ParagonIE_Sodium_Core_Util
      *     1 => 0xAB10C92D
      * ].
      *
-     * @internal You should not use this directly from another application
-     *
      * @param string $in
      * @param string $key
      * @return string
      * @throws SodiumException
      * @throws TypeError
+     * @internal You should not use this directly from another application
+     *
      */
     public static function sipHash24($in, $key)
     {
@@ -300,7 +169,138 @@ class ParagonIE_Sodium_Core_SipHash extends ParagonIE_Sodium_Core_Util
 
         # b = v0 ^ v1 ^ v2 ^ v3;
         # STORE64_LE( out, b );
-        return  self::store32_le($v[1] ^ $v[3] ^ $v[5] ^ $v[7]) .
+        return self::store32_le($v[1] ^ $v[3] ^ $v[5] ^ $v[7]) .
             self::store32_le($v[0] ^ $v[2] ^ $v[4] ^ $v[6]);
+    }
+
+    /**
+     * @param int[] $v
+     * @return int[]
+     * @internal You should not use this directly from another application
+     *
+     */
+    public static function sipRound(array $v)
+    {
+        # v0 += v1;
+        list($v[0], $v[1]) = self::add(
+            array($v[0], $v[1]),
+            array($v[2], $v[3])
+        );
+
+        #  v1=ROTL(v1,13);
+        list($v[2], $v[3]) = self::rotl_64($v[2], $v[3], 13);
+
+        #  v1 ^= v0;
+        $v[2] ^= $v[0];
+        $v[3] ^= $v[1];
+
+        #  v0=ROTL(v0,32);
+        list($v[0], $v[1]) = self::rotl_64((int)$v[0], (int)$v[1], 32);
+
+        # v2 += v3;
+        list($v[4], $v[5]) = self::add(
+            array($v[4], $v[5]),
+            array($v[6], $v[7])
+        );
+
+        # v3=ROTL(v3,16);
+        list($v[6], $v[7]) = self::rotl_64($v[6], $v[7], 16);
+
+        #  v3 ^= v2;
+        $v[6] ^= $v[4];
+        $v[7] ^= $v[5];
+
+        # v0 += v3;
+        list($v[0], $v[1]) = self::add(
+            array((int)$v[0], (int)$v[1]),
+            array((int)$v[6], (int)$v[7])
+        );
+
+        # v3=ROTL(v3,21);
+        list($v[6], $v[7]) = self::rotl_64((int)$v[6], (int)$v[7], 21);
+
+        # v3 ^= v0;
+        $v[6] ^= $v[0];
+        $v[7] ^= $v[1];
+
+        # v2 += v1;
+        list($v[4], $v[5]) = self::add(
+            array((int)$v[4], (int)$v[5]),
+            array((int)$v[2], (int)$v[3])
+        );
+
+        # v1=ROTL(v1,17);
+        list($v[2], $v[3]) = self::rotl_64((int)$v[2], (int)$v[3], 17);
+
+        #  v1 ^= v2;;
+        $v[2] ^= $v[4];
+        $v[3] ^= $v[5];
+
+        # v2=ROTL(v2,32)
+        list($v[4], $v[5]) = self::rotl_64((int)$v[4], (int)$v[5], 32);
+
+        return $v;
+    }
+
+    /**
+     * Add two 32 bit integers representing a 64-bit integer.
+     *
+     * @param int[] $a
+     * @param int[] $b
+     * @return array<int, mixed>
+     * @internal You should not use this directly from another application
+     *
+     */
+    public static function add(array $a, array $b)
+    {
+        /** @var int $x1 */
+        $x1 = $a[1] + $b[1];
+        /** @var int $c */
+        $c = $x1 >> 32; // Carry if ($a + $b) > 0xffffffff
+        /** @var int $x0 */
+        $x0 = $a[0] + $b[0] + $c;
+        return array(
+            $x0 & 0xffffffff,
+            $x1 & 0xffffffff
+        );
+    }
+
+    /**
+     * @param int $int0
+     * @param int $int1
+     * @param int $c
+     * @return array<int, mixed>
+     * @internal You should not use this directly from another application
+     *
+     */
+    public static function rotl_64($int0, $int1, $c)
+    {
+        $int0 &= 0xffffffff;
+        $int1 &= 0xffffffff;
+        $c &= 63;
+        if ($c === 32) {
+            return array($int1, $int0);
+        }
+        if ($c > 31) {
+            $tmp = $int1;
+            $int1 = $int0;
+            $int0 = $tmp;
+            $c &= 31;
+        }
+        if ($c === 0) {
+            return array($int0, $int1);
+        }
+        return array(
+            0xffffffff & (
+                ($int0 << $c)
+                |
+                ($int1 >> (32 - $c))
+            ),
+            0xffffffff & (
+                ($int1 << $c)
+                |
+                ($int0 >> (32 - $c))
+            ),
+        );
     }
 }
