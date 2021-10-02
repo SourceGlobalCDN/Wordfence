@@ -1,11 +1,11 @@
-# AH-dark/WordPress-Wordfence
+# AH-SourceStorage/WordPress-Wordfence
 
 This Git repository stores WordPress plugins: Wordfence
 
 AHdark has made some changes to it, which may affect its work, but it will improve the user experience.
 
 - Change the Google reCaptcha calling domain to recaptcha.net
-- Set some static files to load using JsDelivr CDN.
+- Set some static files to load using [Source Storage](https://ahdark.com/source-storage) CDN.
 
 # Original Readme
 
