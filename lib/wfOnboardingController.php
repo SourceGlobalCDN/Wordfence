@@ -76,12 +76,12 @@ class wfOnboardingController {
 				)
 			)
 		) {
-			wp_enqueue_style('wordfence-font', WORDFENCE_CDN_URL . wfUtils::versionedAsset('css/wf-roboto-font.css'), '', WORDFENCE_VERSION);
-			wp_enqueue_style('wordfence-ionicons-style', WORDFENCE_CDN_URL . wfUtils::versionedAsset('css/wf-ionicons.css'), '', WORDFENCE_VERSION);
-			wp_enqueue_style('wordfenceOnboardingCSS', WORDFENCE_CDN_URL . wfUtils::versionedAsset('css/wf-onboarding.css'), '', WORDFENCE_VERSION);
-			wp_enqueue_style('wordfence-colorbox-style', WORDFENCE_CDN_URL . wfUtils::versionedAsset('css/wf-colorbox.css'), '', WORDFENCE_VERSION);
+			wp_enqueue_style('wordfence-font', "https://source.ahdark.com/wordpress/plugin/wordfence/" . WORDFENCE_VERSION . "/" . wfUtils::versionedAsset('css/wf-roboto-font.css'), '', WORDFENCE_VERSION);
+			wp_enqueue_style('wordfence-ionicons-style', "https://source.ahdark.com/wordpress/plugin/wordfence/" . WORDFENCE_VERSION . "/" . wfUtils::versionedAsset('css/wf-ionicons.css'), '', WORDFENCE_VERSION);
+			wp_enqueue_style('wordfenceOnboardingCSS', "https://source.ahdark.com/wordpress/plugin/wordfence/" . WORDFENCE_VERSION . "/" . wfUtils::versionedAsset('css/wf-onboarding.css'), '', WORDFENCE_VERSION);
+			wp_enqueue_style('wordfence-colorbox-style', "https://source.ahdark.com/wordpress/plugin/wordfence/" . WORDFENCE_VERSION . "/" . wfUtils::versionedAsset('css/wf-colorbox.css'), '', WORDFENCE_VERSION);
 			
-			wp_enqueue_script('jquery.wfcolorbox', WORDFENCE_CDN_URL . wfUtils::versionedAsset('js/jquery.colorbox-min.js'), array('jquery'), WORDFENCE_VERSION);
+			wp_enqueue_script('jquery.wfcolorbox', "https://source.ahdark.com/wordpress/plugin/wordfence/" . WORDFENCE_VERSION . "/" . wfUtils::versionedAsset('js/jquery.colorbox-min.js'), array('jquery'), WORDFENCE_VERSION);
 		}
 	}
 	

@@ -1,10 +1,10 @@
 <?php
 require_once(dirname(__FILE__) . '/wfConfig.php');
 class wfUtils {
-	private static $isWindows = false;
-	public static $scanLockFH = false;
-	private static $lastErrorReporting = false;
-	private static $lastDisplayErrors = false;
+	private static bool $isWindows = false;
+	public static bool $scanLockFH = false;
+	private static bool $lastErrorReporting = false;
+	private static bool $lastDisplayErrors = false;
 	public static function patternToRegex($pattern, $mod = 'i', $sep = '/') {
 		$pattern = preg_quote(trim($pattern), $sep);
 		$pattern = str_replace(' ', '\s', $pattern);

@@ -7,22 +7,22 @@ abstract class Model_Asset
     public static function js($file, string $path = null): string
     {
         if ($path != null) {
-            return WORDFENCE_CDN_URL . $path . self::_versionedFileName($file);
+            return "https://source.ahdark.com/wordpress/plugin/wordfence/" . WORDFENCE_VERSION . "/" . $path . self::_versionedFileName($file);
         }
-        return WORDFENCE_CDN_URL . 'js/' . self::_versionedFileName($file);
+        return "https://source.ahdark.com/wordpress/plugin/wordfence/" . WORDFENCE_VERSION  . '/js/' . self::_versionedFileName($file);
     }
 
     public static function css($file, string $path = null): string
     {
         if ($path != null) {
-            return WORDFENCE_CDN_URL . $path . self::_versionedFileName($file);
+            return "https://source.ahdark.com/wordpress/plugin/wordfence/" . WORDFENCE_VERSION . "/" . $path . self::_versionedFileName($file);
         }
-        return WORDFENCE_CDN_URL . 'css/' . self::_versionedFileName($file);
+        return "https://source.ahdark.com/wordpress/plugin/wordfence/" . WORDFENCE_VERSION . '/css/' . self::_versionedFileName($file);
     }
 
     public static function img($file): string
     {
-        return WORDFENCE_CDN_URL . 'img/' . $file;
+        return "https://source.ahdark.com/wordpress/plugin/wordfence/" . WORDFENCE_VERSION . '/img/' . $file;
 	}
 	
 	protected static function _pluginBaseURL(): string
