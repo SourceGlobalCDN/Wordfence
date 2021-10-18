@@ -15,7 +15,7 @@ AHdark has made some changes to it, which may affect its work, but it will impro
 > Requires at least: 3.9
 > Requires PHP: 5.3
 > Tested up to: 5.8
-> Stable tag: 7.5.4
+> Stable tag: 7.5.6
 >
 > Secure your website with the most comprehensive WordPress security plugin. Firewall, malware scan, blocking, live traffic, login security & more.
 >
