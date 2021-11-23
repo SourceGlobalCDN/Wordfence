@@ -178,6 +178,28 @@ class wfScanEngine
         return hash_equals($signature, $test);
     }
 
+    protected static function _baseStartURL($isFork, $scanMode, $cronKey)
+    {
+        $url = admin_url('admin-ajax.php');
+        $url .= '?action=wordfence_doScan&isFork=' . ($isFork ? '1' : '0') . '&scanMode=' . urlencode($scanMode) . '&cronKey=' . urlencode($cronKey);
+        return $url;
+    }
+
+    protected static function _remoteStartURL($isFork, $scanMode, $cronKey)
+    {
+        $url = self::_baseStartURL($isFork, $scanMode, $cronKey);
+        $url = preg_replace('/^https?:\/\//i', (wfAPI::SSLEnabled() ? WORDFENCE_API_URL_SEC : WORDFENCE_API_URL_NONSEC) . 'scanp/', $url);
+        $url = add_query_arg('k', wfConfig::get('apiKey'), $url);
+        $url = add_query_arg('ssl', wfUtils::isFullSSL() ? '1' : '0', $url);
+        return add_query_arg('signature', self::_signStartURL($url), $url);
+    }
+
+    protected static function _signStartURL($url)
+    {
+        $payload = preg_replace('~^https?://[^/]+~i', '', $url);
+        return wfCrypt::local_sign($payload);
+    }
+
     public function __sleep()
     { //Same order here as above for properties that are included in serialization
         return array('hasher', 'jobList', 'i', 'wp_version', 'apiKey', 'startTime', 'maxExecTime', 'publicScanEnabled', 'fileContentsResults', 'scanner', 'scanQueue', 'hoover', 'scanData', 'statusIDX', 'userPasswdQueue', 'passwdHasIssues', 'suspectedFiles', 'dbScanner', 'knownFilesLoader', 'metrics', 'checkHowGetIPsRequestTime', 'gsbMultisiteBlogOffset', 'updateCheck', 'pluginRepoStatus', 'malwarePrefixesHash', 'coreHashesHash', 'scanMode', 'pluginsCounted', 'themesCounted');
@@ -288,7 +310,7 @@ class wfScanEngine
             $isFork = ($_GET['isFork'] == '1' ? true : false);
             wfConfig::set('lowResourceScanWaitStep', !wfConfig::get('lowResourceScanWaitStep'));
             if ($isFork && wfConfig::get('lowResourceScanWaitStep')) {
-                sleep($this->maxExecTime / 2);
+                sleep((int)round($this->maxExecTime / 2));
                 $this->fork(); //exits
             }
         }
@@ -497,28 +519,6 @@ class wfScanEngine
     protected static function _localStartURL($isFork, $scanMode, $cronKey)
     {
         $url = self::_baseStartURL($isFork, $scanMode, $cronKey);
-        return add_query_arg('signature', self::_signStartURL($url), $url);
-    }
-
-    protected static function _baseStartURL($isFork, $scanMode, $cronKey)
-    {
-        $url = admin_url('admin-ajax.php');
-        $url .= '?action=wordfence_doScan&isFork=' . ($isFork ? '1' : '0') . '&scanMode=' . urlencode($scanMode) . '&cronKey=' . urlencode($cronKey);
-        return $url;
-    }
-
-    protected static function _signStartURL($url)
-    {
-        $payload = preg_replace('~^https?://[^/]+~i', '', $url);
-        return wfCrypt::local_sign($payload);
-    }
-
-    protected static function _remoteStartURL($isFork, $scanMode, $cronKey)
-    {
-        $url = self::_baseStartURL($isFork, $scanMode, $cronKey);
-        $url = preg_replace('/^https?:\/\//i', (wfAPI::SSLEnabled() ? WORDFENCE_API_URL_SEC : WORDFENCE_API_URL_NONSEC) . 'scanp/', $url);
-        $url = add_query_arg('k', wfConfig::get('apiKey'), $url);
-        $url = add_query_arg('ssl', wfUtils::isFullSSL() ? '1' : '0', $url);
         return add_query_arg('signature', self::_signStartURL($url), $url);
     }
 
@@ -928,6 +928,35 @@ class wfScanEngine
 
         wfIssues::statusEnd($this->statusIDX['suspiciousOptions'], $haveIssues);
         $this->scanController->completeStage(wfScanner::STAGE_OPTIONS_AUDIT, $haveIssues);
+    }
+
+    public static function getBlogsToScan($table, $withID = null)
+    {
+        $wfdb = new wfDB();
+        global $wpdb;
+        $blogsToScan = array();
+        if (is_multisite()) {
+            if ($withID === null) {
+                $q1 = $wfdb->querySelect("select blog_id, domain, path from {$wpdb->blogs} where deleted=0 order by blog_id asc");
+            } else {
+                $q1 = $wfdb->querySelect("select blog_id, domain, path from {$wpdb->blogs} where deleted=0 and blog_id = %d", $withID);
+            }
+
+            foreach ($q1 as $row) {
+                $row['isMultisite'] = true;
+                $row['table'] = wfDB::blogTable($table, $row['blog_id']);
+                $blogsToScan[] = $row;
+            }
+        } else {
+            $blogsToScan[] = array(
+                'isMultisite' => false,
+                'table' => wfDB::networkTable($table),
+                'blog_id' => '1',
+                'domain' => '',
+                'path' => '',
+            );
+        }
+        return $blogsToScan;
     }
 
     public function scan_geoipSupport()
@@ -1554,25 +1583,6 @@ class wfScanEngine
         return $_cache;
     }
 
-    private function scan_knownFiles_init()
-    {
-        $paths = $this->_scannedSkippedPaths();
-        $includeInKnownFilesScan = $paths['scanned'];
-        if ($this->scanController->scanOutsideWordPress()) {
-            wordfence::status(2, 'info', __("Including files that are outside the WordPress installation in the scan.", 'wordfence'));
-        }
-
-        $this->status(2, 'info', __("Getting plugin list from WordPress", 'wordfence'));
-        $knownFilesPlugins = $this->getPlugins();
-        $this->status(2, 'info', sprintf(/* translators: Number of plugins. */ _n("Found %d plugin", "Found %d plugins", sizeof($knownFilesPlugins), 'wordfence'), sizeof($knownFilesPlugins)));
-
-        $this->status(2, 'info', __("Getting theme list from WordPress", 'wordfence'));
-        $knownFilesThemes = $this->getThemes();
-        $this->status(2, 'info', sprintf(/* translators: Number of themes. */ _n("Found %d theme", "Found %d themes", sizeof($knownFilesThemes), 'wordfence'), sizeof($knownFilesThemes)));
-
-        $this->hasher = new wordfenceHash(strlen(ABSPATH), ABSPATH, $includeInKnownFilesScan, $knownFilesThemes, $knownFilesPlugins, $this, wfUtils::hex2bin($this->malwarePrefixesHash), $this->coreHashesHash, $this->scanMode);
-    }
-
     /*
     private function scan_sitePages(){
         if(is_multisite()){ return; } //Multisite not supported by this function yet
@@ -1600,6 +1610,25 @@ class wfScanEngine
         }
     }
     */
+
+    private function scan_knownFiles_init()
+    {
+        $paths = $this->_scannedSkippedPaths();
+        $includeInKnownFilesScan = $paths['scanned'];
+        if ($this->scanController->scanOutsideWordPress()) {
+            wordfence::status(2, 'info', __("Including files that are outside the WordPress installation in the scan.", 'wordfence'));
+        }
+
+        $this->status(2, 'info', __("Getting plugin list from WordPress", 'wordfence'));
+        $knownFilesPlugins = $this->getPlugins();
+        $this->status(2, 'info', sprintf(/* translators: Number of plugins. */ _n("Found %d plugin", "Found %d plugins", sizeof($knownFilesPlugins), 'wordfence'), sizeof($knownFilesPlugins)));
+
+        $this->status(2, 'info', __("Getting theme list from WordPress", 'wordfence'));
+        $knownFilesThemes = $this->getThemes();
+        $this->status(2, 'info', sprintf(/* translators: Number of themes. */ _n("Found %d theme", "Found %d themes", sizeof($knownFilesThemes), 'wordfence'), sizeof($knownFilesThemes)));
+
+        $this->hasher = new wordfenceHash(strlen(ABSPATH), ABSPATH, $includeInKnownFilesScan, $knownFilesThemes, $knownFilesPlugins, $this, wfUtils::hex2bin($this->malwarePrefixesHash), $this->coreHashesHash, $this->scanMode);
+    }
 
     /**
      * @return array
@@ -1815,35 +1844,6 @@ class wfScanEngine
                 $this->scanQueue .= pack('LL', $blog['blog_id'], $idRow['ID']);
             }
         }
-    }
-
-    public static function getBlogsToScan($table, $withID = null)
-    {
-        $wfdb = new wfDB();
-        global $wpdb;
-        $blogsToScan = array();
-        if (is_multisite()) {
-            if ($withID === null) {
-                $q1 = $wfdb->querySelect("select blog_id, domain, path from {$wpdb->blogs} where deleted=0 order by blog_id asc");
-            } else {
-                $q1 = $wfdb->querySelect("select blog_id, domain, path from {$wpdb->blogs} where deleted=0 and blog_id = %d", $withID);
-            }
-
-            foreach ($q1 as $row) {
-                $row['isMultisite'] = true;
-                $row['table'] = wfDB::blogTable($table, $row['blog_id']);
-                $blogsToScan[] = $row;
-            }
-        } else {
-            $blogsToScan[] = array(
-                'isMultisite' => false,
-                'table' => wfDB::networkTable($table),
-                'blog_id' => '1',
-                'domain' => '',
-                'path' => '',
-            );
-        }
-        return $blogsToScan;
     }
 
     private function scan_posts_main()

@@ -57,8 +57,8 @@ class wfLog
             $IP = wfUtils::getIP();
         }
 
-        if ($UA === false) {
-            $UA = (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '');
+        if ($UA === false || $UA === null) {
+            $UA = $_SERVER['HTTP_USER_AGENT'] ?? '';
         }
 
         $table = wfDB::networkTable('wfLiveTrafficHuman');
@@ -785,7 +785,7 @@ class wfLog
         $timeOffset = 3600 * get_option('gmt_offset');
         foreach ($results as &$rec) {
             //$rec['timeAgo'] = wfUtils::makeTimeAgo(time() - $rec['ctime']);
-            $rec['date'] = date('M d H:i:s', $rec['ctime'] + $timeOffset);
+            $rec['date'] = date('M d H:i:s', (int)$rec['ctime'] + $timeOffset);
             $rec['msg'] = wp_kses_data((string)$rec['msg']);
         }
         return $results;
@@ -796,7 +796,7 @@ class wfLog
         $results = $this->getDB()->querySelect("select ctime, level, type, msg from " . $this->statusTable . " where level = 10 order by ctime desc limit 100");
         $timeOffset = 3600 * get_option('gmt_offset');
         foreach ($results as &$rec) {
-            $rec['date'] = date('M d H:i:s', $rec['ctime'] + $timeOffset);
+            $rec['date'] = date('M d H:i:s', (int)$rec['ctime'] + $timeOffset);
             if (strpos($rec['msg'], 'SUM_PREP:') === 0) {
                 break;
             }
@@ -1517,7 +1517,7 @@ class wfLiveTrafficQuery
                 }
             }
 
-            $row['actionData'] = (array)json_decode($row['actionData'], true);
+            $row['actionData'] = $row['actionData'] === null ? array() : (array)json_decode($row['actionData'], true);
         }
         return array_values($results);
     }

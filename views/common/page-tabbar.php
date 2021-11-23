@@ -18,11 +18,8 @@ if (!defined('WORDFENCE_VERSION')) {
                     $a = '#top#' . urlencode($a);
                 }
                 ?>
-                <li class="wf-tab" id="wf-tab-<?php echo esc_attr($t->id); ?>"
-                    data-target="<?php echo esc_attr($t->id); ?>"
-                    data-page-title="<?php echo esc_attr($t->pageTitle); ?>"><a role="tab"
-                                                                                href="<?php echo esc_attr($a); ?>"><?php echo esc_html($t->tabTitle); ?></a>
-                </li>
+                <li class="wf-tab" id="wf-tab-<?php echo esc_attr($t->id); ?>" data-target="<?php echo esc_attr($t->id); ?>" data-page-title="<?php echo esc_attr($t->pageTitle); ?>">
+                    <a role="tab" href="<?php echo esc_attr($a); ?>"><?php echo esc_html($t->tabTitle); ?></a></li>
             <?php endforeach; ?>
         </ul>
     </div>

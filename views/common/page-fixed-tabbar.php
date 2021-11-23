@@ -20,19 +20,16 @@ if (!defined('WORDFENCE_VERSION')) {
                 ?>
                 <li class="wf-tab<?php if ($t->active) {
                     echo ' wf-active';
-                } ?>" id="wf-tab-<?php echo esc_attr($t->id); ?>" data-target="<?php echo esc_attr($t->id); ?>"
-                    data-page-title="<?php echo esc_attr($t->pageTitle); ?>"><a role="tab"
-                                                                                href="<?php echo esc_attr($a); ?>"
-                                                                                aria-selected="<?php echo json_encode((bool)$t->active) ?>"><?php echo esc_html($t->tabTitle); ?></a>
+                } ?>" id="wf-tab-<?php echo esc_attr($t->id); ?>" data-target="<?php echo esc_attr($t->id); ?>" data-page-title="<?php echo esc_attr($t->pageTitle); ?>">
+                    <a role="tab" href="<?php echo esc_attr($a); ?>" aria-selected="<?php echo json_encode((bool)$t->active) ?>"><?php echo esc_html($t->tabTitle); ?></a>
                 </li>
             <?php endforeach; ?>
         </ul>
         <ul class="wf-nav wf-nav-pills wf-visible-xs">
             <li class="wf-navbar-brand wordfence-lock-icon wordfence-icon32"></li>
             <li class="wf-dropdown">
-                <a href="#" id="wordfenceTopTabsMobile" class="wf-dropdown-toggle wf-mobile-dropdown"
-                   data-toggle="wf-dropdown" role="button"><span id="wordfenceTopTabsMobileTitle">Go to</span> <span
-                            class="wf-caret"></span></a>
+                <a href="#" id="wordfenceTopTabsMobile" class="wf-dropdown-toggle wf-mobile-dropdown" data-toggle="wf-dropdown" role="button"><span id="wordfenceTopTabsMobileTitle">Go to</span>
+                    <span class="wf-caret"></span></a>
                 <ul class="wf-dropdown-menu">
                     <?php foreach ($tabs as $t): ?>
                         <?php

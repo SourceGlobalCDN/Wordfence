@@ -251,7 +251,7 @@ abstract class ParagonIE_Sodium_Core_Util
                 if (!in_array($type, $allow)) {
                     throw new TypeError('Argument ' . $argumentIndex . ' must be an integer, ' . $realType . ' given.');
                 }
-            $mixedVar = (int)$mixedVar;
+                $mixedVar = (int)$mixedVar;
                 break;
             case 'boolean':
             case 'bool':

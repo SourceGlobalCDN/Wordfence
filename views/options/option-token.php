@@ -16,11 +16,9 @@ if (!defined('WORDFENCE_VERSION')) {
 
 $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $tokenOptionName);
 ?>
-<ul id="<?php echo esc_attr($id); ?>"
-    class="wf-option wf-option-token<?php if (!wfConfig::p() && isset($premium) && $premium) {
-        echo ' wf-option-premium';
-    } ?>" data-token-option="<?php echo esc_attr($tokenOptionName); ?>"
-    data-original-token-value="<?php echo esc_attr(json_encode($tokenValue)); ?>">
+<ul id="<?php echo esc_attr($id); ?>" class="wf-option wf-option-token<?php if (!wfConfig::p() && isset($premium) && $premium) {
+    echo ' wf-option-premium';
+} ?>" data-token-option="<?php echo esc_attr($tokenOptionName); ?>" data-original-token-value="<?php echo esc_attr(json_encode($tokenValue)); ?>">
     <li class="wf-option-spacer"></li>
     <li class="wf-flex-vertical wf-flex-align-left">
         <div class="wf-option-title">
@@ -39,8 +37,7 @@ $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $tokenOptionName);
             </ul>
         <?php endif; ?>
         </div>
-        <select multiple<?php echo(!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' disabled'); ?>
-                aria-labelledby="<?php echo esc_attr($id); ?>-label">
+        <select multiple<?php echo(!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' disabled'); ?> aria-labelledby="<?php echo esc_attr($id); ?>-label">
             <?php foreach ($tokenValue as $o): ?>
                 <option value="<?php echo esc_attr($o); ?>" selected><?php echo esc_html($o); ?></option>
             <?php endforeach; ?>

@@ -24,17 +24,13 @@ if (isset($subtitle) && !isset($subtitleHTML)) {
 
 $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $optionName);
 ?>
-<ul id="<?php echo esc_attr($id); ?>"
-    class="wf-option wf-option-toggled-boolean-switch<?php if (!wfConfig::p() && isset($premium) && $premium) {
-        echo ' wf-option-premium';
-    } ?><?php if (isset($disabled) && $disabled) {
-        echo ' wf-disabled';
-    } ?>" data-option="<?php echo esc_attr($optionName); ?>" data-enabled-value="<?php echo esc_attr($enabledValue); ?>"
-    data-disabled-value="<?php echo esc_attr($disabledValue); ?>"
-    data-original-value="<?php echo esc_attr($value == $enabledValue ? $enabledValue : $disabledValue); ?>">
-    <li class="wf-boolean-switch<?php echo($value == $enabledValue ? ' wf-active' : ''); ?>" role="checkbox"
-        aria-checked="<?php echo($value == $enabledValue ? 'true' : 'false'); ?>" tabindex="0"
-        aria-labelledby="<?php echo esc_attr($id); ?>-label"><a href="#" class="wf-boolean-switch-handle"></a></li>
+<ul id="<?php echo esc_attr($id); ?>" class="wf-option wf-option-toggled-boolean-switch<?php if (!wfConfig::p() && isset($premium) && $premium) {
+    echo ' wf-option-premium';
+} ?><?php if (isset($disabled) && $disabled) {
+    echo ' wf-disabled';
+} ?>" data-option="<?php echo esc_attr($optionName); ?>" data-enabled-value="<?php echo esc_attr($enabledValue); ?>" data-disabled-value="<?php echo esc_attr($disabledValue); ?>" data-original-value="<?php echo esc_attr($value == $enabledValue ? $enabledValue : $disabledValue); ?>">
+    <li class="wf-boolean-switch<?php echo($value == $enabledValue ? ' wf-active' : ''); ?>" role="checkbox" aria-checked="<?php echo($value == $enabledValue ? 'true' : 'false'); ?>" tabindex="0" aria-labelledby="<?php echo esc_attr($id); ?>-label">
+        <a href="#" class="wf-boolean-switch-handle"></a></li>
     <li class="wf-option-title">
         <?php if (isset($subtitleHTML)): ?>
         <ul class="wf-flex-vertical wf-flex-align-left">

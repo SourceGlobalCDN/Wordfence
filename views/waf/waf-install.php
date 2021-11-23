@@ -12,15 +12,13 @@ if (!defined('WORDFENCE_VERSION')) {
                 </div>
             </div>
             <div class="wf-modal-header-action">
-                <div><?php esc_html_e('If you cannot complete the setup process, ', 'wordfence'); ?><a target="_blank"
-                                                                                                       rel="noopener noreferrer"
-                                                                                                       href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_FIREWALL_WAF_INSTALL_MANUALLY); ?>"><?php esc_html_e('click here for help', 'wordfence'); ?>
+                <div><?php esc_html_e('If you cannot complete the setup process, ', 'wordfence'); ?>
+                    <a target="_blank" rel="noopener noreferrer" href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_FIREWALL_WAF_INSTALL_MANUALLY); ?>"><?php esc_html_e('click here for help', 'wordfence'); ?>
                         <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
                 </div>
-                <div class="wf-padding-add-left-small wf-modal-header-action-close"><a href="#"
-                                                                                       onclick="WFAD.colorboxClose(); return false"
-                                                                                       role="button"><i
-                                class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
+                <div class="wf-padding-add-left-small wf-modal-header-action-close">
+                    <a href="#" onclick="WFAD.colorboxClose(); return false" role="button"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a>
+                </div>
             </div>
         </div>
         <div class="wf-modal-content">
@@ -74,8 +72,7 @@ if (!defined('WORDFENCE_VERSION')) {
             <select name='serverConfiguration' id='wf-waf-server-config'>
                 <?php echo $wafPrependOptions; ?>
             </select>
-            <div class="wf-notice wf-nginx-waf-config"
-                 style="display: none;"><?php wp_kses(printf(/* translators: 1. PHP ini setting. 2. Support URL. */ __('Part of the Firewall configuration procedure for NGINX depends on creating a <code>%1$s</code> file in the root of your WordPress installation. This file can contain sensitive information and public access to it should be restricted. We have <a href="%2$s" target="_blank" rel="noreferrer noopener">instructions on our documentation site<span class="screen-reader-text"> (opens in new tab)</span></a> on what directives to put in your nginx.conf to fix this.', 'wordfence'), esc_html(ini_get('user_ini.filename') ? ini_get('user_ini.filename') : '(.user.ini)'), wfSupportController::esc_supportURL(wfSupportController::ITEM_FIREWALL_WAF_INSTALL_NGINX)), array('a' => array('href' => array(), 'target' => array(), 'rel' => array()), 'span' => array('class' => array()))); ?></div>
+            <div class="wf-notice wf-nginx-waf-config" style="display: none;"><?php wp_kses(printf(/* translators: 1. PHP ini setting. 2. Support URL. */ __('Part of the Firewall configuration procedure for NGINX depends on creating a <code>%1$s</code> file in the root of your WordPress installation. This file can contain sensitive information and public access to it should be restricted. We have <a href="%2$s" target="_blank" rel="noreferrer noopener">instructions on our documentation site<span class="screen-reader-text"> (opens in new tab)</span></a> on what directives to put in your nginx.conf to fix this.', 'wordfence'), esc_html(ini_get('user_ini.filename') ? ini_get('user_ini.filename') : '(.user.ini)'), wfSupportController::esc_supportURL(wfSupportController::ITEM_FIREWALL_WAF_INSTALL_NGINX)), array('a' => array('href' => array(), 'target' => array(), 'rel' => array()), 'span' => array('class' => array()))); ?></div>
             <div class="wf-manual-waf-config" style="display: none;">
                 <p><?php esc_html_e('If you are using a web server not listed in the dropdown or if file permissions prevent the installer from completing successfully, you will need to perform the change manually. Click Continue below to create the required file and view manual installation instructions.', 'wordfence'); ?></p>
             </div>
@@ -119,9 +116,9 @@ if (!defined('WORDFENCE_VERSION')) {
         <div class="wf-modal-footer">
             <ul class="wf-flex-horizontal wf-flex-full-width">
                 <li class="wf-waf-download-instructions"><?php esc_html_e('Once you have downloaded the files, click Continue to complete the setup.', 'wordfence'); ?></li>
-                <li class="wf-right"><a href="#" class="wf-btn wf-btn-primary wf-btn-callout-subtle wf-disabled"
-                                        id="wf-waf-install-continue"
-                                        role="button"><?php esc_html_e('Continue', 'wordfence'); ?></a></li>
+                <li class="wf-right">
+                    <a href="#" class="wf-btn wf-btn-primary wf-btn-callout-subtle wf-disabled" id="wf-waf-install-continue" role="button"><?php esc_html_e('Continue', 'wordfence'); ?></a>
+                </li>
             </ul>
         </div>
     </div>

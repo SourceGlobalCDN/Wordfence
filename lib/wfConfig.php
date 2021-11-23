@@ -300,7 +300,7 @@ Options -ExecCGI
         }
     }
 
-    public static function get($key, $default = false, $allowCached = true)
+    public static function get($key, $default = false, $allowCached = true, &$isDefault = false)
     {
         global $wpdb;
 
@@ -309,11 +309,13 @@ Options -ExecCGI
         }
 
         if (!self::$tableExists) {
+            $isDefault = true;
             return $default;
         }
 
         $table = self::table();
         if (!($option = $wpdb->get_row($wpdb->prepare("SELECT name, val, autoload FROM {$table} WHERE name = %s", $key)))) {
+            $isDefault = true;
             return $default;
         }
 
@@ -748,6 +750,15 @@ Options -ExecCGI
         self::getDB()->queryWrite("delete from " . self::table() . " where name='%s'", $chunkedValueKey . 'header');
     }
 
+    private static function removeCachedOption($name)
+    {
+        $options = self::loadAllOptions();
+        if (isset($options[$name])) {
+            unset($options[$name]);
+            wp_cache_set('alloptions', $options, 'wordfence');
+        }
+    }
+
     private static function ser_chunked_key($key)
     {
         return 'wordfence_chunked_' . $key . '_';
@@ -1099,15 +1110,6 @@ Options -ExecCGI
         }
     }
 
-    private static function removeCachedOption($name)
-    {
-        $options = self::loadAllOptions();
-        if (isset($options[$name])) {
-            unset($options[$name]);
-            wp_cache_set('alloptions', $options, 'wordfence');
-        }
-    }
-
     public static function migrateCodeExecutionForUploadsPHP7()
     {
         if (self::get('disableCodeExecutionUploads')) {
@@ -1325,7 +1327,10 @@ Options -ExecCGI
 
     public static function getJSON($key, $default = false, $allowCached = true)
     {
-        $json = self::get($key, $default, $allowCached);
+        $json = self::get($key, $default, $allowCached, $isDefault);
+        if ($isDefault) {
+            return $json;
+        }
         $decoded = @json_decode($json, true);
         if ($decoded === null) {
             return $default;

@@ -32,10 +32,8 @@ $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $optionName);
     <?php if (!wfConfig::p() && isset($premium) && $premium): ?>
         <li class="wf-option-premium-lock"></li>
     <?php else: ?>
-        <li class="wf-option-checkbox<?php echo($value == $enabledValue ? ' wf-checked' : ''); ?>" role="checkbox"
-            aria-checked="<?php echo($value == $enabledValue ? 'true' : 'false'); ?>" tabindex="0"
-            aria-labelledby="<?php echo esc_attr($id); ?>-label"><i class="wf-ion-ios-checkmark-empty"
-                                                                    aria-hidden="true"></i></li>
+        <li class="wf-option-checkbox<?php echo($value == $enabledValue ? ' wf-checked' : ''); ?>" role="checkbox" aria-checked="<?php echo($value == $enabledValue ? 'true' : 'false'); ?>" tabindex="0" aria-labelledby="<?php echo esc_attr($id); ?>-label">
+            <i class="wf-ion-ios-checkmark-empty" aria-hidden="true"></i></li>
     <?php endif; ?>
     <li class="wf-option-title">
         <?php if (isset($subtitleHTML)): ?>

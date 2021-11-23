@@ -304,7 +304,7 @@ if (!defined('WFWAF_RUN_COMPLETE')) {
                                         'h' => wfWAF::getInstance()->getStorageEngine()->getConfig('homeURL', null, 'synced') ? wfWAF::getInstance()->getStorageEngine()->getConfig('homeURL', null, 'synced') : $guessSiteURL,
                                         't' => microtime(true),
                                         'lang' => wfWAF::getInstance()->getStorageEngine()->getConfig('WPLANG', null, 'synced'),
-                                    ), null, '&'), $request);
+                                    )), $request);
 
                                 if ($response instanceof wfWAFHTTPResponse && $response->getBody()) {
                                     $jsonData = wfWAFUtils::json_decode($response->getBody(), true);

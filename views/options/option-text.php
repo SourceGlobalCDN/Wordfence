@@ -20,11 +20,9 @@ if (!isset($placeholder)) {
 }
 $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $textOptionName);
 ?>
-<ul id="<?php echo esc_attr($id); ?>"
-    class="wf-option wf-option-text<?php if (!wfConfig::p() && isset($premium) && $premium) {
-        echo ' wf-option-premium';
-    } ?>" data-text-option="<?php echo esc_attr($textOptionName); ?>"
-    data-original-text-value="<?php echo esc_attr($textValue); ?>">
+<ul id="<?php echo esc_attr($id); ?>" class="wf-option wf-option-text<?php if (!wfConfig::p() && isset($premium) && $premium) {
+    echo ' wf-option-premium';
+} ?>" data-text-option="<?php echo esc_attr($textOptionName); ?>" data-original-text-value="<?php echo esc_attr($textValue); ?>">
     <li class="wf-option-spacer"></li>
     <li class="wf-option-content">
         <ul>
@@ -45,9 +43,7 @@ $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $textOptionName);
             <?php endif; ?>
             </li>
             <li class="wf-option-text">
-                <input type="text" value="<?php echo esc_attr($textValue); ?>"
-                       placeholder="<?php echo esc_attr($placeholder); ?>"<?php echo(!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' disabled'); ?>
-                       aria-labelledby="<?php echo esc_attr($id); ?>-label">
+                <input type="text" value="<?php echo esc_attr($textValue); ?>" placeholder="<?php echo esc_attr($placeholder); ?>"<?php echo(!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' disabled'); ?> aria-labelledby="<?php echo esc_attr($id); ?>-label">
             </li>
         </ul>
     </li>

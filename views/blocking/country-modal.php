@@ -28,12 +28,7 @@ $letters = str_split($letters);
                 </div>
             </div>
             <div class="wf-modal-header-action">
-                <a href="#" class="wf-btn wf-btn-default wf-btn-callout-subtle wf-countries-shortcut"
-                   id="wf-country-selector-block-all" data-shortcut="select"
-                   role="button"><?php esc_html_e('Block All', 'wordfence'); ?></a>&nbsp;&nbsp;<a href="#"
-                                                                                                  class="wf-btn wf-btn-default wf-btn-callout-subtle wf-countries-shortcut"
-                                                                                                  id="wf-country-selector-unblock-all"
-                                                                                                  data-shortcut="deselect"><?php esc_html_e('Unblock All', 'wordfence'); ?></a>
+                <a href="#" class="wf-btn wf-btn-default wf-btn-callout-subtle wf-countries-shortcut" id="wf-country-selector-block-all" data-shortcut="select" role="button"><?php esc_html_e('Block All', 'wordfence'); ?></a>&nbsp;&nbsp;<a href="#" class="wf-btn wf-btn-default wf-btn-callout-subtle wf-countries-shortcut" id="wf-country-selector-unblock-all" data-shortcut="deselect"><?php esc_html_e('Unblock All', 'wordfence'); ?></a>
             </div>
         </div>
         <div class="wf-modal-content">
@@ -67,10 +62,8 @@ $letters = str_split($letters);
                             <?php
                             }
                             ?>
-                            <li id="wf-country-option-<?php echo esc_attr(strtolower($code)); ?>"
-                                data-country="<?php echo esc_attr($code); ?>"><a href="#"
-                                                                                 role="button"><?php echo esc_html($name); ?></a>
-                            </li>
+                            <li id="wf-country-option-<?php echo esc_attr(strtolower($code)); ?>" data-country="<?php echo esc_attr($code); ?>">
+                                <a href="#" role="button"><?php echo esc_html($name); ?></a></li>
                             <?php
                             }
 
@@ -85,11 +78,9 @@ $letters = str_split($letters);
         <div class="wf-modal-footer">
             <ul class="wf-flex-horizontal wf-flex-full-width">
                 <li id="wf-country-selector-count"></li>
-                <li class="wf-right"><a href="#" class="wf-btn wf-btn-default wf-btn-callout-subtle"
-                                        id="wf-country-selector-cancel"
-                                        role="button"><?php esc_html_e('Back', 'wordfence'); ?></a>&nbsp;&nbsp;<a
-                            href="#" class="wf-btn wf-btn-primary wf-btn-callout-subtle"
-                            id="wf-country-selector-confirm"><?php esc_html_e('Save', 'wordfence'); ?></a></li>
+                <li class="wf-right">
+                    <a href="#" class="wf-btn wf-btn-default wf-btn-callout-subtle" id="wf-country-selector-cancel" role="button"><?php esc_html_e('Back', 'wordfence'); ?></a>&nbsp;&nbsp;<a href="#" class="wf-btn wf-btn-primary wf-btn-callout-subtle" id="wf-country-selector-confirm"><?php esc_html_e('Save', 'wordfence'); ?></a>
+                </li>
             </ul>
         </div>
     </div>

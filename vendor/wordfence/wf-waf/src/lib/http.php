@@ -354,7 +354,7 @@ if (defined('WFWAF_VERSION') && !defined('WFWAF_RUN_COMPLETE')) {
             $url = $request->getUrl();
             if ($queryString = $request->getQueryString()) {
                 if (is_array($queryString)) {
-                    $queryString = http_build_query($queryString, null, '&');
+                    $queryString = http_build_query($queryString, '', '&');
                 }
                 $url .= (wfWAFUtils::strpos($url, '?') !== false ? '&' : '?') . $queryString;
             }
@@ -431,7 +431,7 @@ if (defined('WFWAF_VERSION') && !defined('WFWAF_RUN_COMPLETE')) {
             $url = $request->getUrl();
             if ($queryString = $request->getQueryString()) {
                 if (is_array($queryString)) {
-                    $queryString = http_build_query($queryString, null, '&');
+                    $queryString = http_build_query($queryString, '', '&');
                 }
                 $url .= (wfWAFUtils::strpos($url, '?') !== false ? '&' : '?') . $queryString;
             }

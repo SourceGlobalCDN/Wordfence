@@ -110,6 +110,24 @@ abstract class ParagonIE_Sodium_Core_BLAKE2b extends ParagonIE_Sodium_Core_Util
     }
 
     /**
+     * Turn two 32-bit integers into a fixed array representing a 64-bit integer.
+     *
+     * @param int $high
+     * @param int $low
+     * @return SplFixedArray
+     * @psalm-suppress MixedAssignment
+     * @internal You should not use this directly from another application
+     *
+     */
+    public static function new64($high, $low)
+    {
+        $i64 = new SplFixedArray(2);
+        $i64[0] = $high & 0xffffffff;
+        $i64[1] = $low & 0xffffffff;
+        return $i64;
+    }
+
+    /**
      * @param SplFixedArray $ctx
      * @param int $inc
      * @return void
@@ -150,6 +168,30 @@ abstract class ParagonIE_Sodium_Core_BLAKE2b extends ParagonIE_Sodium_Core_Util
     {
         list($hi, $lo) = self::numericTo64BitInteger($num);
         return self::new64($hi, $lo);
+    }
+
+    /**
+     * Adds two 64-bit integers together, returning their sum as a SplFixedArray
+     * containing two 32-bit integers (representing a 64-bit integer).
+     *
+     * @param SplFixedArray $x
+     * @param SplFixedArray $y
+     * @return SplFixedArray
+     * @psalm-suppress MixedArgument
+     * @psalm-suppress MixedAssignment
+     * @psalm-suppress MixedOperand
+     * @internal You should not use this directly from another application
+     *
+     */
+    protected static function add64($x, $y)
+    {
+        $l = ($x[1] + $y[1]) & 0xffffffff;
+        return self::new64(
+            (int)($x[0] + $y[0] + (
+                ($l < $x[1]) ? 1 : 0
+                )),
+            (int)$l
+        );
     }
 
     /**
@@ -313,48 +355,6 @@ abstract class ParagonIE_Sodium_Core_BLAKE2b extends ParagonIE_Sodium_Core_Util
     protected static function add364($x, $y, $z)
     {
         return self::add64($x, self::add64($y, $z));
-    }
-
-    /**
-     * Adds two 64-bit integers together, returning their sum as a SplFixedArray
-     * containing two 32-bit integers (representing a 64-bit integer).
-     *
-     * @param SplFixedArray $x
-     * @param SplFixedArray $y
-     * @return SplFixedArray
-     * @psalm-suppress MixedArgument
-     * @psalm-suppress MixedAssignment
-     * @psalm-suppress MixedOperand
-     * @internal You should not use this directly from another application
-     *
-     */
-    protected static function add64($x, $y)
-    {
-        $l = ($x[1] + $y[1]) & 0xffffffff;
-        return self::new64(
-            (int)($x[0] + $y[0] + (
-                ($l < $x[1]) ? 1 : 0
-                )),
-            (int)$l
-        );
-    }
-
-    /**
-     * Turn two 32-bit integers into a fixed array representing a 64-bit integer.
-     *
-     * @param int $high
-     * @param int $low
-     * @return SplFixedArray
-     * @psalm-suppress MixedAssignment
-     * @internal You should not use this directly from another application
-     *
-     */
-    public static function new64($high, $low)
-    {
-        $i64 = new SplFixedArray(2);
-        $i64[0] = $high & 0xffffffff;
-        $i64[1] = $low & 0xffffffff;
-        return $i64;
     }
 
     /**

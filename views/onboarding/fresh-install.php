@@ -30,45 +30,41 @@ if (!defined('WORDFENCE_VERSION')) {
         <div id="wf-onboarding-footer">
             <ul>
                 <li>
-                    <input type="checkbox" class="wf-option-checkbox wf-small" id="wf-onboarding-agree"> <label
-                            for="wf-onboarding-agree"><?php echo wp_kses(__('By checking this box, I agree to the Wordfence <a href="https://www.wordfence.com/terms-of-use/" target="_blank" rel="noopener noreferrer">terms</a> and <a href="https://www.wordfence.com/privacy-policy/" target="_blank" rel="noopener noreferrer">privacy policy<span class="screen-reader-text"> (opens in new tab)</span></a>', 'wordfence'), array('a' => array('href' => array(), 'target' => array(), 'rel' => array()), 'span' => array('class' => array()))); ?></label>
-                    <p class="wf-gdpr-dpa"><?php echo wp_kses(sprintf(/* translators: Support URL. */ __('If you qualify as a data controller under the GDPR and need a data processing agreement, <a href="%s" target="_blank" rel="noopener noreferrer">click here<span class="screen-reader-text"> (opens in new tab)</span></a>.', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_GDPR_DPA)), array('a' => array('href' => array(), 'target' => array(), 'rel' => array()), 'span' => array('class' => array()))); ?></p>
+                    <input type="checkbox" class="wf-option-checkbox wf-small" id="wf-onboarding-agree">
+                    <label for="wf-onboarding-agree"><?php echo wp_kses(__('I have read and agree to the <a href="https://www.wordfence.com/license-terms-and-conditions/" target="_blank" rel="noopener noreferrer">Wordfence License Terms and Conditions<span class="screen-reader-text"> (opens in new tab)</span></a> and <a href="https://www.wordfence.com/terms-of-service/" target="_blank" rel="noopener noreferrer">Terms of Service</a> and have read and acknowledge the <a href="https://www.wordfence.com/privacy-policy/" target="_blank" rel="noopener noreferrer">Wordfence Privacy Policy<span class="screen-reader-text"> (opens in new tab)</span></a>.', 'wordfence'), array('a' => array('href' => array(), 'target' => array(), 'rel' => array()), 'span' => array('class' => array()))); ?></label>
                 </li>
-                <li><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary wf-disabled"
-                       id="wf-onboarding-continue" role="button"><?php esc_html_e('Continue', 'wordfence'); ?></a></li>
+                <li>
+                    <a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary wf-disabled" id="wf-onboarding-continue" role="button"><?php esc_html_e('Continue', 'wordfence'); ?></a>
+                </li>
             </ul>
         </div>
     </div>
-    <div id="wf-onboarding-fresh-install-2"
-         class="wf-onboarding-modal-content"<?php if (wfConfig::get('onboardingAttempt1') != wfOnboardingController::ONBOARDING_FIRST_EMAILS) {
+    <div id="wf-onboarding-fresh-install-2" class="wf-onboarding-modal-content"<?php if (wfConfig::get('onboardingAttempt1') != wfOnboardingController::ONBOARDING_FIRST_EMAILS) {
         echo ' style="display: none;"';
     } ?>>
-        <div class="wf-onboarding-logo"><img
-                    src="<?php echo esc_attr(wfUtils::getBaseURL() . 'images/wf-horizontal.svg'); ?>"
-                    alt="<?php esc_html_e('Wordfence - Securing your WordPress Website', 'wordfence'); ?>"></div>
+        <div class="wf-onboarding-logo">
+            <img src="<?php echo esc_attr(wfUtils::getBaseURL() . 'images/wf-horizontal.svg'); ?>" alt="<?php esc_html_e('Wordfence - Securing your WordPress Website', 'wordfence'); ?>">
+        </div>
         <h3><?php esc_html_e('Enter Premium License Key', 'wordfence'); ?></h3>
         <p><?php esc_html_e('Enter your premium license key to enable real-time protection for your website.', 'wordfence'); ?></p>
-        <div id="wf-onboarding-license"><input type="text"
-                                               placeholder="<?php esc_html_e('Enter Premium Key', 'wordfence'); ?>"><a
-                    href="#" class="wf-onboarding-btn wf-onboarding-btn-primary wf-disabled"
-                    id="wf-onboarding-license-install" role="button"><?php esc_html_e('Install', 'wordfence'); ?></a>
+        <div id="wf-onboarding-license">
+            <input type="text" placeholder="<?php esc_html_e('Enter Premium Key', 'wordfence'); ?>"><a href="#" class="wf-onboarding-btn wf-onboarding-btn-primary wf-disabled" id="wf-onboarding-license-install" role="button"><?php esc_html_e('Install', 'wordfence'); ?></a>
         </div>
         <div id="wf-onboarding-or"><span><?php esc_html_e('or', 'wordfence') ?></span></div>
         <p><?php esc_html_e('If you don\'t have one, you can purchase one now.', 'wordfence'); ?></p>
         <div id="wf-onboarding-license-footer">
             <ul>
-                <li><a href="https://www.wordfence.com/gnl1onboardingOverlayGet/wordfence-signup/#premium-order-form"
-                       class="wf-onboarding-btn wf-onboarding-btn-primary" id="wf-onboarding-get" target="_blank"
-                       rel="noopener noreferrer"><?php esc_html_e('Upgrade to Premium', 'wordfence'); ?><span
-                                class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                <li>
+                    <a href="https://www.wordfence.com/gnl1onboardingOverlayGet/wordfence-signup/#premium-order-form" class="wf-onboarding-btn wf-onboarding-btn-primary" id="wf-onboarding-get" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Upgrade to Premium', 'wordfence'); ?>
+                        <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
                 </li>
-                <li><a href="https://www.wordfence.com/gnl1onboardingOverlayLearn/wordfence-signup/"
-                       class="wf-onboarding-btn wf-onboarding-btn-default" id="wf-onboarding-learn" target="_blank"
-                       rel="noopener noreferrer"><?php esc_html_e('Learn More', 'wordfence'); ?><span
-                                class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                <li>
+                    <a href="https://www.wordfence.com/gnl1onboardingOverlayLearn/wordfence-signup/" class="wf-onboarding-btn wf-onboarding-btn-default" id="wf-onboarding-learn" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Learn More', 'wordfence'); ?>
+                        <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
                 </li>
-                <li><a href="#" id="wf-onboarding-no-thanks"
-                       role="button"><?php esc_html_e('No Thanks', 'wordfence'); ?></a></li>
+                <li>
+                    <a href="#" id="wf-onboarding-no-thanks" role="button"><?php esc_html_e('No Thanks', 'wordfence'); ?></a>
+                </li>
             </ul>
         </div>
     </div>

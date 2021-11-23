@@ -29,17 +29,13 @@ $tabs = array(
         ?>
         <li class="wf-tab<?php if ($index == 0) {
             echo ' wf-active';
-        } ?>" id="wf-scan-tab-<?php echo esc_attr($t->id); ?>" data-target="<?php echo esc_attr($t->id); ?>"
-            data-tab-title="<?php echo esc_attr($t->tabTitle); ?>"><a href="<?php echo esc_attr($a); ?>"
-                                                                      aria-selected="<?php echo json_encode($index == 0) ?>"
-                                                                      role="tab"><?php echo $t->tabTitle; ?></a></li>
+        } ?>" id="wf-scan-tab-<?php echo esc_attr($t->id); ?>" data-target="<?php echo esc_attr($t->id); ?>" data-tab-title="<?php echo esc_attr($t->tabTitle); ?>">
+            <a href="<?php echo esc_attr($a); ?>" aria-selected="<?php echo json_encode($index == 0) ?>" role="tab"><?php echo $t->tabTitle; ?></a>
+        </li>
     <?php endforeach; ?>
-    <li id="wf-scan-bulk-buttons"><span class="wf-hidden-xs"><a href="#" id="wf-scan-bulk-buttons-delete"
-                                                                class="wf-btn wf-btn-default wf-btn-callout-subtle<?php echo($hasDeleteableIssue ? '' : ' wf-disabled'); ?>"
-                                                                role="button"><?php esc_html_e('Delete All Deletable Files', 'wordfence'); ?></a>&nbsp;&nbsp;&nbsp;<a
-                    href="#" id="wf-scan-bulk-buttons-repair"
-                    class="wf-btn wf-btn-default wf-btn-callout-subtle<?php echo($hasRepairableIssue ? '' : ' wf-disabled'); ?>"
-                    role="button"><?php esc_html_e('Repair All Repairable Files', 'wordfence'); ?></a></span></li>
+    <li id="wf-scan-bulk-buttons">
+        <span class="wf-hidden-xs"><a href="#" id="wf-scan-bulk-buttons-delete" class="wf-btn wf-btn-default wf-btn-callout-subtle<?php echo($hasDeleteableIssue ? '' : ' wf-disabled'); ?>" role="button"><?php esc_html_e('Delete All Deletable Files', 'wordfence'); ?></a>&nbsp;&nbsp;&nbsp;<a href="#" id="wf-scan-bulk-buttons-repair" class="wf-btn wf-btn-default wf-btn-callout-subtle<?php echo($hasRepairableIssue ? '' : ' wf-disabled'); ?>" role="button"><?php esc_html_e('Repair All Repairable Files', 'wordfence'); ?></a></span>
+    </li>
 </ul>
 <ul class="wf-scan-results">
     <li class="wf-scan-results-stats">

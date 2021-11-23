@@ -34,27 +34,16 @@ if (!defined('WORDFENCE_VERSION')) {
                         <ul class="wf-flex-horizontal wf-flex-vertical-xs wf-flex-full-width wf-flex-grow-all wf-no-top">
                             <li class="wf-padding-add-bottom-xs">
                                 <ul class="wf-flex-horizontal wf-flex-full-width wf-flex-grow-first wf-no-top">
-                                    <li><input type="text"
-                                               placeholder="<?php esc_attr_e('Filter by Type, Detail, or Reason', 'wordfence'); ?>"
-                                               id="wf-blocks-filter-field" class="wf-input-text"></li>
-                                    <li class="wf-padding-add-left-medium"><a href="#" id="wf-blocks-apply-filter"
-                                                                              class="wf-btn wf-btn-callout wf-btn-default"
-                                                                              role="button"><?php esc_html_e('Filter', 'wordfence'); ?></a>&nbsp;&nbsp;<a
-                                                href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_FIREWALL_BLOCKING_FILTER); ?>"
-                                                target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i
-                                                    class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i><span
-                                                    class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                                    <li>
+                                        <input type="text" placeholder="<?php esc_attr_e('Filter by Type, Detail, or Reason', 'wordfence'); ?>" id="wf-blocks-filter-field" class="wf-input-text">
+                                    </li>
+                                    <li class="wf-padding-add-left-medium">
+                                        <a href="#" id="wf-blocks-apply-filter" class="wf-btn wf-btn-callout wf-btn-default" role="button"><?php esc_html_e('Filter', 'wordfence'); ?></a>&nbsp;&nbsp;<a href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_FIREWALL_BLOCKING_FILTER); ?>" target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i><span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
                                     </li>
                                 </ul>
                             </li>
                             <li class="wf-right wf-flex-vertical-xs">
-                                <a href="#" id="blocks-bulk-unblock" class="wf-btn wf-btn-callout wf-btn-default"
-                                   role="button"><?php esc_html_e('Unblock', 'wordfence'); ?></a>&nbsp;&nbsp;<a href="#"
-                                                                                                                id="blocks-bulk-make-permanent"
-                                                                                                                class="wf-btn wf-btn-callout wf-btn-default"><?php esc_html_e('Make Permanent', 'wordfence'); ?></a>&nbsp;&nbsp;<a
-                                        href="<?php echo wfUtils::siteURLRelative(); ?>?_wfsf=blockedIPs&amp;nonce=<?php echo wp_create_nonce('wp-ajax'); ?>"
-                                        id="blocks-export-ips"
-                                        class="wf-btn wf-btn-callout wf-btn-default"><?php echo wp_kses(__('Export<span class="wf-hidden-xs"> All IPs</span>', 'wordfence'), array('span' => array('class' => array()))); ?></a>
+                                <a href="#" id="blocks-bulk-unblock" class="wf-btn wf-btn-callout wf-btn-default" role="button"><?php esc_html_e('Unblock', 'wordfence'); ?></a>&nbsp;&nbsp;<a href="#" id="blocks-bulk-make-permanent" class="wf-btn wf-btn-callout wf-btn-default"><?php esc_html_e('Make Permanent', 'wordfence'); ?></a>&nbsp;&nbsp;<a href="<?php echo wfUtils::siteURLRelative(); ?>?_wfsf=blockedIPs&amp;nonce=<?php echo wp_create_nonce('wp-ajax'); ?>" id="blocks-export-ips" class="wf-btn wf-btn-callout wf-btn-default"><?php echo wp_kses(__('Export<span class="wf-hidden-xs"> All IPs</span>', 'wordfence'), array('span' => array('class' => array()))); ?></a>
                             </li>
                         </ul>
                         <div class="wf-block wf-block-no-padding wf-block-no-header wf-active wf-no-bottom wf-overflow-y-auto-xs">
@@ -133,16 +122,11 @@ if (!defined('WORDFENCE_VERSION')) {
 <script type="text/x-jquery-template" id="wf-block-row-tmpl">
     <tr class="wf-block-record" data-id="${id}" data-expiration="${expiration}">
         <td style="text-align: center;">
-            <div class="wf-blocks-table-bulk-checkbox wf-option-checkbox"><i class="wf-ion-ios-checkmark-empty"
-                                                                             aria-hidden="true"></i></div>
+            <div class="wf-blocks-table-bulk-checkbox wf-option-checkbox">
+                <i class="wf-ion-ios-checkmark-empty" aria-hidden="true"></i></div>
         </td>
         <td data-column="type" data-sort="${typeSort}">${typeDisplay}</td>
-        <td data-column="detail" data-sort="${detailSort}">${detailDisplay}{{if (editable)}}&nbsp;<a href="#"
-                                                                                                     class="wf-block-edit"
-                                                                                                     data-edit-type="${editType}"
-                                                                                                     data-edit-values="${editValues}"
-                                                                                                     role="button"><i
-                        class="wf-ion-edit" aria-hidden="true"></i></a>{{/if}}
+        <td data-column="detail" data-sort="${detailSort}">${detailDisplay}{{if (editable)}}&nbsp;<a href="#" class="wf-block-edit" data-edit-type="${editType}" data-edit-values="${editValues}" role="button"><i class="wf-ion-edit" aria-hidden="true"></i></a>{{/if}}
         </td>
         <td data-column="ruleAdded" data-sort="${ruleAddedSort}">${ruleAddedDisplay}</td>
         <td data-column="reason" data-sort="${reasonSort}">${reasonDisplay}</td>

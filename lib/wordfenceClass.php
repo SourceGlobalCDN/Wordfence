@@ -7462,7 +7462,7 @@ HTML;
     public static function admin_menus_80()
     {
         if (wfCentral::isSupported()) {
-            add_submenu_page(null, __('Wordfence Central', 'wordfence'), __('Wordfence Central', 'wordfence'), 'activate_plugins', 'WordfenceCentral', 'wordfence::menu_wordfence_central');
+            add_submenu_page('', __('Wordfence Central', 'wordfence'), __('Wordfence Central', 'wordfence'), 'activate_plugins', 'WordfenceCentral', 'wordfence::menu_wordfence_central');
         }
     }
 
@@ -7555,7 +7555,7 @@ JQUERY;
         wp_enqueue_style('wordfence-select2-css');
         wp_enqueue_script('wordfence-select2-js');
 
-        $subpage = filter_input(INPUT_GET, 'subpage', FILTER_SANITIZE_STRING);
+        $subpage = filter_input(INPUT_GET, 'subpage');
         switch ($subpage) {
             case 'livetraffic':
                 $content = self::_menu_tools_livetraffic();
@@ -9212,7 +9212,7 @@ SQL
                                     't' => microtime(true),
                                     'c' => $installType,
                                     'lang' => get_site_option('WPLANG'),
-                                ), null, '&'),
+                                )),
                                 array(
                                     'body' => $bodyData,
                                     'headers' => array(
@@ -9314,7 +9314,7 @@ SQL
                                     't' => microtime(true),
                                     'c' => $installType,
                                     'lang' => get_site_option('WPLANG'),
-                                ), null, '&'),
+                                )),
                                 array(
                                     'body' => json_encode($data),
                                     'headers' => array(

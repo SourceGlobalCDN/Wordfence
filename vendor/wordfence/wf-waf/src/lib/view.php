@@ -63,6 +63,7 @@ if (defined('WFWAF_VERSION') && !defined('WFWAF_RUN_COMPLETE')) {
                 define('WFWAF_VIEW_RENDERING', true);
             }
             ob_start();
+            /** @noinspection PhpIncludeInspection */
             include $viewPath;
             return ob_get_clean();
         }

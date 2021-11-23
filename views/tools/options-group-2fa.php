@@ -41,17 +41,13 @@ $helpLink = wfSupportController::supportURL(wfSupportController::ITEM_TOOLS_TWO_
                     <p><?php echo wp_kses(__('Used by banks, government agencies, and military worldwide, two-factor authentication is one of the most secure forms of remote system authentication available. With it enabled, an attacker needs to know your username, password, <em>and</em> have control of your phone to log into your site. Upgrade to Premium now to enable this powerful feature.', 'wordfence'), array('em' => array())) ?></p>
 
                     <p class="wf-nowrap wf-center">
-                        <img id="wf-two-factor-img1" src="<?php echo wfUtils::getBaseURL() . 'images/2fa1.svg' ?>"
-                             alt="">
-                        <img id="wf-two-factor-img2" src="<?php echo wfUtils::getBaseURL() . 'images/2fa2.svg' ?>"
-                             alt="">
+                        <img id="wf-two-factor-img1" src="<?php echo wfUtils::getBaseURL() . 'images/2fa1.svg' ?>" alt="">
+                        <img id="wf-two-factor-img2" src="<?php echo wfUtils::getBaseURL() . 'images/2fa2.svg' ?>" alt="">
                     </p>
 
                     <p class="wf-center wf-padding-add-bottom">
-                        <a class="wf-btn wf-btn-primary wf-btn-callout"
-                           href="https://www.wordfence.com/gnl1twoFac1/wordfence-signup/" target="_blank"
-                           rel="noopener noreferrer"><?php esc_html_e('Upgrade to Premium', 'wordfence') ?><span
-                                    class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+                        <a class="wf-btn wf-btn-primary wf-btn-callout" href="https://www.wordfence.com/gnl1twoFac1/wordfence-signup/" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Upgrade to Premium', 'wordfence') ?>
+                            <span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
                     </p>
                 <?php else: ?>
                     <ul class="wf-block-list">

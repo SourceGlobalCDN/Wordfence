@@ -13,10 +13,9 @@ if (!defined('WORDFENCE_VERSION')) {
             </div>
             <div class="wf-modal-header-action">
                 <div><?php echo wp_kses(sprintf(__('If you cannot complete the uninstall process, <a target="_blank" rel="noopener noreferrer" href="%s">click here for help<span class="screen-reader-text"> (opens in new tab)</span></a>', 'wordfence'), wfSupportController::esc_supportURL(wfSupportController::ITEM_FIREWALL_WAF_REMOVE_MANUALLY)), array('a' => array('href' => array(), 'target' => array(), 'rel' => array()), 'span' => array('class' => array()))); ?></div>
-                <div class="wf-padding-add-left-small wf-modal-header-action-close"><a href="#"
-                                                                                       onclick="WFAD.colorboxClose(); return false"
-                                                                                       role="button"><i
-                                class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a></div>
+                <div class="wf-padding-add-left-small wf-modal-header-action-close">
+                    <a href="#" onclick="WFAD.colorboxClose(); return false" role="button"><i class="wf-fa wf-fa-times-circle" aria-hidden="true"></i></a>
+                </div>
             </div>
         </div>
         <div class="wf-modal-content">
@@ -111,9 +110,9 @@ if (!defined('WORDFENCE_VERSION')) {
         <div class="wf-modal-footer">
             <ul class="wf-flex-horizontal wf-flex-full-width">
                 <li class="wf-waf-download-instructions"><?php esc_html_e('Once you have downloaded the files, click Continue to complete uninstallation.', 'wordfence'); ?></li>
-                <li class="wf-right"><a href="#" class="wf-btn wf-btn-primary wf-btn-callout-subtle wf-disabled"
-                                        id="wf-waf-uninstall-continue"
-                                        role="button"><?php esc_html_e('Continue', 'wordfence'); ?></a></li>
+                <li class="wf-right">
+                    <a href="#" class="wf-btn wf-btn-primary wf-btn-callout-subtle wf-disabled" id="wf-waf-uninstall-continue" role="button"><?php esc_html_e('Continue', 'wordfence'); ?></a>
+                </li>
             </ul>
         </div>
     </div>

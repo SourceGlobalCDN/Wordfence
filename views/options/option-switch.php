@@ -49,14 +49,11 @@ $id = 'wf-option-' . preg_replace('/[^a-z0-9]/i', '-', $optionName);
             <li class="wf-option-switch<?php if (isset($alignment)) {
                 echo ' ' . $alignment;
             } ?> wf-padding-add-top-xs-small">
-                <ul class="wf-switch<?php echo(!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' wf-disabled'); ?>"
-                    role="radiogroup" aria-labelledby="<?php echo esc_attr($id); ?>-label">
+                <ul class="wf-switch<?php echo(!(!wfConfig::p() && isset($premium) && $premium) ? '' : ' wf-disabled'); ?>" role="radiogroup" aria-labelledby="<?php echo esc_attr($id); ?>-label">
                     <?php foreach ($states as $s): ?>
                         <li<?php if ($s['value'] == $value) {
                             echo ' class="wf-active"';
-                        } ?> data-option-value="<?php echo esc_attr($s['value']); ?>" role="radio"
-                             aria-checked="<?php echo($s['value'] == $value ? 'true' : 'false'); ?>"
-                             tabindex="0"><?php echo esc_html($s['label']); ?></li>
+                        } ?> data-option-value="<?php echo esc_attr($s['value']); ?>" role="radio" aria-checked="<?php echo($s['value'] == $value ? 'true' : 'false'); ?>" tabindex="0"><?php echo esc_html($s['label']); ?></li>
                     <?php endforeach; ?>
                 </ul>
             </li>

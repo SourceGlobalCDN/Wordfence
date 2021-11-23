@@ -19,21 +19,12 @@ if (!defined('WORDFENCE_VERSION')) {
 ?>
 <ul class="wf-flex-vertical wf-flex-full-width">
     <li>
-        <ul id="wf-option-scansEnabled-fileContents" class="wf-option wf-option-scan-signatures"
-            data-toggle-option="scansEnabled_fileContents" data-enabled-toggle-value="1" data-disabled-toggle-value="0"
-            data-original-toggle-value="<?php echo wfConfig::get('scansEnabled_fileContents') ? 1 : 0; ?>"
-            data-text-area-option="scan_include_extra"
-            data-original-text-area-value="<?php echo esc_attr(wfConfig::get('scan_include_extra')); ?>">
-            <li class="wf-option-checkbox<?php echo(wfConfig::get('scansEnabled_fileContents') ? ' wf-checked' : ''); ?>"
-                role="checkbox" aria-checked="<?php echo($value == $enabledValue ? 'true' : 'false'); ?>" tabindex="0"
-                aria-labelledby="wf-option-scansEnabled-fileContents-label"><i class="wf-ion-ios-checkmark-empty"
-                                                                               aria-hidden="true"></i></li>
-            <li class="wf-option-title"><span
-                        id="wf-option-scansEnabled-fileContents-label"><?php echo esc_html($title); ?></span> <a
-                        href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_SCAN_OPTION_MALWARE_SIGNATURES); ?>"
-                        target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i
-                            class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i><span
-                            class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
+        <ul id="wf-option-scansEnabled-fileContents" class="wf-option wf-option-scan-signatures" data-toggle-option="scansEnabled_fileContents" data-enabled-toggle-value="1" data-disabled-toggle-value="0" data-original-toggle-value="<?php echo wfConfig::get('scansEnabled_fileContents') ? 1 : 0; ?>" data-text-area-option="scan_include_extra" data-original-text-area-value="<?php echo esc_attr(wfConfig::get('scan_include_extra')); ?>">
+            <li class="wf-option-checkbox<?php echo(wfConfig::get('scansEnabled_fileContents') ? ' wf-checked' : ''); ?>" role="checkbox" aria-checked="<?php echo($value == $enabledValue ? 'true' : 'false'); ?>" tabindex="0" aria-labelledby="wf-option-scansEnabled-fileContents-label">
+                <i class="wf-ion-ios-checkmark-empty" aria-hidden="true"></i></li>
+            <li class="wf-option-title">
+                <span id="wf-option-scansEnabled-fileContents-label"><?php echo esc_html($title); ?></span>
+                <a href="<?php echo wfSupportController::esc_supportURL(wfSupportController::ITEM_SCAN_OPTION_MALWARE_SIGNATURES); ?>" target="_blank" rel="noopener noreferrer" class="wf-inline-help"><i class="wf-fa wf-fa-question-circle-o" aria-hidden="true"></i><span class="screen-reader-text"> (<?php esc_html_e('opens in new tab', 'wordfence') ?>)</span></a>
             </li>
             <li class="wf-option-disclosure">
                 <svg width="12px" height="12px" viewBox="0 0 12 12">
@@ -44,8 +35,7 @@ if (!defined('WORDFENCE_VERSION')) {
     </li>
     <li id="wf-scan-additional-signatures">
         <h4 id="wf-scan-additional-signatures-label"><?php esc_html_e('Add Additional Signatures', 'wordfence') ?></h4>
-        <textarea id="wf-option-scan-include-extra" spellcheck="false" autocapitalize="none" autocomplete="off"
-                  aria-labelledby="wf-scan-additional-signatures-label"><?php echo esc_html(wfConfig::get('scan_include_extra')); ?></textarea>
+        <textarea id="wf-option-scan-include-extra" spellcheck="false" autocapitalize="none" autocomplete="off" aria-labelledby="wf-scan-additional-signatures-label"><?php echo esc_html(wfConfig::get('scan_include_extra')); ?></textarea>
     </li>
 </ul>
 <script type="application/javascript">

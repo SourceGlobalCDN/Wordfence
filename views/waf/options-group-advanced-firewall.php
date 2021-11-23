@@ -174,8 +174,8 @@ if (!isset($collapseable)) {
         <tfoot>
         {{if (ruleCount >= 10)}}
         <tr id="waf-show-all-rules">
-            <td class="wf-center" colspan="4"><a href="#" id="waf-show-all-rules-button"
-                                                 role="button"><?php esc_html_e('SHOW ALL RULES', 'wordfence'); ?></a>
+            <td class="wf-center" colspan="4">
+                <a href="#" id="waf-show-all-rules-button" role="button"><?php esc_html_e('SHOW ALL RULES', 'wordfence'); ?></a>
             </td>
         </tr>
         {{/if}}
